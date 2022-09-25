@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "293039057833",
+    "project_id": "deaks-mobile-applications",
+    "storage_bucket": "deaks-mobile-applications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293039057833:android:14231cc8a48932bb0e32b8",
+        "android_client_info": {
+          "package_name": "com.deaksapplication.deaks_applications"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293039057833-d29k0rlm0gh46dln1nr35tbfqe26a2b1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvS_nu67r_Kc0ySDIJ7P8ZLZqtzdZifyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293039057833-d29k0rlm0gh46dln1nr35tbfqe26a2b1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "293039057833-12n5cv6hbod3b95to5v7omsqhc3khqpp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.deaksapp.deaksApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
