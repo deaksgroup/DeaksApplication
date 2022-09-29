@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 import 'package:deaksapp/size_config.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:deaksapp/globals.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class Body extends StatefulWidget {
   final List<DisplaySlot> displaySlots;
@@ -22,6 +25,8 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   int selection = 0;
+  String? _selectedOption;
+  List availableMaps = [];
 
   List<DisplaySlot> moreDisplaySlots = [];
   Future<void> openWhatsapp(String whatsapp) async {
@@ -34,6 +39,7 @@ class _BodyState extends State<Body> {
       if (await canLaunchUrl(whatappURL_ios)) {
         await launchUrl(whatappURL_ios, mode: LaunchMode.externalApplication);
       } else {
+        log("here");
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: new Text("Whatsapp not installed!")));
       }
@@ -73,25 +79,81 @@ class _BodyState extends State<Body> {
     }
   }
 
-  Future<void> openlocation(String longitude, String latitude) async {
-    var whatsappURl_android =
-        Uri.parse('comgooglemaps://?center=${longitude},${latitude}');
+  List<CupertinoActionSheetAction> generateTab() {
+    List<CupertinoActionSheetAction> actions = availableMaps.map((e) {
+      print(e.mapType);
+      return CupertinoActionSheetAction(
+          onPressed: () {
+            setState(() {
+              _selectedOption = e.mapType.toString();
+            });
+            launchURL();
+            _close(context);
+          },
+          child: Text("${e.mapName}"));
+    }).toList();
+    return actions;
+  }
 
-    var whatappURL_ios =
-        Uri.parse('https://maps.apple.com/?sll=${longitude},${latitude}');
+  Future<void> _show(BuildContext ctx) async {
+    availableMaps = await MapLauncher.installedMaps;
+    print(availableMaps);
+
+    showCupertinoModalPopup(
+        context: ctx,
+        builder: (_) => CupertinoActionSheet(
+              actions: generateTab(),
+              cancelButton: CupertinoActionSheetAction(
+                onPressed: () => _close(ctx),
+                child: const Text('Close'),
+              ),
+            ));
+  }
+
+  void _close(BuildContext ctx) {
+    Navigator.of(ctx).pop();
+  }
+
+  Future<void> launchURL() async {
+    var appleMapsLink = Uri.parse(
+        "https://maps.apple.com/?address=3%20Upper%20Pickering%20St,%20Singapore%20058289&auid=17137328228958775144&ll=1.285605,103.846400&lsp=9902&q=PARKROYAL%20COLLECTION%20Pickering,%20Singapore&_ext=CjIKBQgEEMoBCgQIBRADCgQIBhALCgQIChAACgQIUhADCgQIVRAPCgQIWRACCgUIpAEQARImKZLXC8pwf/Q/MaIQIM/h9VlAOUyHxk48pPQ/QSyarwZ19llAUAQ%3D");
+    "https://maps.apple.com/?address=3%20Upper%20Pickering%20St,%20Singapore%20058289&auid=17137328228958775144&ll=1.285605,103.846400&lsp=9902&q=PARKROYAL%20COLLECTION%20Pickering,%20Singapore&_ext=CjIKBQgEEMoBCgQIBRADCgQIBhALCgQIChAACgQIUhADCgQIVRAPCgQIWRACCgUIpAEQARImKZLXC8pwf/Q/MaIQIM/h9VlAOUyHxk48pPQ/QSyarwZ19llAUAQ%3D";
+
+    var googgleMapsLink = Uri.parse("https://goo.gl/maps/FuXvUt1uiWtJqEM97");
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only
-      if (await canLaunchUrl(whatappURL_ios)) {
-        await launchUrl(whatappURL_ios, mode: LaunchMode.externalApplication);
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: new Text("Maps not installed!")));
+
+      if (_selectedOption == "MapType.apple") {
+        log("aapplemap");
+        if (await canLaunchUrl(appleMapsLink)) {
+          log("can");
+          await launchUrl(appleMapsLink, mode: LaunchMode.externalApplication);
+        } else {
+          log("here");
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: new Text("Maps not installed!")));
+        }
+      } else if (_selectedOption == "MapType.google") {
+        log("ggoogglemap");
+        if (await canLaunchUrl(googgleMapsLink)) {
+          log("can");
+          await launchUrl(googgleMapsLink,
+              mode: LaunchMode.externalApplication);
+        } else {
+          log("here");
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: new Text("Google M Maps not installed!")));
+        }
       }
+      setState(() {
+        _selectedOption = "";
+      });
+      print("retrun");
     } else {
       // android , web
-      if (await canLaunchUrl(whatsappURl_android)) {
-        await launchUrl(whatsappURl_android,
-            mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(googgleMapsLink)) {
+        await launchUrl(googgleMapsLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: new Text("Google Maps not installed!")));
@@ -279,8 +341,8 @@ class _BodyState extends State<Body> {
                           ),
                           GestureDetector(
                             onTap: (() {
-                              openlocation(widget.displaySlot.longitude,
-                                  widget.displaySlot.latitude);
+                              _show(context);
+                              // _show(context);
                             }),
                             child: Container(
                               width: 30,

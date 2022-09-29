@@ -39,7 +39,10 @@ class _MyDetailsState extends State<MyDetails> {
                     });
                   }
                 },
-                child: Text(ButtonText))
+                child: Text(
+                  ButtonText,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ))
           ],
           centerTitle: true,
           title: Text(

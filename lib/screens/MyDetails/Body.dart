@@ -216,7 +216,7 @@ class _BodyState extends State<Body> {
             ),
             if (!(profile["verificationStatus"] == "Pending" ||
                 profile["verificationStatus"] == "Not Submitted" ||
-                profile["accountStatus"] != "Unauthorized"))
+                profile["accountStatus"] == "Unauthorized"))
               Container(
                 width: 30,
                 height: 30,
@@ -469,7 +469,9 @@ class _BodyState extends State<Body> {
                 name: 'DOB',
                 // locale: const Locale.fromSubtags(languageCode: 'in'),
                 initialEntryMode: DatePickerEntryMode.calendarOnly,
-                initialValue: DateTime.now(),
+                initialValue: DateTime.now().subtract(Duration(days: 5844)),
+                lastDate: DateTime.now().subtract(Duration(days: 5844)),
+                firstDate: DateTime.utc(1969, 7, 20, 20, 18, 04),
                 format: DateFormat("dd-MM-yyyy"),
                 inputType: InputType.date,
                 decoration: InputDecoration(
@@ -717,6 +719,47 @@ class _BodyState extends State<Body> {
               SizedBox(
                 height: 20,
               ),
+              FormBuilderTextField(
+                name: 'NRIC',
+
+                decoration: InputDecoration(
+                  labelText: 'NRIC',
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5)),
+                  disabledBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5)),
+                  border: OutlineInputBorder(
+                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5)),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  suffixIcon: _NRICHasError
+                      ? const Icon(Icons.error, color: Colors.red)
+                      : const Icon(Icons.check, color: Colors.green),
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    _NRICHasError =
+                        !(_formKey.currentState?.fields['NRIC']?.validate() ??
+                            false);
+                  });
+                },
+
+                // valueTransformer: (text) => num.tryParse(text),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.match(
+                      r'^[STGMstgm]\d\d\d\d\d\d\d[A-Za-z]$'),
+                ]),
+                // initialValue: '12',
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 15),
               FormBuilderDropdown<String>(
                 // autovalidate: true,
 
@@ -867,47 +910,6 @@ class _BodyState extends State<Body> {
               SizedBox(
                 height: 20,
               ),
-              FormBuilderTextField(
-                name: 'NRIC',
-
-                decoration: InputDecoration(
-                  labelText: 'NRIC',
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5)),
-                  disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5)),
-                  border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(5)),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _NRICHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
-                ),
-                onChanged: (val) {
-                  setState(() {
-                    _NRICHasError =
-                        !(_formKey.currentState?.fields['NRIC']?.validate() ??
-                            false);
-                  });
-                },
-
-                // valueTransformer: (text) => num.tryParse(text),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.match(
-                      r'^[STGMstgm]\d\d\d\d\d\d\d[A-Za-z]$'),
-                ]),
-                // initialValue: '12',
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-              ),
-              const SizedBox(height: 15),
               FormBuilderTextField(
                 name: 'PayNow',
 

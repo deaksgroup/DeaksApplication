@@ -16,10 +16,17 @@ class Body extends StatelessWidget {
       children: [
         Expanded(
             child: jobsDispaySlots.isEmpty
-                ? Center(
-                    child: Text("No Upcoming jobs."),
+                ? SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Container(
+                      height: getProportionateScreenHeight(400),
+                      child: Center(
+                        child: Text("No Upcoming jobs."),
+                      ),
+                    ),
                   )
                 : ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
                     itemCount: jobsDispaySlots.length,
                     itemBuilder: ((context, index) {
                       return JobCard(displaySlot: jobsDispaySlots[index]);

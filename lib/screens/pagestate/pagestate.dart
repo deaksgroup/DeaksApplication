@@ -236,10 +236,11 @@ class _PageStateState extends State<PageState> {
                     }
                   },
                   child: Container(
+                    height: double.infinity,
                     // decoration: BoxDecoration(color: Colors.white),
 
-                    child: SvgPicture.asset(
-                      "assets/icons/home.svg",
+                    child: Image.asset(
+                      "assets/icons/home.png",
                       color: selected == 0 ? Colors.red : Colors.grey,
                       width: selected == 0 ? 25 : 22,
                       height: selected == 0 ? 25 : 22,
@@ -263,8 +264,9 @@ class _PageStateState extends State<PageState> {
                   },
                   child: Container(
                     // decoration: BoxDecoration(color: Colors.white),
-                    child: SvgPicture.asset(
-                      "assets/icons/briefcase.svg",
+                    height: double.infinity,
+                    child: Image.asset(
+                      "assets/icons/briefcase.png",
                       color: selected == 1 ? Colors.red : Colors.grey,
                       width: selected == 1 ? 25 : 22,
                       height: selected == 1 ? 25 : 22,
@@ -289,8 +291,9 @@ class _PageStateState extends State<PageState> {
                   },
                   child: Container(
                     // decoration: BoxDecoration(color: Colors.white),
-                    child: SvgPicture.asset(
-                      "assets/icons/user 2.svg",
+                    height: double.infinity,
+                    child: Image.asset(
+                      "assets/icons/user.png",
                       color: selected == 2 ? Colors.red : Colors.grey,
                       width: selected == 2 ? 25 : 22,
                       height: selected == 2 ? 25 : 22,
