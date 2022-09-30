@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       // //print(value);
     });
     FirebaseMessaging.instance.getToken().then((token) async {
-      print(token);
+      // print(token);
       final prefs = await SharedPreferences.getInstance();
       final userPushToken = json.encode(
         {
@@ -79,13 +79,13 @@ class _MyAppState extends State<MyApp> {
     ///forground work
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {}
-      print(message);
+      // print(message);
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(message);
+      // print(message);
     });
     super.initState();
   }

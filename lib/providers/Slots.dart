@@ -14,14 +14,14 @@ class Slots with ChangeNotifier {
   }
 
   Future<void> fetchAndSetSlots() async {
-    print("slotsFetch");
+    // print("slotsFetch");
     var dio = Dio();
     Response response;
 
     try {
       //404
       response = await dio.get("${globals.url}/slotList");
-      print(response.data.toString());
+      // print(response.data.toString());
 
       final extractedData = response.data;
       if (extractedData == null && extractedData["result"] == null) {

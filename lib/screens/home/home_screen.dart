@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> openWhatsapp() async {
-    var whatsapp = "+6588279462";
+    var whatsapp = "+6598596440";
     var whatsappURl_android =
         Uri.parse("whatsapp://send?phone=" + whatsapp + "&text=hello");
     "whatsapp://send?phone=" + whatsapp + "&text=hello";

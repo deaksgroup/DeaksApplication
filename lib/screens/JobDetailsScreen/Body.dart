@@ -81,7 +81,7 @@ class _BodyState extends State<Body> {
 
   List<CupertinoActionSheetAction> generateTab() {
     List<CupertinoActionSheetAction> actions = availableMaps.map((e) {
-      print(e.mapType);
+      // print(e.mapType);
       return CupertinoActionSheetAction(
           onPressed: () {
             setState(() {

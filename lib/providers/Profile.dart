@@ -93,7 +93,7 @@ class ProfileFetch with ChangeNotifier {
       //404
       response = await dio.get("${globals.url}/profile",
           options: Options(headers: headers));
-      print(response.data.toString());
+      // print(response.data.toString());
 
       final extractedData = response.data;
       if (extractedData == null) {

@@ -76,7 +76,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<Map<dynamic, dynamic>> loginUser(Map<String, String> loginData) async {
-    log("message");
+    // log("message");
     Map<dynamic, dynamic> extracteddata = {};
     var dio = Dio();
     Response response;
