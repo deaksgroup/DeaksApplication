@@ -65,13 +65,12 @@ class TrendingJobsCard extends StatelessWidget {
             ),
           ]),
       padding: EdgeInsets.all(2),
-      margin: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(2), vertical: 10),
-      width: getProportionateScreenWidth(200),
+      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 10),
+      width: 250,
       // height: getProportionateScreenWidth(220),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
-          width: getProportionateScreenWidth(200),
+          width: 246,
           height: 130,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5.0),
@@ -94,8 +93,7 @@ class TrendingJobsCard extends StatelessWidget {
                 1,
               ),
               borderRadius: BorderRadius.circular(5.0)),
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(5)),
+          padding: EdgeInsets.symmetric(horizontal: 5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             SizedBox(height: 5),
@@ -103,51 +101,47 @@ class TrendingJobsCard extends StatelessWidget {
               displaySlot.hotelName,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: getProportionateScreenWidth(14),
+                  fontSize: 15,
                   fontWeight: FontWeight.bold),
             ),
             Text(
               displaySlot.outletName,
-              style: TextStyle(
-                  fontSize: getProportionateScreenWidth(14),
-                  fontWeight: FontWeight.w200),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),
             )
           ]),
         ),
         SizedBox(height: 10),
         Container(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(5)),
+          padding: EdgeInsets.symmetric(horizontal: 5),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text("${displaySlot.startTime} to ${displaySlot.endTime}",
                 style: TextStyle(
-                  fontSize: getProportionateScreenWidth(14),
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
                 )),
             Text(displaySlot.date,
                 style: TextStyle(
-                  fontSize: getProportionateScreenWidth(14),
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 )),
           ]),
         ),
         Container(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(5)),
+          padding: EdgeInsets.symmetric(horizontal: 5),
           child: Row(
             children: [
               Text("Expected Pay : ",
                   style: TextStyle(
-                    fontSize: getProportionateScreenWidth(14),
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   )),
               Text("\$${displaySlot.totalPay}",
                   style: TextStyle(
-                    fontSize: getProportionateScreenWidth(17),
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
                   ))

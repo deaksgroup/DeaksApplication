@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/screens/otp/otp_screen.dart';
@@ -9,6 +11,7 @@ import 'package:deaksapp/helper/keyboard.dart';
 import 'package:deaksapp/screens/forgot_password/forgot_password_screen.dart';
 import 'package:deaksapp/screens/login_success/login_success_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
@@ -45,9 +48,15 @@ class _SignFormState extends State<SignForm> {
     setState(() {
       _isLoading = true;
     });
+    final prefs = await SharedPreferences.getInstance();
+    final extractedUserPushToken =
+        await jsonDecode(prefs.getString('userPushToken').toString())
+            as Map<dynamic, dynamic>;
+
     Map<String, String> loginData = {
       "email": email.toString(),
-      "password": password.toString()
+      "password": password.toString(),
+      "userPushToken": extractedUserPushToken["userPushToken"].toString()
     };
 
     Provider.of<Auth>(context, listen: false)

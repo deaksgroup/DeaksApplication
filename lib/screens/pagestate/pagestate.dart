@@ -225,6 +225,7 @@ class _PageStateState extends State<PageState> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -236,19 +237,18 @@ class _PageStateState extends State<PageState> {
                     }
                   },
                   child: Container(
-                    height: double.infinity,
                     // decoration: BoxDecoration(color: Colors.white),
-
-                    child: Image.asset(
-                      "assets/icons/home.png",
+                    height: double.infinity,
+                    child: Icon(
+                      Icons.home_outlined,
                       color: selected == 0 ? Colors.red : Colors.grey,
-                      width: selected == 0 ? 25 : 22,
-                      height: selected == 0 ? 25 : 22,
+                      size: selected == 0 ? 27 : 23,
                     ),
                   ),
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -263,18 +263,17 @@ class _PageStateState extends State<PageState> {
                     }
                   },
                   child: Container(
-                    // decoration: BoxDecoration(color: Colors.white),
-                    height: double.infinity,
-                    child: Image.asset(
-                      "assets/icons/briefcase.png",
-                      color: selected == 1 ? Colors.red : Colors.grey,
-                      width: selected == 1 ? 25 : 22,
-                      height: selected == 1 ? 25 : 22,
-                    ),
-                  ),
+                      // decoration: BoxDecoration(color: Colors.white),
+                      height: double.infinity,
+                      child: Icon(
+                        Icons.work_outline,
+                        color: selected == 1 ? Colors.red : Colors.grey,
+                        size: selected == 1 ? 27 : 23,
+                      )),
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -290,15 +289,13 @@ class _PageStateState extends State<PageState> {
                     }
                   },
                   child: Container(
-                    // decoration: BoxDecoration(color: Colors.white),
-                    height: double.infinity,
-                    child: Image.asset(
-                      "assets/icons/user.png",
-                      color: selected == 2 ? Colors.red : Colors.grey,
-                      width: selected == 2 ? 25 : 22,
-                      height: selected == 2 ? 25 : 22,
-                    ),
-                  ),
+                      // decoration: BoxDecoration(color: Colors.white),
+                      height: double.infinity,
+                      child: Icon(
+                        Icons.account_box_outlined,
+                        color: selected == 2 ? Colors.red : Colors.grey,
+                        size: selected == 2 ? 27 : 23,
+                      )),
                 ),
               ),
             ],

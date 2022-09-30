@@ -76,7 +76,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<Map<dynamic, dynamic>> loginUser(Map<String, String> loginData) async {
-    //log("message");
+    log("message");
     Map<dynamic, dynamic> extracteddata = {};
     var dio = Dio();
     Response response;
@@ -136,6 +136,10 @@ class Auth with ChangeNotifier {
   }
 
   Future<Map<dynamic, dynamic>> signUpUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final extractedUserPushToken =
+        await jsonDecode(prefs.getString('userPushToken').toString())
+            as Map<dynamic, dynamic>;
     var dio = Dio();
     Response response;
     Map<dynamic, dynamic> extractedData = {};
@@ -143,7 +147,8 @@ class Auth with ChangeNotifier {
       "email": _email,
       "password": _password,
       "name": _fullName,
-      "contactNumber": _contactNumber
+      "contactNumber": _contactNumber,
+      "userPushToken": extractedUserPushToken["userPushToken"].toString(),
     };
 
     try {
@@ -412,8 +417,7 @@ class Auth with ChangeNotifier {
     }
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    // prefs.remove('userData');
-    prefs.clear();
+    prefs.remove('userData');
   }
 
   void _autoLogout() {

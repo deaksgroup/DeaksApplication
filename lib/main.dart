@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:deaksapp/providers/Hotels.dart';
 import 'package:deaksapp/providers/Jobs.dart';
 import 'package:deaksapp/providers/Outlets.dart';
@@ -21,6 +23,7 @@ import 'package:deaksapp/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import "./providers/Auth.dart";
 
 void main() async {
@@ -31,29 +34,7 @@ void main() async {
   runApp(MyApp());
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {
-  //print("HereBackgound");
-  // AwesomeNotifications().createNotification(
-  //     content: NotificationContent(
-  //       //simgple notification
-  //       id: 123,
-  //       channelKey: 'basic', //set configuration wuth key "basic"
-  //       title: 'Welcome to FlutterCampus.com',
-  //       body: 'This simple notification with action buttons in Flutter App',
-  //       payload: {"name": "FlutterCampus"},
-  //       autoDismissible: false,
-  //     ),
-  //     actionButtons: [
-  //       NotificationActionButton(
-  //         key: "open",
-  //         label: "Open ",
-  //       ),
-  //       NotificationActionButton(
-  //         key: "delete",
-  //         label: "Delete ",
-  //       )
-  //     ]);
-}
+Future<void> backgroundHandler(RemoteMessage message) async {}
 
 class MyApp extends StatefulWidget {
   @override
@@ -70,8 +51,15 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.instance.requestPermission().then((value) {
       // //print(value);
     });
-    FirebaseMessaging.instance.getToken().then((token) {
-      //print(token);
+    FirebaseMessaging.instance.getToken().then((token) async {
+      print(token);
+      final prefs = await SharedPreferences.getInstance();
+      final userPushToken = json.encode(
+        {
+          'userPushToken': token,
+        },
+      );
+      await prefs.setString('userPushToken', userPushToken);
     });
     FirebaseMessaging.instance.getAPNSToken().then((APNStoken) {
       // //print(APNStoken);
@@ -86,77 +74,18 @@ class _MyAppState extends State<MyApp> {
 
     ///forground work
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //print(message.notification);
-      if (message.notification != null) {
-        // AwesomeNotifications().createNotification(
-        //     content: NotificationContent(
-        //       //simgple notification
-        //       id: 123,
-        //       channelKey: 'basic', //set configuration wuth key "basic"
-        //       title: 'Welcome to FlutterCampus.com',
-        //       body:
-        //           'This simple notification with action buttons in Flutter App',
-        //       payload: {"name": "FlutterCampus"},
-        //       autoDismissible: false,
-        //     ),
-        //     actionButtons: [
-        //       NotificationActionButton(
-        //         key: "open",
-        //         label: "Open ",
-        //       ),
-        //       NotificationActionButton(
-        //         key: "delete",
-        //         label: "Delete ",
-        //       )
-        //     ]);
-      }
+      ;
+      if (message.notification != null) {}
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      //print("HereBackgoundOpend");
-      // AwesomeNotifications().createNotification(
-      //     content: NotificationContent(
-      //       //simgple notification
-      //       id: 113,
-      //       channelKey: 'basic', //set configuration wuth key "basic"
-      //       title: 'Welcome to FlutterCampus.com',
-      //       body: 'This simple notification with action buttons in Flutter App',
-      //       payload: {"name": "FlutterCampus"},
-      //       autoDismissible: false,
-      //     ),
-      //     actionButtons: [
-      //       NotificationActionButton(
-      //         key: "open",
-      //         label: "Open ",
-      //       ),
-      //       NotificationActionButton(
-      //         key: "delete",
-      //         label: "Delete ",
-      //       )
-      //     ]);
-    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // AwesomeNotifications().actionStream.listen((action) {
-    //   if (action.buttonKeyPressed == "open") {
-    //     //print("Open button is pressed");
-    //   } else if (action.buttonKeyPressed == "delete") {
-    //     //print("Delete button is pressed.");
-    //     AwesomeNotifications().resetGlobalBadge();
-    //     AwesomeNotifications().cancelAll();
-    //     AwesomeNotifications().dismissAllNotifications();
-    //   } else {
-    //     //print(action.payload); //notification was pressed
-    //     AwesomeNotifications().resetGlobalBadge();
-    //     AwesomeNotifications().cancelAll();
-    //     AwesomeNotifications().dismissAllNotifications();
-    //   }
-    // });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
