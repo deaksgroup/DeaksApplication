@@ -115,11 +115,10 @@ class _BodyState extends State<Body> {
   }
 
   Future<void> launchURL() async {
-    var appleMapsLink = Uri.parse(
-        "https://maps.apple.com/?address=3%20Upper%20Pickering%20St,%20Singapore%20058289&auid=17137328228958775144&ll=1.285605,103.846400&lsp=9902&q=PARKROYAL%20COLLECTION%20Pickering,%20Singapore&_ext=CjIKBQgEEMoBCgQIBRADCgQIBhALCgQIChAACgQIUhADCgQIVRAPCgQIWRACCgUIpAEQARImKZLXC8pwf/Q/MaIQIM/h9VlAOUyHxk48pPQ/QSyarwZ19llAUAQ%3D");
+    var appleMapsLink = Uri.parse(widget.displaySlot.appleMapLink);
     "https://maps.apple.com/?address=3%20Upper%20Pickering%20St,%20Singapore%20058289&auid=17137328228958775144&ll=1.285605,103.846400&lsp=9902&q=PARKROYAL%20COLLECTION%20Pickering,%20Singapore&_ext=CjIKBQgEEMoBCgQIBRADCgQIBhALCgQIChAACgQIUhADCgQIVRAPCgQIWRACCgUIpAEQARImKZLXC8pwf/Q/MaIQIM/h9VlAOUyHxk48pPQ/QSyarwZ19llAUAQ%3D";
 
-    var googgleMapsLink = Uri.parse("https://goo.gl/maps/FuXvUt1uiWtJqEM97");
+    var googgleMapsLink = Uri.parse(widget.displaySlot.googleMapLink);
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only

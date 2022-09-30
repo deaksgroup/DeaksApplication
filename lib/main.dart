@@ -34,7 +34,9 @@ void main() async {
   runApp(MyApp());
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {}
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message);
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -48,7 +50,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
 
-    FirebaseMessaging.instance.requestPermission().then((value) {
+    FirebaseMessaging.instance
+        .requestPermission(alert: true, badge: true, sound: true)
+        .then((value) {
       // //print(value);
     });
     FirebaseMessaging.instance.getToken().then((token) async {
@@ -74,13 +78,15 @@ class _MyAppState extends State<MyApp> {
 
     ///forground work
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      ;
       if (message.notification != null) {}
+      print(message);
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message);
+    });
     super.initState();
   }
 

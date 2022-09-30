@@ -46,8 +46,8 @@ class Hotels with ChangeNotifier {
           id: hotel["_id"] ?? "",
           hotelName: hotel["hotelName"] ?? "",
           logo: hotel["hotelEmblem"] ?? "",
-          longitude: hotel["longitude"] ?? "",
-          latitude: hotel["latitude"] ?? "",
+          googleMapLink: hotel["googleMapLink"] ?? "",
+          appleMapLink: hotel["appleMapLink"] ?? "",
         ));
       }
       ////////print(loadedHotels);

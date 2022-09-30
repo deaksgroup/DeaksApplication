@@ -12,8 +12,8 @@ class DisplaySlot {
   final String hotelId;
   final String hotelName;
   final String hotelLogo;
-  final String longitude;
-  final String latitude;
+  final String googleMapLink;
+  final String appleMapLink;
   final String date;
   final String startTime;
   final String endTime;
@@ -36,8 +36,8 @@ class DisplaySlot {
       required this.hotelId,
       required this.hotelName,
       required this.hotelLogo,
-      required this.longitude,
-      required this.latitude,
+      required this.googleMapLink,
+      required this.appleMapLink,
       required this.date,
       required this.startTime,
       required this.endTime,
