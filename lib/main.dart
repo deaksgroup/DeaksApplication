@@ -110,11 +110,10 @@ class _MyAppState extends State<MyApp> {
             update: ((context, auth, previous) =>
                 ProfileFetch(token: auth.token, profile: {}))),
         ChangeNotifierProxyProvider<Auth, Slots>(
-          create: (
-            ctx,
-          ) =>
-              Slots(),
-          update: (context, value, previous) => Slots(),
+          create: (context) => Slots(
+            token: Provider.of<Auth>(context, listen: false).token,
+          ),
+          update: (context, auth, previous) => Slots(token: auth.token),
         ),
         ChangeNotifierProxyProvider<Auth, Outlets>(
           create: (

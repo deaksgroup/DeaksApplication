@@ -94,6 +94,7 @@ class Auth with ChangeNotifier {
       Map<dynamic, dynamic> extractedData = Map<dynamic, dynamic>.from(data);
 
       if (extractedData["token"] != null) {
+        print(extractedData["token"]);
         _token = extractedData["token"];
         _expiryDate = DateTime.now().add(const Duration(minutes: 8000));
         _userName = extractedData["user"]["name"] ?? "";

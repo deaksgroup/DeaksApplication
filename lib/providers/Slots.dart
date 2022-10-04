@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:deaksapp/globals.dart' as globals;
 
 class Slots with ChangeNotifier {
+  final String token;
+  Slots({required this.token});
   List<Slot> slots = [];
 
   List<Slot> get getSlots {
@@ -14,13 +16,16 @@ class Slots with ChangeNotifier {
   }
 
   Future<void> fetchAndSetSlots() async {
-    // print("slotsFetch");
+    print("slotsFetch");
     var dio = Dio();
     Response response;
-
+    Map<String, dynamic> headers = {
+      "secret_token": token,
+    };
     try {
       //404
-      response = await dio.get("${globals.url}/slotList");
+      response = await dio.get("${globals.url}/slotList",
+          options: Options(headers: headers));
       // print(response.data.toString());
 
       final extractedData = response.data;
@@ -28,7 +33,7 @@ class Slots with ChangeNotifier {
         return;
       }
       // //////////print(extractedData);
-      // //////////print(extractedData["result"]);
+      print(extractedData["result"]);
 
       List<Map<dynamic, dynamic>> extractedSlots =
           List<Map<dynamic, dynamic>>.from(extractedData["result"]);
@@ -38,6 +43,7 @@ class Slots with ChangeNotifier {
       List<Slot> loadedSlots = [];
       for (var slot in extractedSlots) {
         {
+          log(slot.toString());
           loadedSlots.add(Slot(
             date: slot["date"] ?? "",
             id: slot["_id"] ?? "",
