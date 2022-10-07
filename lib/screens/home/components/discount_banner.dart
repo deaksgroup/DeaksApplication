@@ -1,8 +1,10 @@
+import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/Auth.dart';
 import '../../../size_config.dart';
+import 'icon_btn_with_counter.dart';
 
 class DiscountBanner extends StatelessWidget {
   const DiscountBanner({
@@ -31,21 +33,30 @@ class DiscountBanner extends StatelessWidget {
         color: Colors.black,
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Text.rich(
-        TextSpan(
-          style: TextStyle(color: Colors.white),
-          children: [
-            TextSpan(text: "Hello $fullName.\n"),
-            TextSpan(
-              text: "Find your next job!",
-              style: TextStyle(
-                fontSize: getProportionateScreenWidth(24),
-                fontWeight: FontWeight.bold,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text.rich(
+          TextSpan(
+            style: TextStyle(color: Colors.white),
+            children: [
+              TextSpan(text: "Hello $fullName.\n"),
+              TextSpan(
+                text: "Find your next job!",
+                style: TextStyle(
+                  fontSize: getProportionateScreenWidth(24),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        IconBtnWithCounter(
+          svgSrc: "assets/icons/Bell.svg",
+          numOfitem: 3,
+          press: () {
+            Navigator.pushNamed(context, NotoficationPage.routeName);
+          },
+        ),
+      ]),
     );
   }
 }

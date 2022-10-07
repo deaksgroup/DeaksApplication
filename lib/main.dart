@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:deaksapp/providers/Hotels.dart';
 import 'package:deaksapp/providers/Jobs.dart';
+import 'package:deaksapp/providers/Notification.dart';
 import 'package:deaksapp/providers/Outlets.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
@@ -35,7 +36,34 @@ void main() async {
 }
 
 Future<void> backgroundHandler(RemoteMessage message) async {
+  print("background");
   print(message);
+  List<Map<String, String>> notificationList = [];
+  print("1");
+  print(message.notification!.title);
+  print(message.notification!.body);
+  print("1");
+  print(message.data.toString());
+  print("1");
+  final String title = message.notification!.title.toString();
+  final String body = message.notification!.body.toString();
+  final String slotId = message.data["slotId"];
+  final String notificationNumer = message.data["notificationNumer"].toString();
+  final String action1 = message.data["action1"].toString();
+  final String action2 = message.data["action2"].toString();
+  final prefs = await SharedPreferences.getInstance();
+
+  final Map<String, String> notification = {
+    "title": title,
+    "body": body,
+    "slotId": slotId,
+    "notificationId": notificationNumer,
+    "action2": action2,
+    "action1": action1
+  };
+  notificationList.add(notification);
+  final userNotifications = json.encode(notificationList);
+  await prefs.setString('userNotifications', userNotifications);
 }
 
 class MyApp extends StatefulWidget {
@@ -56,7 +84,7 @@ class _MyAppState extends State<MyApp> {
       // //print(value);
     });
     FirebaseMessaging.instance.getToken().then((token) async {
-      // print(token);
+      print(token);
       final prefs = await SharedPreferences.getInstance();
       final userPushToken = json.encode(
         {
@@ -77,15 +105,72 @@ class _MyAppState extends State<MyApp> {
     });
 
     ///forground work
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    ///
+    ///
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (message.notification != null) {}
       // print(message);
+      print("forground");
+      List<Map<String, String>> notificationList = [];
+      print("1");
+      print(message.notification!.title);
+      print(message.notification!.body);
+      print("1");
+      print(message.data);
+      print("1");
+      final String title = message.notification!.title.toString();
+      final String body = message.notification!.body.toString();
+      final String slotId = message.data["slotId"];
+      final String notificationNumer =
+          message.data["notificationNumer"].toString();
+      final String action1 = message.data["action1"].toString();
+      final String action2 = message.data["action2"].toString();
+      final prefs = await SharedPreferences.getInstance();
+
+      final Map<String, String> notification = {
+        "title": title,
+        "body": body,
+        "slotId": slotId,
+        "notificationNumer": notificationNumer,
+        "action2": action2,
+        "action1": action1
+      };
+      notificationList.add(notification);
+      final userNotifications = json.encode(notificationList);
+      await prefs.setString('userNotifications', userNotifications);
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      // print(message);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      print("backworking");
+      List<Map<String, String>> notificationList = [];
+      print("1");
+      print(message.notification!.title);
+      print(message.notification!.body);
+      print("1");
+      print(message.data);
+      print("1");
+      final String title = message.notification!.title.toString();
+      final String body = message.notification!.body.toString();
+      final String slotId = message.data["slotId"];
+      final String notificationNumber =
+          message.data["notificationNumber"].toString();
+      final String action1 = message.data["action1"].toString();
+      final String action2 = message.data["action2"].toString();
+      final prefs = await SharedPreferences.getInstance();
+
+      final Map<String, String> notification = {
+        "title": title,
+        "body": body,
+        "slotId": slotId,
+        "notificationId": notificationNumber,
+        "action2": action2,
+        "action1": action1
+      };
+      notificationList.add(notification);
+      final userNotifications = json.encode(notificationList);
+      await prefs.setString('userNotifications', userNotifications);
     });
     super.initState();
   }
@@ -114,6 +199,13 @@ class _MyAppState extends State<MyApp> {
             token: Provider.of<Auth>(context, listen: false).token,
           ),
           update: (context, auth, previous) => Slots(token: auth.token),
+        ),
+        ChangeNotifierProxyProvider<Auth, NotificationFetch>(
+          create: (context) => NotificationFetch(
+            token: Provider.of<Auth>(context, listen: false).token,
+          ),
+          update: (context, auth, previous) =>
+              NotificationFetch(token: auth.token),
         ),
         ChangeNotifierProxyProvider<Auth, Outlets>(
           create: (

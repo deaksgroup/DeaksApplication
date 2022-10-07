@@ -6,6 +6,7 @@ import 'package:deaksapp/screens/TermsAndCondtion/TermsAndCondtions.dart';
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
 import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
+import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:deaksapp/screens/support/Support.dart';
 import 'package:flutter/widgets.dart';
@@ -44,5 +45,6 @@ final Map<String, WidgetBuilder> routes = {
   DeleteAccount.routeName: (context) => DeleteAccount(),
   Support.routeName: (context) => Support(),
   TermsAndCondition.routeName: (context) => TermsAndCondition(),
-  PrivacyPolicy.routeName: (context) => PrivacyPolicy()
+  PrivacyPolicy.routeName: (context) => PrivacyPolicy(),
+  NotoficationPage.routeName: (context) => NotoficationPage()
 };
