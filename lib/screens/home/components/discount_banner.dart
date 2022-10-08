@@ -16,33 +16,21 @@ class DiscountBanner extends StatelessWidget {
     String fullName = Provider.of<Auth>(context, listen: false).getFullName();
 
     return Container(
-      // height: 90,
       width: double.infinity,
-      margin: EdgeInsets.symmetric(vertical: getProportionateScreenWidth(20)),
-      padding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenWidth(20),
-        vertical: getProportionateScreenWidth(15),
-      ),
       decoration: BoxDecoration(
-        boxShadow: [
-          new BoxShadow(
-            color: Colors.grey.shade400.withOpacity(1),
-            blurRadius: 5.0,
-          ),
-        ],
-        color: Colors.black,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text.rich(
           TextSpan(
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
             children: [
-              TextSpan(text: "Hello $fullName.\n"),
+              TextSpan(text: "Hello,"),
               TextSpan(
-                text: "Find your next job!",
+                text: " Max",
                 style: TextStyle(
-                  fontSize: getProportionateScreenWidth(24),
+                  fontSize: getProportionateScreenWidth(17),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -52,9 +40,7 @@ class DiscountBanner extends StatelessWidget {
         IconBtnWithCounter(
           svgSrc: "assets/icons/Bell.svg",
           numOfitem: 3,
-          press: () {
-            Navigator.pushNamed(context, NotoficationPage.routeName);
-          },
+          press: () {},
         ),
       ]),
     );

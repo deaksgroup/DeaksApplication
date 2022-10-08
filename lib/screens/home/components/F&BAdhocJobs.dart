@@ -2,7 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/screens/FlushBar/ShowFlushBAr.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
-import 'package:deaksapp/size_config.dart';
+// import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -28,7 +28,7 @@ class _AdHocJobsState extends State<AdHocJobs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: getProportionateScreenWidth(500),
+      height: 500,
       child: ListView.builder(
         itemBuilder: ((context, index) {
           return GestureDetector(
@@ -147,10 +147,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
           ),
         ),
       ),
-      padding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenWidth(0),
-      ),
-      margin: EdgeInsets.only(bottom: getProportionateScreenWidth(10)),
+      margin: EdgeInsets.only(bottom: 10),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -168,47 +165,73 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
             ),
             Container(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    "\$${widget.displaySlot.payPerHour} /h",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "\$${widget.displaySlot.payPerHour} /h",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ]),
                   Row(children: [
                     Text(
                       "ExpectedPay | ",
                       style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
+                        fontSize: 12,
+                      ),
                     ),
                     Text(
                       "\$${widget.displaySlot.totalPay}",
                       style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 14,
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
                     )
                   ]),
                   Text(
                     "${widget.displaySlot.startTime} to ${widget.displaySlot.endTime}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 12, color: Colors.blue),
                   ),
                   Text(
-                    "${widget.displaySlot.date}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blueGrey,
-                        fontWeight: FontWeight.bold),
+                    "27th Wednesday December",
+                    style: TextStyle(fontSize: 12, color: Colors.red),
                   )
                 ],
               ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Waiting List",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                Container(
+                  child: Icon(Icons.notification_add),
+                )
+              ],
             )
           ],
         ),
@@ -232,14 +255,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${widget.displaySlot.hotelName}",
+                      "Park Royal",
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${widget.displaySlot.outletName}",
+                      "Pickering, Lime Restaurant",
                       style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey,

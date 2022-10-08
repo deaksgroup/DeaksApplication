@@ -18,7 +18,7 @@ class _TrendingJobsState extends State<TrendingJobs> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Colors.white),
-      height: 300,
+      height: 160,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -47,108 +47,154 @@ class TrendingJobsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.white,
-          border: Border.all(
-            color: Color.fromRGBO(
-              255,
-              243,
-              218,
-              1,
-            ),
-          ),
-          boxShadow: [
-            new BoxShadow(
-              color: Colors.grey.shade400.withOpacity(.3),
-              blurRadius: 5.0,
-            ),
-          ]),
-      padding: EdgeInsets.all(2),
-      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 10),
-      width: 250,
-      // height: getProportionateScreenWidth(220),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          width: 246,
-          height: 130,
-          child: ClipRRect(
+        decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.0),
-            child: Image.network(
-              "${globals.url}/images/${displaySlot.hotelLogo}",
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 2,
-        ),
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
               color: Color.fromRGBO(
                 255,
                 243,
                 218,
                 1,
               ),
-              borderRadius: BorderRadius.circular(5.0)),
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(height: 5),
-            Text(
-              displaySlot.hotelName,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold),
             ),
-            Text(
-              displaySlot.outletName,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w200),
-            )
-          ]),
-        ),
-        SizedBox(height: 10),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("${displaySlot.startTime} to ${displaySlot.endTime}",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                )),
-            Text(displaySlot.date,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
-                )),
-          ]),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          child: Row(
-            children: [
-              Text("Expected Pay : ",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  )),
-              Text("\$${displaySlot.totalPay}",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ))
-            ],
-          ),
-        )
-      ]),
-    );
+            boxShadow: [
+              new BoxShadow(
+                color: Colors.grey.shade400.withOpacity(.3),
+                blurRadius: 5.0,
+              ),
+            ]),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        margin: EdgeInsets.only(right: 5, top: 10, bottom: 10),
+        width: 215,
+        height: 160,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 65,
+                  height: 65,
+                  child: ClipRRect(
+                    child: Image.network(
+                      "${globals.url}/images/${displaySlot.hotelLogo}",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${displaySlot.startTime} ",
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                        Text(
+                          " to ",
+                          style: TextStyle(fontSize: 8, color: Colors.blue),
+                        ),
+                        Text(
+                          " ${displaySlot.endTime}",
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      child: Text(
+                        "27th Wednesday December",
+                        style: TextStyle(fontSize: 9, color: Colors.red),
+                      ),
+                    )
+                  ],
+                ))
+              ],
+            ),
+            Container(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Perk Royal",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Pickering, Lime Restaurent",
+                          style: TextStyle(
+                              fontSize: 9,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6),
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Waiting List",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Text(
+                          "\$13 /h",
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Row(
+                      children: [
+                        Text(
+                          "Estimated Pay : ",
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        Text(
+                          "\$130",
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 }

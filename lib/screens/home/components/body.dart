@@ -26,22 +26,19 @@ class Body extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // SizedBox(height: getProportionateScreenWidth(5)),
             DiscountBanner(),
+            HomeHeader(),
             SectionTitle(
               title: "Trending",
             ),
-            SizedBox(height: getProportionateScreenWidth(10)),
             TrendingJobs(
               displaySlots: displaySlots
                   .where((element) => element.priority == "H")
                   .toList(),
             ),
-            SizedBox(height: getProportionateScreenWidth(30)),
             SectionTitle(
               title: "F&B Ad-hoc Jobs",
             ),
-            SizedBox(height: getProportionateScreenWidth(20)),
             AdHocJobs(
                 displaySlots: displaySlots
                     .where((element) => element.priority == "L")
