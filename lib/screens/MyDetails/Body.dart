@@ -1,3 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+import 'package:deaksapp/screens/MyDetails/ProfilePicture.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
@@ -8,8 +17,14 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
+import 'package:images_picker/images_picker.dart';
+
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../size_config.dart';
+import "../../globals.dart" as MediaType;
 
 class Body extends StatefulWidget {
   final VoidCallback press;
@@ -21,6 +36,9 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  File? image;
+  List<File> attireImages = [];
+
   bool isInIt = true;
   bool isLoading = false;
   @override
@@ -143,13 +161,121 @@ class _BodyState extends State<Body> {
 
   String legalStatus = "";
 
+  Future<void> onReset() async {
+    print("hello");
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return showCupertinoModalPopup(
+          context: context,
+          builder: ((context) => CupertinoActionSheet(
+                actions: [
+                  CupertinoActionSheetAction(
+                      onPressed: (() {
+                        pickImage(ImageSource.camera);
+                        Navigator.of(context).pop();
+                      }),
+                      child: Text("Camera")),
+                  CupertinoActionSheetAction(
+                      onPressed: (() {
+                        pickImage(ImageSource.gallery);
+                        Navigator.of(context).pop();
+                      }),
+                      child: Text("Gallery"))
+                ],
+              )));
+    } else {
+      return showModalBottomSheet(
+          context: context,
+          builder: ((context) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: Text("Camera"),
+                    onTap: () {
+                      pickImage(ImageSource.camera);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  ListTile(
+                    title: Text("Gallery"),
+                    onTap: (() {
+                      pickImage(ImageSource.gallery);
+                      Navigator.of(context).pop();
+                    }),
+                  )
+                ],
+              )));
+    }
+  }
+
+  void pickImage(ImageSource source) async {
+    try {
+      final imageFile = await ImagePicker().pickImage(source: source);
+      print("pickImage");
+      if (imageFile != null) {
+        print(imageFile.path);
+        final baseName = Path.basename(imageFile.path);
+        // final imagePermenent = await saveImagePermenently(imageFile.path);
+        final path = await getApplicationDocumentsDirectory();
+        log("1");
+        print(path.path);
+        final File newImage =
+            await File(imageFile.path).copy('${path.path}/$baseName');
+        final prefs = await SharedPreferences.getInstance();
+        final profilePicPath = json.encode(
+          {
+            'profilePicPath': newImage.path.toString(),
+          },
+        );
+        await prefs.setString('profilePicPath', profilePicPath);
+        setState(() {
+          print("setState");
+          image = newImage;
+        });
+      }
+    } on PlatformException catch (e) {
+      print("Failed to pick image : $e");
+    }
+  }
+
+  void pickImages() async {
+    try {
+      final List<Media>? imageList = await ImagesPicker.pick(
+          count: 2, pickType: PickType.image, gif: false, maxTime: 30);
+
+      if (imageList!.isNotEmpty) {
+        attireImages = [];
+        imageList.forEach((image) async {
+          final baseName = Path.basename(image.path);
+          final path = await getApplicationDocumentsDirectory();
+
+          final File newImage =
+              await File(image.path).copy('${path.path}/$baseName');
+          setState(() {
+            attireImages.add(newImage);
+          });
+        });
+      }
+    } on PlatformException catch (e) {
+      print("Failed to pick image : $e");
+    }
+  }
+
+  // Future<List<File>> saveImagesPermenently(Lis)
+
+  // Future<File> saveImagePermenently(String ImagePath) async {
+  //   final directory = await getApplicationDocumentsDirectory();
+
+  //   final image = File("${directory.path}$ImagePath");
+  //   return File(ImagePath).copy(image);
+  // }
+
   Future<void> submitUserData(Map<String, dynamic>? userData) async {
     setState(() {
       isLoading = true;
     });
 
     Provider.of<ProfileFetch>(context, listen: false)
-        .submitProfile(userData)
+        .submitProfile(userData, image, attireImages)
         .then((value) => {
               ////print("insideForm"),
               ////print(value),
@@ -168,6 +294,7 @@ class _BodyState extends State<Body> {
   void _onChanged(dynamic val) => debugPrint(val.toString());
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     var seen = Set<String>();
 
     List<String> uniquelist =
@@ -178,33 +305,99 @@ class _BodyState extends State<Body> {
         Provider.of<ProfileFetch>(context, listen: false).getProfile;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 13),
+      padding: EdgeInsets.symmetric(horizontal: 17),
       child: Column(children: [
+        SizedBox(
+          height: 30,
+        ),
+        Container(
+          child: image != null
+              ? ProfilePicture(image: image!, onReset: onReset)
+              : GestureDetector(
+                  onTap: () => onReset(),
+                  child: Container(
+                    width: 110,
+                    height: 115,
+                    child: Stack(children: [
+                      Center(
+                        child: Container(
+                          // margin: EdgeInsets.only(top: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(width: 2, color: Colors.white),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(50),
+                              ),
+                              boxShadow: [
+                                new BoxShadow(
+                                  color: Colors.grey.shade400.withOpacity(.6),
+                                  blurRadius: 5.0,
+                                ),
+                              ]),
+                          child: ClipOval(
+                            // borderRadius: BorderRadius.all(
+                            //   Radius.circular(15),
+                            // ),
+                            child: Image.asset(
+                              "assets/images/Profile Image.png",
+                              width: 95,
+                              height: 95,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                          right: 8,
+                          bottom: 0,
+                          child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  new BoxShadow(
+                                    color: Colors.grey.shade400.withOpacity(.6),
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                                color: Color.fromARGB(255, 159, 222, 249),
+                                border:
+                                    Border.all(width: 2, color: Colors.white),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5),
+                                ),
+                              ),
+                              child: Center(
+                                  child: Icon(
+                                Icons.camera_alt_rounded,
+                                size: 20,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ))))
+                    ]),
+                  )),
+        ),
+        SizedBox(
+          height: 10,
+        ),
         Container(
           // height: 90,
           width: double.infinity,
           margin: EdgeInsets.only(bottom: getProportionateScreenWidth(20)),
           padding: EdgeInsets.symmetric(
             horizontal: getProportionateScreenWidth(20),
-            vertical: getProportionateScreenWidth(15),
+            vertical: getProportionateScreenWidth(10),
           ),
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Color.fromRGBO(118, 185, 71, 1),
             borderRadius: BorderRadius.circular(5),
           ),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text.rich(
               TextSpan(
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 children: [
-                  TextSpan(
-                    text: "Hello ${profile["name"] ?? " "}.\n",
-                    style: TextStyle(
-                      fontSize: getProportionateScreenWidth(24),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   TextSpan(
                     text: profile["verificationStatus"] == "Pending" ||
                             profile["verificationStatus"] == "Not Submitted"
@@ -214,14 +407,25 @@ class _BodyState extends State<Body> {
                 ],
               ),
             ),
-            if (!(profile["verificationStatus"] == "Pending" ||
-                profile["verificationStatus"] == "Not Submitted" ||
-                profile["accountStatus"] == "Unauthorized"))
-              Container(
-                width: 30,
-                height: 30,
-                child: Image.asset("assets/icons/checked.png"),
-              )
+            // if (!(profile["verificationStatus"] == "Pending" ||
+            //     profile["verificationStatus"] == "Not Submitted" ||
+            //     profile["accountStatus"] == "Unauthorized"))
+            //   Container(
+            //     width: 30,
+            //     height: 30,
+            //     decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       borderRadius: BorderRadius.all(
+            //         Radius.circular(25),
+            //       ),
+            //     ),
+            //     child: Center(
+            //         child: Image.asset(
+            //       "assets/icons/checked.png",
+            //       width: 25,
+            //       height: 25,
+            //     )),
+            //   )
           ]),
         ),
         SizedBox(
@@ -239,7 +443,7 @@ class _BodyState extends State<Body> {
             debugPrint(_formKey.currentState!.value.toString());
           },
           initialValue: profile,
-          autovalidateMode: AutovalidateMode.always,
+          // autovalidateMode: AutovalidateMode.onUserInteraction,
           // initialValue: profile as Map<String, dynamic>,
           skipDisabled: true,
           child: Column(
@@ -249,73 +453,36 @@ class _BodyState extends State<Body> {
               ),
               SectionTitle(title: "Personal Details"),
               SizedBox(
-                height: 20,
+                height: 25,
               ),
-              FormBuilderTextField(
-                name: 'email',
-                enabled: false,
-                decoration: InputDecoration(
-                    labelText: 'Email',
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5)),
-                    disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5)),
-                    border: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5)),
-                    suffixIcon: _emailHasError
-                        ? const Icon(Icons.error, color: Colors.red)
-                        : const Icon(Icons.check, color: Colors.green),
-                    floatingLabelBehavior: FloatingLabelBehavior.auto),
-                onChanged: (val) {
-                  setState(() {
-                    _emailHasError =
-                        !(_formKey.currentState?.fields['email']?.validate() ??
-                            false);
-                  });
-                },
-
-                // valueTransformer: (text) => num.tryParse(text),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.email(),
-                  FormBuilderValidators.max(22),
-                ]),
-                // initialValue: '12',
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-              ),
-              const SizedBox(height: 15),
               FormBuilderTextField(
                 name: 'name',
-                enabled: false,
+                enabled: true,
                 decoration: InputDecoration(
-                  labelText: 'FullName',
+                  labelText: "Name",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _nameHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -337,27 +504,85 @@ class _BodyState extends State<Body> {
               ),
               const SizedBox(height: 15),
               FormBuilderTextField(
+                name: 'email',
+                enabled: true,
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: BorderRadius.circular(5)),
+                  disabledBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: BorderRadius.circular(5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: BorderRadius.circular(5)),
+                  border: OutlineInputBorder(
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: BorderRadius.circular(5)),
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  // suffixIcon: (_nameHasError)
+                  //     ? const Icon(Icons.error, color: Colors.red)
+                  //     : const Icon(Icons.check, color: Colors.green),
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    _emailHasError =
+                        !(_formKey.currentState?.fields['email']?.validate() ??
+                            false);
+                  });
+                },
+
+                // valueTransformer: (text) => num.tryParse(text),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.email(),
+                  FormBuilderValidators.max(22),
+                ]),
+                // initialValue: '12',
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 15),
+              FormBuilderTextField(
                 name: 'contactNumber',
 
                 decoration: InputDecoration(
                   labelText: "Contact Number",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   prefixText: "+65",
-                  suffixIcon: _numberHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -382,23 +607,30 @@ class _BodyState extends State<Body> {
                 name: 'bookingName',
 
                 decoration: InputDecoration(
-                  labelText: 'Booking Name',
+                  labelText: "Bookin Name",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _bookingNameHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -425,23 +657,30 @@ class _BodyState extends State<Body> {
                 name: 'Sex',
                 enabled: isEditable,
                 decoration: InputDecoration(
-                  labelText: 'Gender',
+                  labelText: "Gender",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffix: _genderHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                   hintText: 'Select Gender',
                 ),
                 validator: FormBuilderValidators.compose([
@@ -469,29 +708,37 @@ class _BodyState extends State<Body> {
                 name: 'DOB',
                 // locale: const Locale.fromSubtags(languageCode: 'in'),
                 initialEntryMode: DatePickerEntryMode.calendarOnly,
-                initialValue: DateTime.now().subtract(Duration(days: 5844)),
+                // initialValue: DateTime.now().subtract(Duration(days: 5844)),
+                initialDate: DateTime.now().subtract(Duration(days: 5844)),
                 lastDate: DateTime.now().subtract(Duration(days: 5844)),
                 firstDate: DateTime.utc(1969, 7, 20, 20, 18, 04),
                 format: DateFormat("dd-MM-yyyy"),
                 inputType: InputType.date,
                 decoration: InputDecoration(
+                  labelText: "Date Of Birth",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  labelText: 'Date of Birth',
-                  suffixIcon: _dobHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -509,6 +756,98 @@ class _BodyState extends State<Body> {
                 // locale: const Locale.fromSubtags(languageCode: 'fr'),
               ),
               const SizedBox(height: 40),
+              SectionTitle(title: "Attire"),
+              SizedBox(
+                height: 20,
+              ),
+              GestureDetector(
+                onTap: () => pickImages(),
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.2),
+                      border: Border.all(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      // boxShadow: [
+                      //   new BoxShadow(
+                      //     color: Colors.grey.shade400.withOpacity(.6),
+                      //     blurRadius: 5.0,
+                      //   ),
+                      // ]
+                    ),
+                    height: 200,
+                    width: double.infinity,
+                    // decoration: BoxDecoration(
+                    //   color: Colors.grey.withOpacity(.3),
+                    //   border: Border.all(width: 1, color: Colors.grey),
+                    // ),
+                    child: attireImages.isNotEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    boxShadow: [
+                                      new BoxShadow(
+                                        color: Colors.grey.shade400
+                                            .withOpacity(.6),
+                                        blurRadius: 5.0,
+                                      ),
+                                    ]),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  child: Image.file(
+                                    attireImages[0],
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    boxShadow: [
+                                      new BoxShadow(
+                                        color: Colors.grey.shade400
+                                            .withOpacity(.6),
+                                        blurRadius: 5.0,
+                                      ),
+                                    ]),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  child: Image.file(
+                                    attireImages[1],
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Center(child: Text("Select images"))),
+              ),
+              const SizedBox(height: 40),
               SectionTitle(title: "Address"),
               SizedBox(
                 height: 20,
@@ -517,23 +856,30 @@ class _BodyState extends State<Body> {
                 name: 'unitNumber',
 
                 decoration: InputDecoration(
-                  labelText: 'Unit Number',
+                  labelText: "Unit Number",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _unitNumberHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -558,23 +904,30 @@ class _BodyState extends State<Body> {
                 name: 'floorNumber',
 
                 decoration: InputDecoration(
-                  labelText: 'Floor Number',
+                  labelText: "Floor Number",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _floorHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -599,23 +952,30 @@ class _BodyState extends State<Body> {
                 name: 'street',
 
                 decoration: InputDecoration(
-                  labelText: 'Street',
+                  labelText: "Street",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _streetHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -639,23 +999,30 @@ class _BodyState extends State<Body> {
                 name: 'city',
 
                 decoration: InputDecoration(
-                  labelText: 'City',
+                  labelText: "City",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _cityHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -679,23 +1046,30 @@ class _BodyState extends State<Body> {
                 name: 'zipCode',
 
                 decoration: InputDecoration(
-                  labelText: 'zipCode',
+                  labelText: "ZIP Code",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _zipHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -723,23 +1097,30 @@ class _BodyState extends State<Body> {
                 name: 'NRIC',
 
                 decoration: InputDecoration(
-                  labelText: 'NRIC',
+                  labelText: "NRIC",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _NRICHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -765,24 +1146,30 @@ class _BodyState extends State<Body> {
 
                 name: 'residentStatus',
                 decoration: InputDecoration(
-                  labelText: 'Legal Status',
+                  labelText: "Legal Status",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffix: _statusHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
-                  // hintText: 'Select Gender',
                 ),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
@@ -815,28 +1202,31 @@ class _BodyState extends State<Body> {
 
                   name: 'FSInstitute',
                   decoration: InputDecoration(
-                    labelText: 'Select Institute',
+                    labelText: "Selelct Institute",
+                    labelStyle: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                    // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                    // filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     border: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 11.5,
+                            color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    suffix: _FSIHasError
-                        ? const Icon(Icons.error, color: Colors.red)
-                        : const Icon(Icons.check, color: Colors.green),
-                    // hintText: 'Select Gender',
                   ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(),
@@ -865,27 +1255,31 @@ class _BodyState extends State<Body> {
                   name: 'FSIDNumber',
 
                   decoration: InputDecoration(
-                    labelText: 'ID Number',
+                    labelText: "ID Number",
+                    labelStyle: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                    // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                    // filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     disabledBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     border: OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(width: 1, color: Colors.grey),
+                        borderSide: new BorderSide(
+                            width: 11.5,
+                            color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     floatingLabelBehavior: FloatingLabelBehavior.auto,
-                    suffixIcon: _FSIDHasError
-                        ? const Icon(Icons.error, color: Colors.red)
-                        : const Icon(Icons.check, color: Colors.green),
                   ),
                   onChanged: (val) {
                     setState(() {
@@ -914,23 +1308,30 @@ class _BodyState extends State<Body> {
                 name: 'PayNow',
 
                 decoration: InputDecoration(
-                  labelText: 'PayNow Number',
+                  labelText: "PayNow Number",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _payNowHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -954,23 +1355,30 @@ class _BodyState extends State<Body> {
                 name: 'bankAccNo',
 
                 decoration: InputDecoration(
-                  labelText: 'Bank Account Number',
+                  labelText: "Bank Account Number",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _BACCNOHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -994,23 +1402,30 @@ class _BodyState extends State<Body> {
                 name: 'bankName',
 
                 decoration: InputDecoration(
-                  labelText: 'Name Of Bank',
+                  labelText: "Name of Bank",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _bankNameHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -1037,24 +1452,34 @@ class _BodyState extends State<Body> {
                 name: 'emergencyContact',
 
                 decoration: InputDecoration(
-                  labelText: 'Emergency Contact',
+                  labelText: "Emergency Contact",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                   prefixText: "+65",
-                  suffixIcon: _emergencyContactHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
+                  // suffixIcon: _emergencyContactHasError
+                  //     ? const Icon(Icons.error, color: Colors.red)
+                  //     : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -1079,23 +1504,30 @@ class _BodyState extends State<Body> {
                 name: 'emergencyContactName',
 
                 decoration: InputDecoration(
-                  labelText: 'Emergency Contact Name',
+                  labelText: "Emergency Contact Name",
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _emergencyContactNameHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {
@@ -1121,22 +1553,30 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: 'Relation',
+
+                  labelStyle: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                  // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide: new BorderSide(
+                          width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  suffixIcon: _emergencyContactRelationHasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : const Icon(Icons.check, color: Colors.green),
                 ),
                 onChanged: (val) {
                   setState(() {

@@ -23,6 +23,7 @@ class _MyDetailsState extends State<MyDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Colors.grey.withOpacity(.1),
       appBar: AppBar(
           actions: [
             TextButton(
@@ -41,14 +42,15 @@ class _MyDetailsState extends State<MyDetails> {
                 },
                 child: Text(
                   ButtonText,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ))
           ],
           centerTitle: true,
           title: Text(
-            "My Info",
+            "Personal Data",
             style: TextStyle(
-              color: Colors.blueGrey,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
               fontSize: 15,
             ),
           )),

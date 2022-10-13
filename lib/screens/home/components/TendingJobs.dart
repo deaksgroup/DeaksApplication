@@ -8,6 +8,7 @@ import 'package:deaksapp/globals.dart' as globals;
 
 class TrendingJobs extends StatefulWidget {
   final List<DisplaySlot> displaySlots;
+
   const TrendingJobs({super.key, required this.displaySlots});
 
   @override
@@ -17,32 +18,32 @@ class TrendingJobs extends StatefulWidget {
 class _TrendingJobsState extends State<TrendingJobs> {
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
-      height: 160,
-      width: double.infinity,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: ((context, index) {
-          return GestureDetector(
-              onTap: () => {
-                    Navigator.pushNamed(context, JobDetailsScreen.routeName,
-                        arguments: [
-                          widget.displaySlots[index],
-                          widget.displaySlots,
-                        ])
-                  },
-              child: TrendingJobsCard(displaySlot: widget.displaySlots[index]));
-        }),
-        itemCount: widget.displaySlots.length,
-      ),
-    );
+        decoration: BoxDecoration(color: Colors.white),
+        height: 160,
+        width: 215,
+        child: TrendingJobsCard()
+        // ListView.builder(
+        //   scrollDirection: Axis.horizontal,
+        //   itemBuilder: ((context, index) {
+        //     return GestureDetector(
+        //         onTap: () => {
+        //               Navigator.pushNamed(context, JobDetailsScreen.routeName,
+        //                   arguments: [number[index]])
+        //             },
+        //         child: TrendingJobsCard(displaySlot: widget.displaySlots[index]));
+        //   }),
+        //   itemCount: number.length,
+        // ),
+        );
   }
 }
 
 class TrendingJobsCard extends StatelessWidget {
-  final DisplaySlot displaySlot;
+  // final DisplaySlot displaySlot;
 
-  const TrendingJobsCard({super.key, required this.displaySlot});
+  const TrendingJobsCard({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +80,7 @@ class TrendingJobsCard extends StatelessWidget {
                   height: 65,
                   child: ClipRRect(
                     child: Image.network(
-                      "${globals.url}/images/${displaySlot.hotelLogo}",
+                      "${globals.url}/images/wefhweif}",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -94,7 +95,7 @@ class TrendingJobsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          "${displaySlot.startTime} ",
+                          "2:00 PM ",
                           style: TextStyle(fontSize: 10, color: Colors.blue),
                         ),
                         Text(
@@ -102,7 +103,7 @@ class TrendingJobsCard extends StatelessWidget {
                           style: TextStyle(fontSize: 8, color: Colors.blue),
                         ),
                         Text(
-                          " ${displaySlot.endTime}",
+                          " 11:00 PM",
                           style: TextStyle(fontSize: 10, color: Colors.blue),
                         ),
                       ],

@@ -29,33 +29,36 @@ class _AdHocJobsState extends State<AdHocJobs> {
   Widget build(BuildContext context) {
     return Container(
       height: 500,
-      child: ListView.builder(
-        itemBuilder: ((context, index) {
-          return GestureDetector(
-            onTap: (() {
-              Navigator.pushNamed(context, JobDetailsScreen.routeName,
-                  arguments: [
-                    widget.displaySlots[index],
-                    widget.displaySlots,
-                  ]);
-            }),
-            child: AdHocJobCard(
-              displaySlot: widget.displaySlots[index],
-              displaySlots: widget.displaySlots,
-            ),
-          );
-        }),
-        itemCount: widget.displaySlots.length,
-      ),
+      child: AdHocJobCard(),
+
+      // ListView.builder(
+      //   itemBuilder: ((context, index) {
+      //     return GestureDetector(
+      //       onTap: (() {
+      //         Navigator.pushNamed(context, JobDetailsScreen.routeName,
+      //             arguments: [
+      //               widget.displaySlots[index],
+      //               widget.displaySlots,
+      //             ]);
+      //       }),
+      //       child: AdHocJobCard(
+      //         displaySlot: widget.displaySlots[index],
+      //         displaySlots: widget.displaySlots,
+      //       ),
+      //     );
+      //   }),
+      //   itemCount: widget.displaySlots.length,
+      // ),
     );
   }
 }
 
 class AdHocJobCard extends StatefulWidget {
-  final DisplaySlot displaySlot;
-  final List<DisplaySlot> displaySlots;
-  const AdHocJobCard(
-      {super.key, required this.displaySlot, required this.displaySlots});
+  // final DisplaySlot displaySlot;
+  // final List<DisplaySlot> displaySlots;
+  const AdHocJobCard({
+    super.key,
+  });
 
   @override
   State<AdHocJobCard> createState() => _AdHocJobCardState();
@@ -99,7 +102,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
             title: Text("Confirm"),
             onPressed: () {
               Navigator.pop(context);
-              applyJob(widget.displaySlot.slotId);
+              // applyJob(widget.displaySlot.slotId);
             },
           ),
         ],
@@ -158,7 +161,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: Image.network(
-                  "${globals.url}/images/${widget.displaySlot.hotelLogo}",
+                  "${globals.url}/images/guyg",
                   fit: BoxFit.fill,
                 ),
               ),
@@ -172,7 +175,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          "\$${widget.displaySlot.payPerHour} /h",
+                          "\$14 /h",
                           style: TextStyle(
                               fontSize: 15,
                               color: Colors.red,
@@ -187,7 +190,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                       ),
                     ),
                     Text(
-                      "\$${widget.displaySlot.totalPay}",
+                      "\$130",
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.red,
@@ -195,7 +198,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                     )
                   ]),
                   Text(
-                    "${widget.displaySlot.startTime} to ${widget.displaySlot.endTime}",
+                    "02:00 PM to 05:00 PM",
                     style: TextStyle(fontSize: 12, color: Colors.blue),
                   ),
                   Text(
@@ -286,7 +289,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                             ),
                           )
                         : Text(
-                            "${widget.displaySlot.slotStatus}",
+                            "Book Now",
                             style: TextStyle(fontSize: 12),
                           ),
                     onPressed: () {

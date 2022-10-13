@@ -1,14 +1,14 @@
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
-import 'package:deaksapp/screens/PrivacyPolicy/PrivacyPolicy.dart';
-import 'package:deaksapp/screens/TermsAndCondtion/TermsAndCondtions.dart';
+
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
 import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
 import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
-import 'package:deaksapp/screens/support/Support.dart';
+import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
+
 import 'package:flutter/widgets.dart';
 
 import 'package:deaksapp/screens/complete_profile/complete_profile_screen.dart';
@@ -43,8 +43,7 @@ final Map<String, WidgetBuilder> routes = {
   ForgotOTPScreen.routeName: (context) => ForgotOTPScreen(),
   NewPasswordScreen.routeName: (context) => NewPasswordScreen(),
   DeleteAccount.routeName: (context) => DeleteAccount(),
-  Support.routeName: (context) => Support(),
-  TermsAndCondition.routeName: (context) => TermsAndCondition(),
-  PrivacyPolicy.routeName: (context) => PrivacyPolicy(),
-  NotoficationPage.routeName: (context) => NotoficationPage()
+
+  NotoficationPage.routeName: (context) => NotoficationPage(),
+  Subscriptions.routeName: (context) => Subscriptions()
 };

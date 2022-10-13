@@ -15,6 +15,7 @@ import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:deaksapp/routes.dart';
@@ -35,36 +36,7 @@ void main() async {
   runApp(MyApp());
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {
-  print("background");
-  print(message);
-  List<Map<String, String>> notificationList = [];
-  print("1");
-  print(message.notification!.title);
-  print(message.notification!.body);
-  print("1");
-  print(message.data.toString());
-  print("1");
-  final String title = message.notification!.title.toString();
-  final String body = message.notification!.body.toString();
-  final String slotId = message.data["slotId"];
-  final String notificationNumer = message.data["notificationNumer"].toString();
-  final String action1 = message.data["action1"].toString();
-  final String action2 = message.data["action2"].toString();
-  final prefs = await SharedPreferences.getInstance();
-
-  final Map<String, String> notification = {
-    "title": title,
-    "body": body,
-    "slotId": slotId,
-    "notificationId": notificationNumer,
-    "action2": action2,
-    "action1": action1
-  };
-  notificationList.add(notification);
-  final userNotifications = json.encode(notificationList);
-  await prefs.setString('userNotifications', userNotifications);
-}
+Future<void> backgroundHandler(RemoteMessage message) async {}
 
 class MyApp extends StatefulWidget {
   @override
@@ -72,12 +44,33 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   // This widget is the root of your application.
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      final Uri uri = dynamicLinkData.link;
+      final queryParams = uri.queryParameters;
+      if (queryParams.isNotEmpty) {
+        String? productId = queryParams["id"];
+
+        // Navigator.pushNamed(context, dynamicLinkData.link.path,
+        //     arguments: {"productId": int.parse(productId!)});
+      } else {
+        Navigator.pushNamed(
+          context,
+          dynamicLinkData.link.path,
+        );
+      }
+    }).onError((error) {
+      print('onLink error');
+      print(error.message);
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
-
+    initDynamicLinks();
     FirebaseMessaging.instance
         .requestPermission(alert: true, badge: true, sound: true)
         .then((value) {
@@ -97,81 +90,18 @@ class _MyAppState extends State<MyApp> {
       // //print(APNStoken);
     });
     FirebaseMessaging.instance.getInitialMessage().then((message) async {
-      if (message != null) {
-        final routeFromMessage = message.data["route"];
-
-        Navigator.of(context).pushNamed(routeFromMessage);
-      }
+      if (message != null) {}
     });
 
     ///forground work
-    ///
-    ///
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       if (message.notification != null) {}
-      // print(message);
-      print("forground");
-      List<Map<String, String>> notificationList = [];
-      print("1");
-      print(message.notification!.title);
-      print(message.notification!.body);
-      print("1");
-      print(message.data);
-      print("1");
-      final String title = message.notification!.title.toString();
-      final String body = message.notification!.body.toString();
-      final String slotId = message.data["slotId"];
-      final String notificationNumer =
-          message.data["notificationNumer"].toString();
-      final String action1 = message.data["action1"].toString();
-      final String action2 = message.data["action2"].toString();
-      final prefs = await SharedPreferences.getInstance();
-
-      final Map<String, String> notification = {
-        "title": title,
-        "body": body,
-        "slotId": slotId,
-        "notificationNumer": notificationNumer,
-        "action2": action2,
-        "action1": action1
-      };
-      notificationList.add(notification);
-      final userNotifications = json.encode(notificationList);
-      await prefs.setString('userNotifications', userNotifications);
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("backworking");
-      List<Map<String, String>> notificationList = [];
-      print("1");
-      print(message.notification!.title);
-      print(message.notification!.body);
-      print("1");
-      print(message.data);
-      print("1");
-      final String title = message.notification!.title.toString();
-      final String body = message.notification!.body.toString();
-      final String slotId = message.data["slotId"];
-      final String notificationNumber =
-          message.data["notificationNumber"].toString();
-      final String action1 = message.data["action1"].toString();
-      final String action2 = message.data["action2"].toString();
-      final prefs = await SharedPreferences.getInstance();
-
-      final Map<String, String> notification = {
-        "title": title,
-        "body": body,
-        "slotId": slotId,
-        "notificationId": notificationNumber,
-        "action2": action2,
-        "action1": action1
-      };
-      notificationList.add(notification);
-      final userNotifications = json.encode(notificationList);
-      await prefs.setString('userNotifications', userNotifications);
-    });
+    FirebaseMessaging.onMessageOpenedApp
+        .listen((RemoteMessage message) async {});
     super.initState();
   }
 
@@ -236,16 +166,22 @@ class _MyAppState extends State<MyApp> {
                 theme: theme(),
                 // home: SplashScreen(),
                 // We use routeName so that we dont need to remember the name
-                home: auth.isAuth
-                    ? PageState()
-                    : FutureBuilder(
-                        future: auth.tryAutoLogin(),
-                        builder: (ctx, authResultSnapshot) =>
-                            authResultSnapshot.connectionState ==
-                                    ConnectionState.waiting
-                                ? SplashScreen()
-                                : PageState(),
-                      ),
+                home: ProfileScreen(),
+                // MyDetails(),
+
+                // ProfileScreen(),
+                // MyDetails(),
+
+                // auth.isAuth
+                //     ? PageState()
+                //     : FutureBuilder(
+                //         future: auth.tryAutoLogin(),
+                //         builder: (ctx, authResultSnapshot) =>
+                //             authResultSnapshot.connectionState ==
+                //                     ConnectionState.waiting
+                //                 ? SplashScreen()
+                //                 : PageState(),
+                //       ),
                 // initialRoute: PageState(),
                 routes: routes,
               ))),

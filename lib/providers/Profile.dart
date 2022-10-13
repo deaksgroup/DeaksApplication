@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
 import 'package:deaksapp/globals.dart' as globals;
+import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile {
   final String name;
@@ -71,6 +76,7 @@ class Profile {
 }
 
 class ProfileFetch with ChangeNotifier {
+  File profilePic = new File("");
   final String token;
   Map<String, String> profile;
   ProfileFetch({required this.profile, required this.token});
@@ -79,7 +85,21 @@ class ProfileFetch with ChangeNotifier {
     return profile;
   }
 
+  File getProfilePicture() {
+    return profilePic;
+  }
+
   Future<void> fetchAndSetProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('profilePicPath')) {
+      final extractedUserData =
+          await jsonDecode(prefs.getString('profilePicPath').toString())
+              as Map<dynamic, dynamic>;
+      final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
+      profilePic = new File(userProfilePath["profilePicPath"]);
+      notifyListeners();
+    }
+
     log("profielfetch");
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
@@ -126,30 +146,55 @@ class ProfileFetch with ChangeNotifier {
     }
   }
 
-  Future<Map<dynamic, dynamic>> submitProfile(
-      Map<String, dynamic>? userData) async {
-    Map<dynamic, dynamic> extractedData = {};
+  Future<Map<dynamic, dynamic>> submitProfile(Map<String, dynamic>? userData,
+      File? profilePicture, List<File> attaireImges) async {
+    profilePic = profilePic;
     var dio = Dio();
+
     Response response;
+    Map<String, String> convertedUserData = userData!
+        .map((key, value) => MapEntry(key.toString(), value.toString()));
+    FormData formData = FormData.fromMap({
+      "data": convertedUserData,
+      "profile": await MultipartFile.fromFile(
+        profilePicture!.path,
+        filename: profilePicture.path.toString().split("/").last,
+        contentType: MediaType('image', 'jpg'),
+      ),
+      "attaire": await MultipartFile.fromFile(
+        attaireImges[0].path,
+        filename: attaireImges[0].path.toString().split("/").last,
+        contentType: MediaType('image', 'jpg'),
+      ),
+      "attaire": await MultipartFile.fromFile(
+        attaireImges[1].path,
+        filename: attaireImges[1].path.toString().split("/").last,
+        contentType: MediaType('image', 'jpg'),
+      ),
+      "type": "image/jpg"
+    });
+
+    Map<dynamic, dynamic> extractedData = {};
 
     Map<String, dynamic> headers = {
       "secret_token": token,
+      "Content-Type": "multipart/form-data"
     };
 
-    Map<String, String> convertedUserData = userData!
-        .map((key, value) => MapEntry(key.toString(), value.toString()));
+    // Map<String, String> convertedUserData = userData!
+    //     .map((key, value) => MapEntry(key.toString(), value.toString()));
 
     try {
       //404
-      response = await dio.post("${globals.url}/submit",
-          data: convertedUserData, options: Options(headers: headers));
+      response = await dio.patch("http://10.0.2.2:5001/api/updateUserInfo",
+          data: formData, options: Options(headers: headers));
       // ////print(response.data.toString());
-
+      print("here");
       final extractedData = response.data;
       if (extractedData == null || extractedData["result"] == null) {
         return extractedData;
       }
-
+      print("not reaching");
       // ////print(extractedData);
       // ////print(extractedData["result"]);
       ////print("ProfileftechFterAubmission...");

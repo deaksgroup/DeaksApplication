@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:293039057833:android:14231cc8a48932bb0e32b8",
+        "mobilesdk_app_id": "1:293039057833:android:d53cf154c230530e0e32b8",
         "android_client_info": {
           "package_name": "com.deaksapplication.deaks_applications"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "293039057833-dfjktqg32e7nesuegibe4fenmfl60jp5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.deaksapplication.deaks_applications",
+            "certificate_hash": "2e467757d78dfd8e42e634683871d01cab686bc8"
+          }
+        },
         {
           "client_id": "293039057833-d29k0rlm0gh46dln1nr35tbfqe26a2b1.apps.googleusercontent.com",
           "client_type": 3
