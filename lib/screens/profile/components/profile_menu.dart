@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constants.dart';
 
@@ -29,11 +29,11 @@ class ProfileMenu extends StatelessWidget {
         onPressed: press,
         child: Row(
           children: [
-            SvgPicture.asset(
-              icon,
-              color: Colors.black,
-              width: 22,
-            ),
+            // SvgPicture.asset(
+            //   icon,
+            //   color: Colors.black,
+            //   width: 22,
+            // ),
             SizedBox(width: 20),
             Expanded(child: Text(text)),
             Icon(Icons.arrow_forward_ios),

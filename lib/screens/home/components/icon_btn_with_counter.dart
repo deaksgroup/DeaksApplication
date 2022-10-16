@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -32,7 +32,7 @@ class IconBtnWithCounter extends StatelessWidget {
               color: Colors.white.withOpacity(1),
               shape: BoxShape.circle,
             ),
-            child: SvgPicture.asset(svgSrc),
+            // child: SvgPicture.asset(svgSrc),
           ),
           if (numOfitem != 0)
             Positioned(

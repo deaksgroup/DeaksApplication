@@ -13,6 +13,7 @@ import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
 import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
+import 'package:deaksapp/utils/notification_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -36,7 +37,13 @@ void main() async {
   runApp(MyApp());
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {}
+Future<void> backgroundHandler(RemoteMessage message) async {
+  // await notificationService.showLocalNotification(
+  //     id: 0,
+  //     title: "Drink Water",
+  //     body: "Time to drink some water!",
+  //     payload: "You just took water! Huurray!");
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -44,6 +51,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final NotificationService notificationService;
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   // This widget is the root of your application.
   Future<void> initDynamicLinks() async {
@@ -67,9 +75,22 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void listenToNotificationStream() =>
+      notificationService.behaviorSubject.listen((payload) {
+        print(payload);
+        print("1111111");
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => MySecondScreen(payload: payload)));
+      });
+
   @override
   void initState() {
     // TODO: implement initState
+    notificationService = NotificationService();
+    listenToNotificationStream();
+    notificationService.initializePlatformNotifications();
     initDynamicLinks();
     FirebaseMessaging.instance
         .requestPermission(alert: true, badge: true, sound: true)
@@ -95,13 +116,23 @@ class _MyAppState extends State<MyApp> {
 
     ///forground work
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      await notificationService.showLocalNotification(
+          id: 0,
+          title: "Drink Water",
+          body: "Time to drink some water!",
+          payload: "You just took water! Huurray!");
       if (message.notification != null) {}
     });
 
     ///When the app is in background but opened and user taps
     ///on the notification
-    FirebaseMessaging.onMessageOpenedApp
-        .listen((RemoteMessage message) async {});
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      await notificationService.showLocalNotification(
+          id: 0,
+          title: "Drink Water",
+          body: "Time to drink some water!",
+          payload: "You just took water! Huurray!");
+    });
     super.initState();
   }
 
@@ -166,7 +197,7 @@ class _MyAppState extends State<MyApp> {
                 theme: theme(),
                 // home: SplashScreen(),
                 // We use routeName so that we dont need to remember the name
-                home: ProfileScreen(),
+                home: PageState(),
                 // MyDetails(),
 
                 // ProfileScreen(),

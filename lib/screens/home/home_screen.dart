@@ -6,7 +6,7 @@ import 'package:deaksapp/providers/Outlets.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:flutter/material.dart';
-import 'package:deaksapp/components/coustom_bottom_nav_bar.dart';
+// import 'package:deaksapp/components/coustom_bottom_nav_bar.dart';
 import 'package:deaksapp/enums.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';

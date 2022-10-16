@@ -50,16 +50,23 @@ dependencies:
   cloud_firestore: ^3.5.1
   url_launcher: ^6.1.5
   map_launcher: ^2.4.0
+  flutter_local_notifications: ^9.7.0
+  timezone: ^0.8.0
+  rxdart: ^0.27.5
+  http: ^0.13.4
+  flutter_native_timezone: ^2.0.0
 
   flutter_dialogs: ^3.0.0
   another_flushbar: ^1.12.29
   flutter_launcher_icons: ^0.10.0
+  share_plus: ^5.0.0
 
   image_picker: ^0.8.6
   images_picker: ^1.2.11
   path_provider: ^2.0.11
   path: ^1.8.2
   http_parser: ^4.0.1
+  filter_list: ^1.0.2
 
 flutter_icons:
   image_path_android: "assets/icons/DeaksAppLogo.jpeg"

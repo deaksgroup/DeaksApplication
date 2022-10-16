@@ -6,6 +6,7 @@ import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,6 +76,32 @@ class NotoficationCard extends StatefulWidget {
 }
 
 class _NotoficationCardState extends State<NotoficationCard> {
+  void showAlert() {
+    showPlatformDialog(
+      context: context,
+      builder: (context) => BasicDialogAlert(
+        title: Text("Not Verified!"),
+        content: Text(
+            "Your Account needs to be verified before applying a job.Please sumbit your details for verification."),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Skip"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Update"),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, MyDetails.routeName);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> sendNotificationResponse(String response) async {
     Map<String, String> responseData = {
       "tokenNumber": widget.notification["notificationNumer"].toString(),
