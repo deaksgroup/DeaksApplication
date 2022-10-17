@@ -26,7 +26,7 @@ class DiscountBanner extends StatelessWidget {
           TextSpan(
             style: TextStyle(color: Colors.black),
             children: [
-              TextSpan(text: "Hello,"),
+              TextSpan(text: "Hello"),
               TextSpan(
                 text: " Max",
                 style: TextStyle(
@@ -37,11 +37,11 @@ class DiscountBanner extends StatelessWidget {
             ],
           ),
         ),
-        IconBtnWithCounter(
-          svgSrc: "assets/icons/Bell.svg",
-          numOfitem: 3,
-          press: () {},
-        ),
+        // IconBtnWithCounter(
+        //   svgSrc: "assets/icons/Bell.svg",
+        //   numOfitem: 3,
+        //   press: () {},
+        // ),
       ]),
     );
   }

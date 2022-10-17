@@ -22,23 +22,29 @@ class Body extends StatelessWidget {
     return SafeArea(
       child: SingleChildScrollView(
         padding:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(10)),
+            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 20),
             DiscountBanner(),
+            SizedBox(height: 10),
             HomeHeader(),
+            // SizedBox(height: 20),
             SectionTitle(
               title: "Trending",
             ),
+            SizedBox(height: 10),
             TrendingJobs(
               displaySlots: displaySlots
                   .where((element) => element.priority == "H")
                   .toList(),
             ),
+            SizedBox(height: 20),
             SectionTitle(
               title: "F&B Ad-hoc Jobs",
             ),
+            SizedBox(height: 20),
             AdHocJobs(
                 displaySlots: displaySlots
                     .where((element) => element.priority == "L")

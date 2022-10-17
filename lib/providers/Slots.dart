@@ -15,8 +15,9 @@ class Slots with ChangeNotifier {
     return slots;
   }
 
-  Future<void> fetchAndSetSlots() async {
+  Future<void> fetchAndSetSlots(Map<String, String> searchQuery) async {
     print("slotsFetch");
+    print(searchQuery);
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {

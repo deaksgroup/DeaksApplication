@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:deaksapp/screens/MyDetails/ProfilePicture.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -23,6 +24,7 @@ import 'package:images_picker/images_picker.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../size_config.dart';
 import "../../globals.dart" as MediaType;
 
@@ -159,7 +161,31 @@ class _BodyState extends State<Body> {
 
   bool _numberHasError = false;
 
+  bool isAgreeTermsAndCondtions = false;
+
   String legalStatus = "";
+  Future<void> openlink(String link) async {
+    var androidLink = Uri.parse(link);
+
+    var iosLink = Uri.parse(link);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // for iOS phone only
+      if (await canLaunchUrl(iosLink)) {
+        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("Sorry! Unable open URL")));
+      }
+    } else {
+      // android , web
+      if (await canLaunchUrl(iosLink)) {
+        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("Sorry! Unable open URL")));
+      }
+    }
+  }
 
   Future<void> onReset() async {
     print("hello");
@@ -901,10 +927,10 @@ class _BodyState extends State<Body> {
               const SizedBox(height: 15),
               const SizedBox(height: 15),
               FormBuilderTextField(
-                name: 'floorNumber',
+                name: 'blockNumber',
 
                 decoration: InputDecoration(
-                  labelText: "Floor Number",
+                  labelText: "Block Number",
                   labelStyle: TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
@@ -1596,6 +1622,52 @@ class _BodyState extends State<Body> {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
               ),
+              const SizedBox(height: 15),
+              FormBuilderCheckbox(
+                name: 'accept_terms',
+                initialValue: isAgreeTermsAndCondtions,
+                onChanged: ((value) {
+                  isAgreeTermsAndCondtions = value as bool;
+                }),
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'I have read and agree to the ',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Terms and Conditions',
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            var link =
+                                "https://deaks-app-fe.vercel.app/terms-condition";
+                            openlink(link);
+                          },
+                      ),
+                      TextSpan(
+                        text: ' & ',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Privacy Policy.',
+                        style: TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            var link =
+                                "https://deaks-app-fe.vercel.app/privacy-policy";
+                            openlink(link);
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+                validator: FormBuilderValidators.equal(
+                  true,
+                  errorText: 'You must accept terms and conditions to continue',
+                ),
+              ),
               const SizedBox(height: 40),
             ],
           ),
@@ -1607,6 +1679,7 @@ class _BodyState extends State<Body> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
                   if (isEditable &&
+                      isAgreeTermsAndCondtions &&
                       profile["verificationStatus"] != "Pending") {
                     if (_formKey.currentState?.saveAndValidate() ?? false) {
                       // debugPrint(_formKey.currentState?.value.toString());

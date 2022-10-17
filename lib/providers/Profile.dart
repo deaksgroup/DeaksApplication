@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -157,8 +158,10 @@ class ProfileFetch with ChangeNotifier {
     FormData formData = FormData.fromMap({
       "data": convertedUserData,
       "profile": await MultipartFile.fromFile(
-        profilePicture!.path,
-        filename: profilePicture.path.toString().split("/").last,
+        // profilePicture?.path != null ? profilePicture!.path : "",
+        // filename: profilePicture?.path.toString().split("/").last,
+        attaireImges[0].path,
+        filename: attaireImges[0].path.toString().split("/").last,
         contentType: MediaType('image', 'jpg'),
       ),
       "attaire": await MultipartFile.fromFile(
@@ -186,7 +189,7 @@ class ProfileFetch with ChangeNotifier {
 
     try {
       //404
-      response = await dio.patch("http://10.0.2.2:5001/api/updateUserInfo",
+      response = await dio.patch("http://localhost:5001/api/updateUserInfo",
           data: formData, options: Options(headers: headers));
       // ////print(response.data.toString());
       print("here");
@@ -228,5 +231,20 @@ class ProfileFetch with ChangeNotifier {
     }
 
     return extractedData;
+  }
+
+  Future<void> subscribe(String outletId) async {
+    Map<dynamic, dynamic> extractedData = {};
+    var dio = Dio();
+    Response response;
+
+    Map<String, dynamic> headers = {
+      "secret_token": token,
+    };
+
+    try {
+      response = await dio.patch("${globals.url}/profile",
+          options: Options(headers: headers));
+    } on DioError catch (e) {}
   }
 }

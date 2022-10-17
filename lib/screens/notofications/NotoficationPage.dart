@@ -94,7 +94,7 @@ class _NotoficationCardState extends State<NotoficationCard> {
             title: Text("Update"),
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, MyDetails.routeName);
+              // Navigator.pushNamed(context, MyDetails.routeName);
             },
           ),
         ],

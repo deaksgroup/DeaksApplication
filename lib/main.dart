@@ -10,6 +10,7 @@ import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
 import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
+import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
@@ -198,7 +199,6 @@ class _MyAppState extends State<MyApp> {
                 // home: SplashScreen(),
                 // We use routeName so that we dont need to remember the name
                 home: PageState(),
-                // MyDetails(),
 
                 // ProfileScreen(),
                 // MyDetails(),

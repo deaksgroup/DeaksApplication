@@ -19,8 +19,8 @@ class _TrendingJobsState extends State<TrendingJobs> {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(color: Colors.white),
-        height: 160,
-        width: 215,
+        height: 170,
+        width: 230,
         child: TrendingJobsCard()
         // ListView.builder(
         //   scrollDirection: Axis.horizontal,
@@ -67,8 +67,8 @@ class TrendingJobsCard extends StatelessWidget {
             ]),
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         margin: EdgeInsets.only(right: 5, top: 10, bottom: 10),
-        width: 215,
-        height: 160,
+        width: 230,
+        height: 170,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -96,22 +96,22 @@ class TrendingJobsCard extends StatelessWidget {
                       children: [
                         Text(
                           "2:00 PM ",
-                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                          style: TextStyle(fontSize: 11, color: Colors.blue),
                         ),
                         Text(
                           " to ",
-                          style: TextStyle(fontSize: 8, color: Colors.blue),
+                          style: TextStyle(fontSize: 11, color: Colors.blue),
                         ),
                         Text(
                           " 11:00 PM",
-                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                          style: TextStyle(fontSize: 11, color: Colors.blue),
                         ),
                       ],
                     ),
                     Container(
                       child: Text(
-                        "27th Wednesday December",
-                        style: TextStyle(fontSize: 9, color: Colors.red),
+                        "27th Wed December",
+                        style: TextStyle(fontSize: 10, color: Colors.red),
                       ),
                     )
                   ],
@@ -119,6 +119,7 @@ class TrendingJobsCard extends StatelessWidget {
               ],
             ),
             Container(
+              margin: EdgeInsets.only(top: 5),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -136,14 +137,14 @@ class TrendingJobsCard extends StatelessWidget {
                           "Pickering, Lime Restaurent",
                           style: TextStyle(
                               fontSize: 9,
-                              color: Colors.black,
+                              color: Colors.blueGrey,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 6),
-                      height: 20,
+                      height: 23,
                       decoration: BoxDecoration(
                         color: Colors.green,
                         borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -178,10 +179,11 @@ class TrendingJobsCard extends StatelessWidget {
                     ),
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 5),
                     child: Row(
                       children: [
                         Text(
-                          "Estimated Pay : ",
+                          "Expected Pay : ",
                           style: TextStyle(fontSize: 10),
                         ),
                         Text(

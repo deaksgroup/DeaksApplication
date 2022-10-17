@@ -19,7 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../pagestate/pagestate.dart';
 import 'profile_menu.dart';
-import 'profile_pic.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -27,6 +27,13 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'Share this job!',
+        linkUrl: 'https://deaksapp.page.link/jobs?id=2',
+        chooserTitle: 'Example Chooser Title');
+  }
+
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
   @override
   void initState() {
@@ -110,12 +117,13 @@ class _BodyState extends State<Body> {
       child: Column(
         children: [
           GestureDetector(
-              onTap: () async {
-                String generatedDeepLink =
-                    await FirebaseDynamicLinkService.createdynamiclink(
-                        false, "67676767");
+              onTap: () {
+                share();
+                // String generatedDeepLink =
+                //     await FirebaseDynamicLinkService.createdynamiclink(
+                //         false, "67676767");
 
-                log(generatedDeepLink);
+                // log(generatedDeepLink);
               },
               child: Icon(Icons.share)),
           ProfileMenu(

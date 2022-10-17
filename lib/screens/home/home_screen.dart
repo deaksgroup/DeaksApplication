@@ -86,8 +86,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refreshProducts(BuildContext context) async {
+    Map<String, String> searchQuery = {
+      "search": "",
+      "sortType": "All Jobs",
+      "Hotels": "",
+      "Tags": "",
+      "subscribed": "",
+      "limit": "20"
+    };
     await Provider.of<Slots>(context, listen: false)
-        .fetchAndSetSlots()
+        .fetchAndSetSlots(searchQuery)
         .then(((value) {
       didChangeDependencies();
       ////print("here");

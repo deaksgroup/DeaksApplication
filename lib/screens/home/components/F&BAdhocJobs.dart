@@ -28,7 +28,7 @@ class _AdHocJobsState extends State<AdHocJobs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
+      // height: 500,
       child: AdHocJobCard(),
 
       // ListView.builder(
@@ -65,6 +65,7 @@ class AdHocJobCard extends StatefulWidget {
 }
 
 class _AdHocJobCardState extends State<AdHocJobCard> {
+  bool isSubscribed = false;
   bool _isLoading = false;
   Future<void> applyJob(String slotId) async {
     setState(() {
@@ -141,6 +142,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        boxShadow: [
+          new BoxShadow(
+            color: Colors.grey.shade400.withOpacity(.3),
+            blurRadius: 5.0,
+          ),
+        ],
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
         border: Border.all(
           color: Color.fromRGBO(
             255,
@@ -156,7 +165,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
-              width: 120,
+              width: 105,
               height: 90,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
@@ -170,27 +179,22 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          "\$14 /h",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ]),
+                  Text(
+                    "\$14 /h",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold),
+                  ),
                   Row(children: [
                     Text(
-                      "ExpectedPay | ",
+                      "ExpectedPay : ",
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                       ),
                     ),
                     Text(
-                      "\$130",
+                      " \$130",
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.red,
@@ -199,11 +203,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                   ]),
                   Text(
                     "02:00 PM to 05:00 PM",
-                    style: TextStyle(fontSize: 12, color: Colors.blue),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "27th Wednesday December",
-                    style: TextStyle(fontSize: 12, color: Colors.red),
+                    "27th Wed December",
+                    style: TextStyle(fontSize: 11, color: Colors.red),
                   )
                 ],
               ),
@@ -213,7 +220,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 6),
-                  height: 20,
+                  height: 23,
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -231,15 +238,29 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                 SizedBox(
                   height: 25,
                 ),
-                Container(
-                  child: Icon(Icons.notification_add),
+                GestureDetector(
+                  onTap: (() {
+                    setState(() {
+                      if (isSubscribed) {
+                        isSubscribed = false;
+                      } else {
+                        isSubscribed = true;
+                      }
+                    });
+                  }),
+                  child: Container(
+                    child: Icon(
+                      Icons.notification_add,
+                      color: isSubscribed ? Colors.red : Colors.blueGrey,
+                    ),
+                  ),
                 )
               ],
             )
           ],
         ),
         SizedBox(
-          height: 5,
+          height: 10,
         ),
         Container(
             padding: EdgeInsets.symmetric(horizontal: 5),
@@ -250,7 +271,9 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                   218,
                   1,
                 ),
-                borderRadius: BorderRadius.circular(5)),
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -260,25 +283,25 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                     Text(
                       "Park Royal",
                       style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "Pickering, Lime Restaurant",
                       style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.w200),
+                        fontSize: 12,
+                        color: Colors.blueGrey,
+                      ),
                     )
                   ],
                 ),
                 Container(
-                  width: 100,
-                  height: 30,
+                  width: 90,
+                  height: 28,
                   child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black.withOpacity(1)),
                     child: _isLoading
                         ? SizedBox(
                             width: 15,
@@ -290,7 +313,8 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                           )
                         : Text(
                             "Book Now",
-                            style: TextStyle(fontSize: 12),
+                            style: TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.bold),
                           ),
                     onPressed: () {
                       Map<String, String> profile =
