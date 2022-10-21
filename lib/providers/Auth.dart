@@ -83,8 +83,7 @@ class Auth with ChangeNotifier {
 
     try {
       //404
-      response =
-          await dio.post("${globals.url}/api/userLogin", data: loginData);
+      response = await dio.post("${globals.url}/userLogin", data: loginData);
       // //////print(response.data.toString());
 
       final data = response.data;
@@ -155,7 +154,7 @@ class Auth with ChangeNotifier {
     try {
       //404
       response =
-          await dio.post("${globals.url}/api/registerUser", data: signUpData);
+          await dio.post("${globals.url}/registerUser", data: signUpData);
       //////print(response.data);
 
       final data = response.data;
@@ -386,8 +385,8 @@ class Auth with ChangeNotifier {
     Map<String, dynamic> headers = {
       "secret_token": _token,
     };
-    Response response = await dio.post(
-      "${globals.url}/api/deleteAccount",
+    Response response = await dio.patch(
+      "${globals.url}/deleteAccount",
       data: {"password": password},
       options: Options(headers: headers),
     );

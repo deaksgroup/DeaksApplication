@@ -1,13 +1,16 @@
+import 'package:deaksapp/providers/Profile.dart';
+import 'package:deaksapp/providers/Slots.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
 
-final subcriptions = List<SubscriptionCard>.generate(
-    20,
-    (i) => SubscriptionCard(
-          index: i,
-          subscriptions: [],
-        ));
+// final subcriptions = List<SubscriptionCard>.generate(
+//     20,
+//     (i) => SubscriptionCard(
+//           index: i,
+//           subscriptions: [],
+//         ));
 
 class Subscriptions extends StatefulWidget {
   static String routeName = "/subscriptions";
@@ -18,12 +21,23 @@ class Subscriptions extends StatefulWidget {
 }
 
 class _SubscriptionsState extends State<Subscriptions> {
-  // final subcriptions = List<SubscriptionCard>.generate(
-  //     20,
-  //     (i) => SubscriptionCard(
-  //           index: i,
-  //           subscriptions: [],
-  //         ));
+  List<Map<dynamic, dynamic>> subcriptions = [];
+  bool _isInIt = true;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    if (_isInIt) {
+      subcriptions =
+          Provider.of<ProfileFetch>(context, listen: false).getSubscriptions;
+    }
+
+    _isInIt = false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +54,7 @@ class _SubscriptionsState extends State<Subscriptions> {
         body: ListView.builder(
             itemCount: subcriptions.length,
             itemBuilder: ((context, index) => Dismissible(
-                key: UniqueKey(),
+                key: subcriptions[index]["_id"],
                 background: Container(
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(color: Colors.red),
@@ -57,12 +71,20 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) {
-                  setState(() {
-                    print("removed");
-                    subcriptions.removeAt(index);
+                  Provider.of<Slots>(context, listen: false)
+                      .unSubscribeOutlet(subcriptions[index]["_id"])
+                      .then((value) {
+                    if (value == 200) {
+                      setState(() {
+                        print("removed");
+                        subcriptions.removeAt(index);
+                      });
+                    }
                   });
                 },
                 child: SubscriptionCard(
+                  outletName: subcriptions[index]["outletName"],
+                  hotelName: subcriptions[index]["hotel"]["hotelName"],
                   subscriptions: subcriptions,
                   index: index,
                 )))));
@@ -70,10 +92,16 @@ class _SubscriptionsState extends State<Subscriptions> {
 }
 
 class SubscriptionCard extends StatefulWidget {
+  final String hotelName;
+  final String outletName;
   final int index;
-  final List<SubscriptionCard> subscriptions;
+  final List<Map<dynamic, dynamic>> subscriptions;
   const SubscriptionCard(
-      {super.key, required this.index, required this.subscriptions});
+      {super.key,
+      required this.index,
+      required this.subscriptions,
+      required this.hotelName,
+      required this.outletName});
 
   @override
   State<SubscriptionCard> createState() => _SubscriptionCardState();
@@ -103,12 +131,12 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Ritz Carlton",
+              Text(widget.hotelName,
                   style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17)),
-              Text("Pickering, Lime Restaurent",
+              Text(widget.outletName,
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.w200))
             ],

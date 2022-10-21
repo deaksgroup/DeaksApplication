@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:deaksapp/providers/Hotel.dart';
 import 'package:deaksapp/providers/Slots.dart';
+import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -11,8 +12,10 @@ import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class SearchField extends StatefulWidget {
+  final VoidCallback refresh;
   const SearchField({
     Key? key,
+    required this.refresh,
   }) : super(key: key);
 
   @override
@@ -34,7 +37,7 @@ class _SearchFieldState extends State<SearchField> {
     });
   }
 
-  bool _isInit = true;
+  bool _isInit = false;
   String searchWord = "";
   String sortType = "All Jobs";
   @override
@@ -46,7 +49,7 @@ class _SearchFieldState extends State<SearchField> {
   void didChangeDependencies() async {
     if (_isInit) {
       Map<String, String> searchQuery = {
-        "search": searchWord,
+        "shiftName": searchWord,
         "sortType": sortType,
         "Hotels": SelectedHotelList.toString(),
         "Tags": SelectedTagsList.toString(),
@@ -54,7 +57,10 @@ class _SearchFieldState extends State<SearchField> {
         "limit": "20"
       };
 
-      Provider.of<Slots>(context, listen: false).fetchAndSetSlots(searchQuery);
+      Provider.of<Slots>(context, listen: false)
+          .fetchAndSetSlots(searchQuery)
+          .then((value) {});
+      widget.refresh();
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -162,49 +168,49 @@ class _SearchFieldState extends State<SearchField> {
                 )),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-                onPressed: (() {
-                  setState(() {
-                    if (isSorting) {
-                      isSorting = false;
-                    } else {
-                      isFiltering = false;
-                      isSorting = true;
-                    }
-                  });
-                }),
-                child: Text(
-                  "Sort",
-                  style: TextStyle(
-                      color: sort == 0
-                          ? Colors.blueGrey
-                          : Colors.blue.withOpacity(1),
-                      fontSize: 12),
-                )),
-            TextButton(
-                onPressed: (() {
-                  setState(() {
-                    if (isFiltering) {
-                      isFiltering = false;
-                    } else {
-                      isSorting = false;
-                      isFiltering = true;
-                    }
-                  });
-                }),
-                child: Text("Filter By",
-                    style: TextStyle(
-                        color: isFliterByHotel ||
-                                isFliterByTags ||
-                                isFliterBySubscriptions
-                            ? Colors.blue
-                            : Colors.blueGrey,
-                        fontSize: 12)))
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.end,
+        //   children: [
+        //     TextButton(
+        //         onPressed: (() {
+        //           setState(() {
+        //             if (isSorting) {
+        //               isSorting = false;
+        //             } else {
+        //               isFiltering = false;
+        //               isSorting = true;
+        //             }
+        //           });
+        //         }),
+        //         child: Text(
+        //           "Sort",
+        //           style: TextStyle(
+        //               color: sort == 0
+        //                   ? Colors.blueGrey
+        //                   : Colors.blue.withOpacity(1),
+        //               fontSize: 12),
+        //         )),
+        //     TextButton(
+        //         onPressed: (() {
+        //           setState(() {
+        //             if (isFiltering) {
+        //               isFiltering = false;
+        //             } else {
+        //               isSorting = false;
+        //               isFiltering = true;
+        //             }
+        //           });
+        //         }),
+        //         child: Text("Filter By",
+        //             style: TextStyle(
+        //                 color: isFliterByHotel ||
+        //                         isFliterByTags ||
+        //                         isFliterBySubscriptions
+        //                     ? Colors.blue
+        //                     : Colors.blueGrey,
+        //                 fontSize: 12)))
+        //   ],
+        // ),
         if (isSorting)
           Container(
             margin: EdgeInsets.only(bottom: 20),

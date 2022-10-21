@@ -1,5 +1,6 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
+import 'package:deaksapp/providers/Slots.dart';
 import 'package:deaksapp/screens/FlushBar/ShowFlushBAr.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 // import 'package:deaksapp/size_config.dart';
@@ -28,36 +29,37 @@ class _AdHocJobsState extends State<AdHocJobs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 500,
-      child: AdHocJobCard(),
-
-      // ListView.builder(
-      //   itemBuilder: ((context, index) {
-      //     return GestureDetector(
-      //       onTap: (() {
-      //         Navigator.pushNamed(context, JobDetailsScreen.routeName,
-      //             arguments: [
-      //               widget.displaySlots[index],
-      //               widget.displaySlots,
-      //             ]);
-      //       }),
-      //       child: AdHocJobCard(
-      //         displaySlot: widget.displaySlots[index],
-      //         displaySlots: widget.displaySlots,
-      //       ),
-      //     );
-      //   }),
-      //   itemCount: widget.displaySlots.length,
-      // ),
+      height: 500,
+      child: ListView.builder(
+        reverse: true,
+        itemBuilder: ((context, index) {
+          return GestureDetector(
+            onTap: (() {
+              Navigator.pushNamed(context, JobDetailsScreen.routeName,
+                  arguments: [
+                    widget.displaySlots[index],
+                    widget.displaySlots,
+                  ]);
+            }),
+            child: AdHocJobCard(
+              displaySlot: widget.displaySlots[index],
+              displaySlots: widget.displaySlots,
+            ),
+          );
+        }),
+        itemCount: widget.displaySlots.length,
+      ),
     );
   }
 }
 
 class AdHocJobCard extends StatefulWidget {
-  // final DisplaySlot displaySlot;
-  // final List<DisplaySlot> displaySlots;
+  final DisplaySlot displaySlot;
+  final List<DisplaySlot> displaySlots;
   const AdHocJobCard({
     super.key,
+    required this.displaySlot,
+    required this.displaySlots,
   });
 
   @override
@@ -67,6 +69,8 @@ class AdHocJobCard extends StatefulWidget {
 class _AdHocJobCardState extends State<AdHocJobCard> {
   bool isSubscribed = false;
   bool _isLoading = false;
+  String status = "Limited";
+  Color color = Colors.red;
   Future<void> applyJob(String slotId) async {
     setState(() {
       _isLoading = true;
@@ -80,7 +84,9 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
           Flushbar(
             margin: EdgeInsets.all(8),
             borderRadius: BorderRadius.circular(5),
-            message: value["message"],
+            message: value == 200
+                ? "Booking Succesfull"
+                : "Something went wrong! Please try again.",
             duration: Duration(seconds: 3),
           )..show(context),
         });
@@ -103,7 +109,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
             title: Text("Confirm"),
             onPressed: () {
               Navigator.pop(context);
-              // applyJob(widget.displaySlot.slotId);
+              applyJob(widget.displaySlot.slotId);
             },
           ),
         ],
@@ -135,6 +141,48 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    if (int.parse(widget.displaySlot.vacancy) > 3) {
+      setState(() {
+        status = "Open";
+        color = Colors.green;
+      });
+    } else if (int.parse(widget.displaySlot.vacancy) -
+            widget.displaySlot.confirmedRequests.length >
+        3) {
+      setState(() {
+        status = "Open";
+        color = Colors.green;
+      });
+    } else if (int.parse(widget.displaySlot.vacancy) -
+            widget.displaySlot.confirmedRequests.length <=
+        0) {
+      setState(() {
+        status = "Waiting List";
+        color = Colors.orange;
+      });
+    } else if (int.parse(widget.displaySlot.release) -
+            int.parse(widget.displaySlot.vacancy) ==
+        widget.displaySlot.waitingListRequests.length) {
+      setState(() {
+        status = "Closed";
+        color = Colors.blue;
+      });
+    } else {
+      setState(() {
+        status = "Limited";
+        color = Colors.red;
+      });
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -170,7 +218,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: Image.network(
-                  "${globals.url}/images/guyg",
+                  "${globals.url}/images/${widget.displaySlot.hotelLogo}",
                   fit: BoxFit.fill,
                 ),
               ),
@@ -180,7 +228,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "\$14 /h",
+                    "\$${widget.displaySlot.payPerHour} /h",
                     style: TextStyle(
                         fontSize: 15,
                         color: Colors.red,
@@ -194,7 +242,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                       ),
                     ),
                     Text(
-                      " \$130",
+                      " \$${widget.displaySlot.totalPay}",
                       style: TextStyle(
                           fontSize: 14,
                           color: Colors.red,
@@ -202,14 +250,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                     )
                   ]),
                   Text(
-                    "02:00 PM to 05:00 PM",
+                    "${widget.displaySlot.startTime} to ${widget.displaySlot.endTime}",
                     style: TextStyle(
                         fontSize: 11,
                         color: Colors.blue,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "27th Wed December",
+                    "${widget.displaySlot.date}",
                     style: TextStyle(fontSize: 11, color: Colors.red),
                   )
                 ],
@@ -221,13 +269,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 6),
                   height: 23,
+                  width: 65,
                   decoration: BoxDecoration(
-                    color: Colors.green,
+                    color: color,
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
                   child: Center(
                     child: Text(
-                      "Waiting List",
+                      status,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 8,
@@ -240,13 +289,33 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                 ),
                 GestureDetector(
                   onTap: (() {
-                    setState(() {
-                      if (isSubscribed) {
-                        isSubscribed = false;
-                      } else {
-                        isSubscribed = true;
-                      }
-                    });
+                    print(isSubscribed);
+                    if (isSubscribed) {
+                      Provider.of<Slots>(context, listen: false)
+                          .unSubscribeOutlet(widget.displaySlot.outletId)
+                          .then((value) => {
+                                if (value == 200)
+                                  {
+                                    print("here"),
+                                    setState(() {
+                                      isSubscribed = false;
+                                    }),
+                                  }
+                              });
+                      isSubscribed = false;
+                    } else {
+                      Provider.of<Slots>(context, listen: false)
+                          .subscribeOutlet(widget.displaySlot.outletId)
+                          .then((value) => {
+                                if (value == 200)
+                                  {
+                                    print("here"),
+                                    setState(() {
+                                      isSubscribed = true;
+                                    })
+                                  }
+                              });
+                    }
                   }),
                   child: Container(
                     child: Icon(
@@ -281,14 +350,14 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Park Royal",
+                      "${widget.displaySlot.hotelName}",
                       style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Pickering, Lime Restaurant",
+                      "${widget.displaySlot.outletName}",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.blueGrey,
@@ -322,7 +391,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                               .getProfile;
                       if (!Provider.of<Auth>(context, listen: false).isAuth) {
                         Navigator.pushNamed(context, SignInScreen.routeName);
-                      } else if (profile["accountStatus"] == "Unauthorized") {
+                      } else if (profile["accountStatus"] == "UNAUTORIZED") {
                         showAlert();
                       } else {
                         askConfirmation();

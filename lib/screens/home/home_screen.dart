@@ -29,16 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isInit = true;
   List<Slot> slots = [];
-  List<DisplaySlot> displaySlotss = [];
-
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
-
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
-  }
+  List<DisplaySlot> displaySlots = [];
 
   @override
   void initState() {
@@ -47,42 +38,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() async {
-    slots = Provider.of<Slots>(context, listen: false).getSlots;
+    if (_isInit) {
+      slots = Provider.of<Slots>(context, listen: false).getSlots;
+      print("homeScreen");
+      displaySlots = [];
+      slots.forEach((slot) => {
+            setState(() {
+              displaySlots.add(DisplaySlot(
+                  confirmedRequests: slot.confirmedRequests,
+                  waitingListRequests: slot.waitingRequests,
+                  vacancy: slot.vacancy,
+                  release: slot.release,
+                  slotId: slot.id,
+                  jobRemarks2: slot.jobRemarks,
+                  jobRemarks1: slot.outlet["jobRemarks"],
+                  outletId: slot.outlet["_id"],
+                  outletName: slot.outlet["outletName"],
+                  outletImages: slot.outlet["outletImages"] ?? [],
+                  paymentDetails: slot.outlet["payment"] ?? "",
+                  groomingImages: slot.outlet["groomingImages"] ?? [],
+                  howToImages: slot.outlet["howToImages"] ?? [],
+                  adminNumber: slot.outlet["outletAdminNo"] ?? "",
+                  youtubeLink: slot.outlet["youtubeLink"] ?? "",
+                  hotelId: slot.hotel["_id"] ?? "",
+                  hotelName: slot.hotel["hotelName"] ?? "",
+                  hotelLogo: slot.hotel["hotelLogo"] ?? "",
+                  googleMapLink: slot.hotel["googleMapLink"] ?? "",
+                  appleMapLink: slot.hotel["appleMapLink"] ?? "",
+                  date: slot.date,
+                  startTime: slot.startTime,
+                  endTime: slot.endTime,
+                  payPerHour: slot.hourlyPay,
+                  totalPay: slot.totalPayForSlot,
+                  priority: slot.priority));
+            }),
+          });
+    }
 
-    displaySlotss = [];
-    slots.forEach((slot) => {
-          setState(() {
-            displaySlotss.add(DisplaySlot(
-                slotId: slot.id,
-                jobRemarks: getOulet(slot.outletId).jobRemarks,
-                outletId: slot.outletId,
-                outletName: slot.outletName,
-                outletImages: getOulet(slot.outletId).outletImages ?? [],
-                paymentDetails: getOulet(slot.outletId).paymentDescription,
-                groomingImages: getOulet(slot.outletId).groomingImages ?? [],
-                hoeToImages: getOulet(slot.outletId).howToImages ?? [],
-                adminNumber: getOulet(slot.outletId).adminNumber,
-                youtubeLink: getOulet(slot.outletId).youtubeLink,
-                hotelId: slot.hotelId,
-                hotelName: slot.hotelName,
-                hotelLogo: getHotel(slot.hotelId).logo ?? "",
-                googleMapLink: getHotel(slot.hotelId).googleMapLink ?? "",
-                appleMapLink: getHotel(slot.hotelId).appleMapLink ?? "",
-                date: slot.date,
-                startTime: slot.startTime,
-                endTime: slot.endTime,
-                payPerHour: slot.payPerHour,
-                totalPay: slot.totalPay,
-                slotStatus: slot.slotStatus,
-                priority: slot.priority));
-          }),
-        });
     _isInit = false;
 
     ////print("HomeScreen1111");
 
     ////print(_isInit);
     super.didChangeDependencies();
+  }
+
+  void searchRefrsh() {
+    print("hello");
+    _isInit = true;
+    didChangeDependencies();
   }
 
   Future<void> _refreshProducts(BuildContext context) async {
@@ -132,9 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      didChangeDependencies();
-    });
     SizeConfig().init(context);
     ////print("rebuilding");
     return
@@ -142,12 +143,15 @@ class _HomeScreenState extends State<HomeScreen> {
         Stack(
       children: [
         Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () => _refreshProducts(context),
-            child: Body(
-              displaySlots: displaySlotss,
-            ),
-          ),
+          body: Consumer<Slots>(builder: (context, value, child) {
+            return RefreshIndicator(
+              onRefresh: () => _refreshProducts(context),
+              child: Body(
+                refresh: (() => searchRefrsh()),
+                displaySlots: displaySlots,
+              ),
+            );
+          }),
           // bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
         ),
         Positioned(

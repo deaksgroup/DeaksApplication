@@ -1,8 +1,11 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
+import 'package:deaksapp/providers/Jobs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:deaksapp/globals.dart' as globals;
+import 'package:provider/provider.dart';
 import '../../size_config.dart';
 
 class Body extends StatelessWidget {
@@ -50,12 +53,21 @@ class Body extends StatelessWidget {
 class JobCard extends StatelessWidget {
   final DisplaySlot displaySlot;
 
-  const JobCard({super.key, required this.displaySlot});
+  const JobCard({
+    super.key,
+    required this.displaySlot,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        boxShadow: [
+          new BoxShadow(
+            color: Colors.grey.shade400.withOpacity(.3),
+            blurRadius: 5.0,
+          ),
+        ],
         color: Colors.white,
         border: Border.all(
           color: Color.fromRGBO(
@@ -88,12 +100,12 @@ class JobCard extends StatelessWidget {
             ),
             Container(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "\$${displaySlot.payPerHour} /h",
+                    "\$${displaySlot.payPerHour}",
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 17,
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
                   ),
@@ -101,18 +113,25 @@ class JobCard extends StatelessWidget {
                     Text(
                       "ExpectedPay | ",
                       style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
+                          fontSize: 12,
+                          // color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "\$${displaySlot.totalPay}",
                       style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 17,
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
                     )
                   ]),
+                  Text(
+                    "${displaySlot.date}",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold),
+                  ),
                   Text(
                     "${displaySlot.startTime} to ${displaySlot.endTime}",
                     style: TextStyle(
@@ -120,13 +139,6 @@ class JobCard extends StatelessWidget {
                         color: Colors.blue,
                         fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "${displaySlot.date}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blueGrey,
-                        fontWeight: FontWeight.bold),
-                  )
                 ],
               ),
             )
@@ -161,12 +173,30 @@ class JobCard extends StatelessWidget {
                     Text(
                       "${displaySlot.outletName}",
                       style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           color: Colors.blueGrey,
                           fontWeight: FontWeight.w200),
                     )
                   ],
                 ),
+                ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                    onPressed: (() {
+                      Provider.of<Jobs>(context, listen: false)
+                          .cancelJob(displaySlot.slotId)
+                          .then((value) => {
+                                Flushbar(
+                                  margin: EdgeInsets.all(8),
+                                  borderRadius: BorderRadius.circular(5),
+                                  message: value == 200
+                                      ? "Job Canceled Succesfully"
+                                      : "Something went wrong! Please contact our support.",
+                                  duration: Duration(seconds: 3),
+                                )..show(context),
+                              });
+                    }),
+                    child: Text("Cancel"))
               ],
             ))
       ]),

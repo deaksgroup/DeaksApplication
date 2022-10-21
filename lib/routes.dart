@@ -7,6 +7,7 @@ import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
 import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
+import 'package:deaksapp/screens/shareJobScreen/shareJobScreen.dart';
 import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
 
 import 'package:flutter/widgets.dart';
@@ -44,6 +45,9 @@ final Map<String, WidgetBuilder> routes = {
   NewPasswordScreen.routeName: (context) => NewPasswordScreen(),
   DeleteAccount.routeName: (context) => DeleteAccount(),
 
-  NotoficationPage.routeName: (context) => NotoficationPage(),
-  Subscriptions.routeName: (context) => Subscriptions()
+  NotoficationPage.routeName: (context) => NotoficationPage(
+        payload: {},
+      ),
+  Subscriptions.routeName: (context) => Subscriptions(),
+  shreJobDetailsScreen.routeName: (context) => shreJobDetailsScreen()
 };

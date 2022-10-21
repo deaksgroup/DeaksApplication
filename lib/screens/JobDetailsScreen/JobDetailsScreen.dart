@@ -90,7 +90,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             Flushbar(
               margin: EdgeInsets.all(8),
               borderRadius: BorderRadius.circular(5),
-              message: value["message"],
+              message: value == 200
+                  ? "Booking Succesfull"
+                  : "Something went wrong! Please try again.",
               duration: Duration(seconds: 3),
             )..show(context),
             setState(() {
@@ -106,7 +108,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ModalRoute.of(context)!.settings.arguments as List<dynamic>;
     List<DisplaySlot> displaySlots = args[1] as List<DisplaySlot>;
     DisplaySlot displaySlot = args[0] as DisplaySlot;
-    //print(displaySlots);
+    print(displaySlots);
     return SafeArea(
       bottom: false,
       child: Scaffold(
@@ -137,7 +139,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           .getProfile;
                   if (!Provider.of<Auth>(context, listen: false).isAuth) {
                     Navigator.pushNamed(context, SignInScreen.routeName);
-                  } else if (profile["accountStatus"] == "Unauthorized") {
+                  } else if (profile["accountStatus"] == "UNAUTORIZED") {
                     showAlert();
                   } else {
                     askConfirmation(displaySlot.slotId);
@@ -154,7 +156,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           ),
                         ),
                       )
-                    : Text("${displaySlot.slotStatus}")),
+                    : Text("Book Now")),
           ),
         ),
       ),

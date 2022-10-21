@@ -21,6 +21,16 @@ String ButtonText = "Edit";
 
 class _MyDetailsState extends State<MyDetails> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.grey.withOpacity(.1),

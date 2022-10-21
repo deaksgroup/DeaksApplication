@@ -48,9 +48,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Deaks App wants to open your camera.</string>
+	<string>Allow access to the camera to take pictures to upload your details</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Deaks App wants to access your gallery.</string>
+	<string>Allow access to photos to upload photos from your library.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -37,11 +37,13 @@ class DiscountBanner extends StatelessWidget {
             ],
           ),
         ),
-        // IconBtnWithCounter(
-        //   svgSrc: "assets/icons/Bell.svg",
-        //   numOfitem: 3,
-        //   press: () {},
-        // ),
+        IconBtnWithCounter(
+          svgSrc: "assets/icons/Bell.svg",
+          numOfitem: 3,
+          press: () {
+            Navigator.pushNamed(context, NotoficationPage.routeName);
+          },
+        ),
       ]),
     );
   }

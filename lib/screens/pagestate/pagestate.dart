@@ -1,7 +1,10 @@
 import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/profile/profile_screen.dart';
+import 'package:deaksapp/screens/shareJobScreen/shareJobScreen.dart';
 import 'package:deaksapp/size_config.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -20,6 +23,7 @@ import '../../providers/Outlets.dart';
 import '../../providers/Profile.dart';
 import '../../providers/Slot.dart';
 import '../../providers/Slots.dart';
+import '../notofications/NotoficationPage.dart';
 import '../sign_in/sign_in_screen.dart';
 
 class PageState extends StatefulWidget {
@@ -31,7 +35,9 @@ class PageState extends StatefulWidget {
 }
 
 class _PageStateState extends State<PageState> {
-  var _isInit = false;
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+
+  var _isInit = true;
   var _isLoading = false;
   List<DisplaySlot> displaySlots = [];
   List<Slot> slots = [];
@@ -47,15 +53,95 @@ class _PageStateState extends State<PageState> {
     return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
   }
 
+  // This widget is the root of your application.
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      final Uri uri = dynamicLinkData.link;
+      final String id = uri.toString().split("/").last ?? "";
+      print(id);
+      final queryParams = uri.queryParameters;
+
+      if (Provider.of<Auth>(context, listen: false).isAuth) {
+        Provider.of<Slots>(context, listen: false)
+            .fetchSingleSlot(id)
+            .then((value) {
+          Navigator.of(context).pushNamed(shreJobDetailsScreen.routeName);
+        });
+      } else {
+        Navigator.of(context).pushNamed(SignInScreen.routeName);
+      }
+    }).onError((error) {
+      print('onLink error');
+      print(error.message);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    initDynamicLinks();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      print("foreground bakc");
+      Map<dynamic, dynamic> notify = {
+        "title": message.notification?.title ?? "",
+        "body": message.notification?.body ?? "",
+        "slotId": message.data["slotId"] ?? "",
+        "tokenNumber": message.data["tokenNumber"] ?? "",
+        "action1": message.data["action1"] ?? "",
+        "action2": message.data["action2"] ?? ""
+      };
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => NotoficationPage(payload: notify)));
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
+      if (message != null) {
+        Map<dynamic, dynamic> notify = {
+          "title": message.notification?.title ?? "",
+          "body": message.notification?.body ?? "",
+          "slotId": message.data["slotId"] ?? "",
+          "tokenNumber": message.data["tokenNumber"] ?? "",
+          "action1": message.data["action1"] ?? "",
+          "action2": message.data["action2"] ?? ""
+        };
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NotoficationPage(payload: notify)));
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      print("foreground");
+
+      if (message.notification != null) {
+        Map<dynamic, dynamic> notify = {
+          "title": message.notification?.title ?? "",
+          "body": message.notification?.body ?? "",
+          "slotId": message.data["slotId"] ?? "",
+          "tokenNumber": message.data["tokenNumber"] ?? "",
+          "action1": message.data["action1"] ?? "",
+          "action2": message.data["action2"] ?? ""
+        };
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NotoficationPage(payload: notify)));
+      }
+    });
   }
+
+  //
 
   @override
   void didChangeDependencies() async {
     Map<String, String> searchQuery = {
-      "search": "",
+      "shiftName": "",
       "sortType": "All Jobs",
       "Hotels": "",
       "Tags": "",
@@ -63,7 +149,7 @@ class _PageStateState extends State<PageState> {
       "limit": "20"
     };
     if (_isInit) {
-      ////print(_isInit);
+      print(_isInit);
       setState(() {
         _isLoading = true;
       });
@@ -73,133 +159,15 @@ class _PageStateState extends State<PageState> {
                 Provider.of<Slots>(context, listen: false)
                     .fetchAndSetSlots(searchQuery)
                     .then((value) => {
-                          Provider.of<Outlets>(context, listen: false)
-                              .fetchAndSetOulets()
-                              .then((value) => {
-                                    Provider.of<Hotels>(context, listen: false)
-                                        .fetchAndSetHotels()
-                                        .then((value) => {
-                                              slots = Provider.of<Slots>(
-                                                      context,
-                                                      listen: false)
-                                                  .getSlots,
-                                              slots.forEach((slot) => {
-                                                    //////print("222"),
-                                                    //////print(slot),
-                                                    //////print("333"),
-                                                    displaySlots.add(DisplaySlot(
-                                                        slotId: slot.id,
-                                                        jobRemarks:
-                                                            getOulet(slot.outletId)
-                                                                .jobRemarks,
-                                                        outletId: slot.outletId,
-                                                        outletName:
-                                                            slot.outletName,
-                                                        outletImages: getOulet(slot.outletId)
-                                                                .outletImages ??
-                                                            [],
-                                                        paymentDetails:
-                                                            getOulet(slot.outletId)
-                                                                .paymentDescription,
-                                                        groomingImages:
-                                                            getOulet(slot.outletId).groomingImages ??
-                                                                [],
-                                                        hoeToImages: getOulet(slot.outletId)
-                                                                .howToImages ??
-                                                            [],
-                                                        adminNumber:
-                                                            getOulet(slot.outletId)
-                                                                .adminNumber,
-                                                        youtubeLink:
-                                                            getOulet(slot.outletId)
-                                                                .youtubeLink,
-                                                        hotelId: slot.hotelId,
-                                                        hotelName: slot.hotelName,
-                                                        hotelLogo: getHotel(slot.hotelId).logo ?? "",
-                                                        googleMapLink: getHotel(slot.hotelId).googleMapLink ?? "",
-                                                        appleMapLink: getHotel(slot.hotelId).appleMapLink ?? "",
-                                                        date: slot.date,
-                                                        startTime: slot.startTime,
-                                                        endTime: slot.endTime,
-                                                        payPerHour: slot.payPerHour,
-                                                        totalPay: slot.totalPay,
-                                                        slotStatus: slot.slotStatus,
-                                                        priority: slot.priority)),
-                                                  }),
-                                              ////print("pagestate"),
-                                              ////print(displaySlots),
-                                            })
-                                        .then((value) => {
-                                              Provider.of<Jobs>(context,
-                                                      listen: false)
-                                                  .fetchAndSetJobs()
-                                                  .then((value) => {
-                                                        jobsList =
-                                                            Provider.of<Jobs>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .getJobs,
-                                                        //////print(jobsList),
-                                                        jobsList
-                                                            .forEach((job) => {
-                                                                  //////print("222"),
-                                                                  //////print(job),
-                                                                  //////print("333"),
-                                                                  displayJobSlots.add(DisplaySlot(
-                                                                      slotId: job
-                                                                          .id,
-                                                                      jobRemarks: getOulet(job.outletId)
-                                                                          .jobRemarks,
-                                                                      outletId: job
-                                                                          .outletId,
-                                                                      outletName: job
-                                                                          .outletName,
-                                                                      outletImages:
-                                                                          getOulet(job.outletId).outletImages ??
-                                                                              [],
-                                                                      paymentDetails: getOulet(job.outletId)
-                                                                          .paymentDescription,
-                                                                      groomingImages:
-                                                                          getOulet(job.outletId).groomingImages ??
-                                                                              [],
-                                                                      hoeToImages:
-                                                                          getOulet(job.outletId).howToImages ??
-                                                                              [],
-                                                                      adminNumber:
-                                                                          getOulet(job.outletId)
-                                                                              .adminNumber,
-                                                                      youtubeLink:
-                                                                          getOulet(job.outletId)
-                                                                              .youtubeLink,
-                                                                      hotelId: job
-                                                                          .hotelId,
-                                                                      hotelName:
-                                                                          job.hotelName,
-                                                                      hotelLogo: getHotel(job.hotelId).logo ?? "",
-                                                                      googleMapLink: getHotel(job.hotelId).googleMapLink ?? "",
-                                                                      appleMapLink: getHotel(job.hotelId).appleMapLink ?? "",
-                                                                      date: job.date,
-                                                                      startTime: job.startTime,
-                                                                      endTime: job.endTime,
-                                                                      payPerHour: job.payPerHour,
-                                                                      totalPay: job.totalPay,
-                                                                      slotStatus: job.slotStatus,
-                                                                      priority: job.priority)),
-                                                                }),
-                                                        setState(() {
-                                                          _isLoading = false;
-                                                        }),
-                                                        //////print("5"),
-                                                      }),
-                                            })
-                                  })
+                          setState(() {
+                            _isLoading = false;
+                          }),
+                          print(displaySlots.length)
                         }),
               });
     }
     _isInit = false;
-    ////print("HomeScreen");
-    ////print(_isInit);
+
     super.didChangeDependencies();
   }
 

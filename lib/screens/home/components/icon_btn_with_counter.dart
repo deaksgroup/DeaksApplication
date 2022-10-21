@@ -25,18 +25,17 @@ class IconBtnWithCounter extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Container(
-            padding: EdgeInsets.all(getProportionateScreenWidth(12)),
-            // height: getProportionateScreenWidth(46),
-            // width: getProportionateScreenWidth(46),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(1),
-              shape: BoxShape.circle,
-            ),
-            // child: SvgPicture.asset(svgSrc),
-          ),
-          if (numOfitem != 0)
+              padding: EdgeInsets.all(getProportionateScreenWidth(12)),
+              // height: getProportionateScreenWidth(46),
+              // width: getProportionateScreenWidth(46),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.notifications)),
+          if (0 != 0)
             Positioned(
-              top: -3,
+              top: 0,
               right: 0,
               child: Container(
                 height: getProportionateScreenWidth(17),

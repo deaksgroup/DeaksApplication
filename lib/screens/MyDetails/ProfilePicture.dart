@@ -67,7 +67,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                       color: Color.fromARGB(255, 159, 222, 249),
                       border: Border.all(width: 2, color: Colors.white),
                       borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+                        Radius.circular(20),
                       ),
                     ),
                     child: Center(

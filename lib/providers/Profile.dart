@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:deaksapp/providers/Subscriptions.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -77,9 +79,13 @@ class Profile {
 }
 
 class ProfileFetch with ChangeNotifier {
-  File profilePic = new File("");
+  File profilePic = File("");
+  List<File> attaireImages = [];
+  List<String> attaireImagesURLKeys = [];
   final String token;
+  String profileURlKey = "";
   Map<String, String> profile;
+  List<Map<dynamic, dynamic>> subscriptions = [];
   ProfileFetch({required this.profile, required this.token});
 
   Map<String, String> get getProfile {
@@ -90,15 +96,47 @@ class ProfileFetch with ChangeNotifier {
     return profilePic;
   }
 
+  String getProfileUrlKey() {
+    return profileURlKey;
+  }
+
+  List<String> getAttaireImagesUrlKey() {
+    return attaireImagesURLKeys;
+  }
+
+  List<File> getAttaireiamges() {
+    return attaireImages;
+  }
+
+  void setProfilePic(File profilepIc) {
+    profilePic = profilepIc;
+  }
+
+  void setAttaireIamges(List<File> attaImages) {
+    attaireImages = attaImages;
+  }
+
+  List<Map<dynamic, dynamic>> get getSubscriptions {
+    return subscriptions;
+  }
+
   Future<void> fetchAndSetProfile() async {
+    print("fetchAnd SetPRofile");
     final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('profilePicPath')) {
+    if (prefs.containsKey('profilePicPath')) {
       final extractedUserData =
           await jsonDecode(prefs.getString('profilePicPath').toString())
               as Map<dynamic, dynamic>;
       final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
-      profilePic = new File(userProfilePath["profilePicPath"]);
+      profilePic = File(userProfilePath["profilePicPath"]);
       notifyListeners();
+    }
+    if (prefs.containsKey('attaireImagesPaths')) {
+      final extractedUserData =
+          await jsonDecode(prefs.getString('attaireImagesPaths').toString())
+              as List<dynamic>;
+      attaireImages = List<File>.from(extractedUserData);
+      // attaireImages = File(userProfilePath["profilePicPath"]);
     }
 
     log("profielfetch");
@@ -112,26 +150,39 @@ class ProfileFetch with ChangeNotifier {
 
     try {
       //404
-      response = await dio.get("${globals.url}/profile",
+      response = await dio.get("${globals.url}/getUserInfo",
           options: Options(headers: headers));
       // print(response.data.toString());
 
       final extractedData = response.data;
+      if (response.statusCode != 200) {
+        return;
+      }
       if (extractedData == null) {
         return;
       }
-      // ////print(extractedData);
+      print(extractedData);
       // ////print(extractedData["result"]);
       // ////print("Profileftech...");
       Map<dynamic, dynamic> extractedProfile =
           Map<dynamic, dynamic>.from(extractedData);
-      // ////print(extractedProfile);
+      print(response.data);
       //  Map<dynamic, dynamic> e = {"id": 3};
       Map<String, String> convertedProfile = extractedProfile
           .map((key, value) => MapEntry(key.toString(), value.toString()));
+      subscriptions =
+          List<Map<dynamic, dynamic>>.from(extractedProfile["subscriptions"]) ??
+              [];
+      print(subscriptions);
+
       profile = convertedProfile;
+      profileURlKey = convertedProfile["profilePicture"] ?? "";
+
+      attaireImagesURLKeys = [];
+      // List<String>.from(convertedProfile["attirePictures"]);
+      //     List<dynamic>.from(convertedProfile["attaireImages"]?? ));
       ////print(convertedProfile);
-      notifyListeners();
+      // notifyListeners();
     } on DioError catch (e) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -149,19 +200,37 @@ class ProfileFetch with ChangeNotifier {
 
   Future<Map<dynamic, dynamic>> submitProfile(Map<String, dynamic>? userData,
       File? profilePicture, List<File> attaireImges) async {
+    print(".........");
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('profilePicPath')) {
+      final extractedUserData =
+          await jsonDecode(prefs.getString('profilePicPath').toString())
+              as Map<dynamic, dynamic>;
+      final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
+      profilePic = File(userProfilePath["profilePicPath"]);
+    }
+
+    if (prefs.containsKey('attaireImagesPaths')) {
+      final extractedUserData =
+          await jsonDecode(prefs.getString('attaireImagesPaths').toString())
+              as Map<String, dynamic>;
+      // attaireImages = List<File>.from(extractedUserData);
+      // attaireImages = File(userProfilePath["profilePicPath"]);
+    }
     profilePic = profilePic;
     var dio = Dio();
 
     Response response;
     Map<String, String> convertedUserData = userData!
         .map((key, value) => MapEntry(key.toString(), value.toString()));
+
     FormData formData = FormData.fromMap({
       "data": convertedUserData,
       "profile": await MultipartFile.fromFile(
-        // profilePicture?.path != null ? profilePicture!.path : "",
-        // filename: profilePicture?.path.toString().split("/").last,
-        attaireImges[0].path,
-        filename: attaireImges[0].path.toString().split("/").last,
+        profilePicture?.path != null ? profilePicture!.path : "",
+        filename: profilePicture?.path.toString().split("/").last,
+        // attaireImges[0].path,
+        // filename: attaireImges[0].path.toString().split("/").last,
         contentType: MediaType('image', 'jpg'),
       ),
       "attaire": await MultipartFile.fromFile(
@@ -186,33 +255,28 @@ class ProfileFetch with ChangeNotifier {
 
     // Map<String, String> convertedUserData = userData!
     //     .map((key, value) => MapEntry(key.toString(), value.toString()));
-
+    print("not reaching");
     try {
       //404
-      response = await dio.patch("http://localhost:5001/api/updateUserInfo",
+      response = await dio.patch("${globals.url}/updateUserInfo",
           data: formData, options: Options(headers: headers));
       // ////print(response.data.toString());
       print("here");
       final extractedData = response.data;
-      if (extractedData == null || extractedData["result"] == null) {
+      if (extractedData == null) {
         return extractedData;
       }
-      print("not reaching");
-      // ////print(extractedData);
-      // ////print(extractedData["result"]);
-      ////print("ProfileftechFterAubmission...");
+      print(extractedData);
       Map<dynamic, dynamic> extractedProfile =
           Map<dynamic, dynamic>.from(extractedData);
       ////print(extractedData);
-      Map<dynamic, dynamic> extractedProfileDetails =
-          Map<dynamic, dynamic>.from(extractedProfile["result"]);
-      // ////print(extractedData);
-      ////print("Hello");
-      // ////print(extractedProfile["result"]);
-      ////print("Hello");
-      //  Map<dynamic, dynamic> e = {"id": 3};
-      Map<String, String> convertedProfile = extractedProfileDetails
+      // Map<dynamic, dynamic> extractedProfileDetails =
+      //     Map<dynamic, dynamic>.from(extractedProfile["result"]);
+
+      Map<String, String> convertedProfile = extractedProfile
           .map((key, value) => MapEntry(key.toString(), value.toString()));
+      print(".........");
+      print(".........");
       profile = convertedProfile;
       notifyListeners();
       return extractedData;
@@ -231,6 +295,20 @@ class ProfileFetch with ChangeNotifier {
     }
 
     return extractedData;
+  }
+
+  Future<void> cancelSubscription(String outletId) async {
+    Map<dynamic, dynamic> extractedData = {};
+    var dio = Dio();
+    Response response;
+
+    Map<String, dynamic> headers = {
+      "secret_token": token,
+    };
+    try {
+      response = await dio.patch("${globals.url}/profile",
+          options: Options(headers: headers));
+    } on DioError catch (e) {}
   }
 
   Future<void> subscribe(String outletId) async {

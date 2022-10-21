@@ -34,6 +34,7 @@ class NotificationFetch with ChangeNotifier {
 
   Future<Map<dynamic, dynamic>> sendNotificationResponse(
       Map<String, String> responseMessage) async {
+    print("notification response");
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;

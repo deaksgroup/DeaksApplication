@@ -27,64 +27,6 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  Future<void> share() async {
-    await FlutterShare.share(
-        title: 'Share this job!',
-        linkUrl: 'https://deaksapp.page.link/jobs?id=2',
-        chooserTitle: 'Example Chooser Title');
-  }
-
-  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
-  @override
-  void initState() {
-    super.initState();
-    initDynamicLinks();
-  }
-
-  Future<void> initDynamicLinks() async {
-    dynamicLinks.onLink.listen((dynamicLinkData) {
-      final Uri uri = dynamicLinkData.link;
-      final queryParams = uri.queryParameters;
-      if (queryParams.isNotEmpty) {
-        String? productId = queryParams["id"];
-        print(productId);
-        print(dynamicLinkData);
-
-        // Navigator.pushNamed(context, dynamicLinkData.link.path,
-        //     arguments: {"productId": int.parse(productId!)});
-      } else {
-        // Navigator.pushNamed(
-        //   context,
-        //   dynamicLinkData.link.path,
-        // );
-        print("elese");
-        print(dynamicLinkData);
-      }
-    }).onError((error) {
-      print('onLink error');
-      print(error.message);
-    });
-  }
-
-  File profilePic = new File("");
-
-  Future<void> loadimage() async {
-    print("loadimage");
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('profilePicPath')) {
-      print("image");
-      final extractedUserData =
-          await jsonDecode(prefs.getString('profilePicPath').toString())
-              as Map<dynamic, dynamic>;
-      final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
-      profilePic = await File(userProfilePath["profilePicPath"]);
-      setState(() {
-        print(userProfilePath["profilePicPath"]);
-        // profilePic = await  File(userProfilePath["profilePicPath"]);
-      });
-    }
-  }
-
   Future<void> openlink(String link) async {
     var androidLink = Uri.parse(link);
 
@@ -116,16 +58,6 @@ class _BodyState extends State<Body> {
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
-          GestureDetector(
-              onTap: () {
-                share();
-                // String generatedDeepLink =
-                //     await FirebaseDynamicLinkService.createdynamiclink(
-                //         false, "67676767");
-
-                // log(generatedDeepLink);
-              },
-              child: Icon(Icons.share)),
           ProfileMenu(
             text: "My Info",
             icon: "assets/icons/User Icon.svg",

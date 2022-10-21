@@ -6,6 +6,7 @@ import 'package:deaksapp/providers/Notification.dart';
 import 'package:deaksapp/providers/Outlets.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
+import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
 import 'package:deaksapp/screens/home/home_screen.dart';
@@ -14,7 +15,6 @@ import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
-import 'package:deaksapp/utils/notification_service.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -24,6 +24,7 @@ import 'package:deaksapp/routes.dart';
 import 'package:deaksapp/screens/profile/profile_screen.dart';
 import 'package:deaksapp/screens/splash/splash_screen.dart';
 import 'package:deaksapp/theme.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:provider/provider.dart';
@@ -39,11 +40,7 @@ void main() async {
 }
 
 Future<void> backgroundHandler(RemoteMessage message) async {
-  // await notificationService.showLocalNotification(
-  //     id: 0,
-  //     title: "Drink Water",
-  //     body: "Time to drink some water!",
-  //     payload: "You just took water! Huurray!");
+  print("background");
 }
 
 class MyApp extends StatefulWidget {
@@ -52,47 +49,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late final NotificationService notificationService;
-  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
-  // This widget is the root of your application.
-  Future<void> initDynamicLinks() async {
-    dynamicLinks.onLink.listen((dynamicLinkData) {
-      final Uri uri = dynamicLinkData.link;
-      final queryParams = uri.queryParameters;
-      if (queryParams.isNotEmpty) {
-        String? productId = queryParams["id"];
-
-        // Navigator.pushNamed(context, dynamicLinkData.link.path,
-        //     arguments: {"productId": int.parse(productId!)});
-      } else {
-        Navigator.pushNamed(
-          context,
-          dynamicLinkData.link.path,
-        );
-      }
-    }).onError((error) {
-      print('onLink error');
-      print(error.message);
-    });
-  }
-
-  void listenToNotificationStream() =>
-      notificationService.behaviorSubject.listen((payload) {
-        print(payload);
-        print("1111111");
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => MySecondScreen(payload: payload)));
-      });
-
   @override
   void initState() {
     // TODO: implement initState
-    notificationService = NotificationService();
-    listenToNotificationStream();
-    notificationService.initializePlatformNotifications();
-    initDynamicLinks();
+
     FirebaseMessaging.instance
         .requestPermission(alert: true, badge: true, sound: true)
         .then((value) {
@@ -111,29 +71,7 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.instance.getAPNSToken().then((APNStoken) {
       // //print(APNStoken);
     });
-    FirebaseMessaging.instance.getInitialMessage().then((message) async {
-      if (message != null) {}
-    });
 
-    ///forground work
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      await notificationService.showLocalNotification(
-          id: 0,
-          title: "Drink Water",
-          body: "Time to drink some water!",
-          payload: "You just took water! Huurray!");
-      if (message.notification != null) {}
-    });
-
-    ///When the app is in background but opened and user taps
-    ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      await notificationService.showLocalNotification(
-          id: 0,
-          title: "Drink Water",
-          body: "Time to drink some water!",
-          payload: "You just took water! Huurray!");
-    });
     super.initState();
   }
 
@@ -198,21 +136,20 @@ class _MyAppState extends State<MyApp> {
                 theme: theme(),
                 // home: SplashScreen(),
                 // We use routeName so that we dont need to remember the name
-                home: PageState(),
+                home: auth.isAuth
+                    ? PageState()
+                    : FutureBuilder(
+                        future: auth.tryAutoLogin(),
+                        builder: (ctx, authResultSnapshot) =>
+                            authResultSnapshot.connectionState ==
+                                    ConnectionState.waiting
+                                ? SplashScreen()
+                                : PageState(),
+                      ),
 
                 // ProfileScreen(),
                 // MyDetails(),
 
-                // auth.isAuth
-                //     ? PageState()
-                //     : FutureBuilder(
-                //         future: auth.tryAutoLogin(),
-                //         builder: (ctx, authResultSnapshot) =>
-                //             authResultSnapshot.connectionState ==
-                //                     ConnectionState.waiting
-                //                 ? SplashScreen()
-                //                 : PageState(),
-                //       ),
                 // initialRoute: PageState(),
                 routes: routes,
               ))),

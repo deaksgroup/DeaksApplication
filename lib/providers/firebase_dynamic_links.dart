@@ -8,7 +8,7 @@ class FirebaseDynamicLinkService {
 
     final DynamicLinkParameters parameters = DynamicLinkParameters(
         uriPrefix: 'https://deaksapp.page.link',
-        link: Uri.parse('https://deaksapp.page.link/jobs?id=${keyString}'),
+        link: Uri.parse('https://deaksapp.page.link/jobs/${keyString}'),
         androidParameters: AndroidParameters(
           packageName: 'com.deaksapplication.deaks_applications',
           minimumVersion: 10,

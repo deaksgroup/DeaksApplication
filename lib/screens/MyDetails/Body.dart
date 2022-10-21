@@ -27,6 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../size_config.dart';
 import "../../globals.dart" as MediaType;
+import 'package:deaksapp/globals.dart' as globals;
 
 class Body extends StatefulWidget {
   final VoidCallback press;
@@ -38,11 +39,17 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  GlobalKey<FormBuilderState> _formKeyBuilder = GlobalKey<FormBuilderState>();
+//  _formKeyBuilder = GlobalKey<FormBuilderState>();
   File? image;
   List<File> attireImages = [];
+  String profileUrlKey = "";
+  List<String> attaaireImageUrlKeys = [];
+  Map<String, String> profile = {};
 
   bool isInIt = true;
   bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,13 +57,32 @@ class _BodyState extends State<Body> {
 
   @override
   void didChangeDependencies() async {
+    if (isInIt) {
+      setState(() {
+        image = Provider.of<ProfileFetch>(context, listen: false)
+            .getProfilePicture();
+        profileUrlKey = Provider.of<ProfileFetch>(context, listen: false)
+            .getProfileUrlKey();
+        attaaireImageUrlKeys = Provider.of<ProfileFetch>(context, listen: false)
+            .getAttaireImagesUrlKey();
+        attireImages = Provider.of<ProfileFetch>(context, listen: false)
+            .getAttaireiamges();
+
+        profile = Provider.of<ProfileFetch>(context, listen: false).getProfile;
+        print("111");
+        print(profile);
+        print("111");
+      });
+    }
+
+    isInIt = false;
     super.didChangeDependencies();
   }
 
   bool autoValidate = true;
   bool readOnly = false;
   bool showSegmentedControl = true;
-  final _formKey = GlobalKey<FormBuilderState>();
+
   bool _ageHasError = false;
   bool _dobHasError = false;
   bool _genderHasError = false;
@@ -256,6 +282,8 @@ class _BodyState extends State<Body> {
         setState(() {
           print("setState");
           image = newImage;
+          Provider.of<ProfileFetch>(context, listen: false)
+              .setProfilePic(newImage);
         });
       }
     } on PlatformException catch (e) {
@@ -276,10 +304,23 @@ class _BodyState extends State<Body> {
 
           final File newImage =
               await File(image.path).copy('${path.path}/$baseName');
+
           setState(() {
             attireImages.add(newImage);
+            Provider.of<ProfileFetch>(context, listen: false)
+                .setAttaireIamges(attireImages);
           });
+          Provider.of<ProfileFetch>(context, listen: false)
+              .setAttaireIamges(attireImages);
         });
+        final prefs = await SharedPreferences.getInstance();
+        final attaireImagesPaths = json.encode(
+          {
+            'attaireImagesPaths': attireImages,
+          },
+        );
+        await prefs.setString('attaireImagesPaths', attaireImagesPaths);
+        print(attireImages);
       }
     } on PlatformException catch (e) {
       print("Failed to pick image : $e");
@@ -305,19 +346,19 @@ class _BodyState extends State<Body> {
         .then((value) => {
               ////print("insideForm"),
               ////print(value),
-              Flushbar(
-                margin: EdgeInsets.all(8),
-                borderRadius: BorderRadius.circular(5),
-                message: value["message"],
-                duration: Duration(seconds: 3),
-              )..show(context),
+              // Flushbar(
+              //   margin: EdgeInsets.all(8),
+              //   borderRadius: BorderRadius.circular(5),
+              //   message: value["message"],
+              //   duration: Duration(seconds: 3),
+              // )..show(context),
               setState(() {
                 isLoading = false;
               })
             });
   }
 
-  void _onChanged(dynamic val) => debugPrint(val.toString());
+  // void _onChanged(dynamic val) => debugPrint(val.toString());
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -327,8 +368,6 @@ class _BodyState extends State<Body> {
         institutes.where((country) => seen.add(country)).toList();
     List<String> uniqueStatus =
         institutes.where((country) => seen.add(country)).toList();
-    Map<String, String> profile =
-        Provider.of<ProfileFetch>(context, listen: false).getProfile;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 17),
@@ -337,7 +376,7 @@ class _BodyState extends State<Body> {
           height: 30,
         ),
         Container(
-          child: image != null
+          child: image!.isAbsolute
               ? ProfilePicture(image: image!, onReset: onReset)
               : GestureDetector(
                   onTap: () => onReset(),
@@ -364,12 +403,19 @@ class _BodyState extends State<Body> {
                             // borderRadius: BorderRadius.all(
                             //   Radius.circular(15),
                             // ),
-                            child: Image.asset(
-                              "assets/images/Profile Image.png",
-                              width: 95,
-                              height: 95,
-                              fit: BoxFit.cover,
-                            ),
+                            child: profileUrlKey.isEmpty
+                                ? Image.asset(
+                                    "assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg",
+                                    width: 95,
+                                    height: 95,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    "h${globals.url}/images/$profileUrlKey",
+                                    width: 95,
+                                    height: 95,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                       ),
@@ -390,7 +436,7 @@ class _BodyState extends State<Body> {
                                 border:
                                     Border.all(width: 2, color: Colors.white),
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
+                                  Radius.circular(20),
                                 ),
                               ),
                               child: Center(
@@ -425,8 +471,8 @@ class _BodyState extends State<Body> {
                     TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 children: [
                   TextSpan(
-                    text: profile["verificationStatus"] == "Pending" ||
-                            profile["verificationStatus"] == "Not Submitted"
+                    text: profile["verificationStatus"] == "PENDING" ||
+                            profile["verificationStatus"] == "NOTSUBMITTED"
                         ? "Account Verification Pending..."
                         : "Verified Account.",
                   ),
@@ -457,23 +503,23 @@ class _BodyState extends State<Body> {
         SizedBox(
           height: 5,
         ),
-        if (profile["verificationStatus"] == "Pending")
+        if (profile["verificationStatus"] == "PENDING")
           Text(
               "* Please wait! Your details have been submitted and waiting for verification. We may contact you during the verification process."),
         FormBuilder(
           enabled: isEditable,
-          key: _formKey,
+          key: _formKeyBuilder,
           // enabled: false,
-          onChanged: () {
-            _formKey.currentState!.save();
-            debugPrint(_formKey.currentState!.value.toString());
-          },
+          // onChanged: () {
+          //   _formKeyBuilder.currentState!.save();
+          //   debugPrint(_formKeyBuilder.currentState!.value.toString());
+          // },
           initialValue: profile,
           // autovalidateMode: AutovalidateMode.onUserInteraction,
-          // initialValue: profile as Map<String, dynamic>,
+
           skipDisabled: true,
           child: Column(
-            children: <Widget>[
+            children: [
               SizedBox(
                 height: 25,
               ),
@@ -483,22 +529,22 @@ class _BodyState extends State<Body> {
               ),
               FormBuilderTextField(
                 name: 'name',
-                enabled: true,
+                enabled: false,
                 decoration: InputDecoration(
                   labelText: "Name",
                   labelStyle: TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
-                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
-                  // filled: true,
+                  fillColor: Colors.grey.withOpacity(.2),
+                  filled: true,
                   enabledBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
-                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                          width: 1.5, color: Colors.grey.withOpacity(.5)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
@@ -512,9 +558,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _nameHasError =
-                        !(_formKey.currentState?.fields['name']?.validate() ??
-                            false);
+                    _nameHasError = !(_formKeyBuilder
+                            .currentState?.fields['name']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -531,22 +578,23 @@ class _BodyState extends State<Body> {
               const SizedBox(height: 15),
               FormBuilderTextField(
                 name: 'email',
-                enabled: true,
+                enabled: false,
+
                 decoration: InputDecoration(
                   labelText: "Email",
                   labelStyle: TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
-                  // fillColor: Color.fromRGBO(232, 235, 243, 1),
-                  // filled: true,
+                  fillColor: Colors.grey.withOpacity(.2),
+                  filled: true,
                   enabledBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
-                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                          width: 1.5, color: Colors.grey.withOpacity(.5)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: new BorderSide(
@@ -563,9 +611,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _emailHasError =
-                        !(_formKey.currentState?.fields['email']?.validate() ??
-                            false);
+                    _emailHasError = !(_formKeyBuilder
+                            .currentState?.fields['email']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -612,7 +661,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _numberHasError = !(_formKey
+                    _numberHasError = !(_formKeyBuilder
                             .currentState?.fields['contactNumber']
                             ?.validate() ??
                         false);
@@ -660,7 +709,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _bookingNameHasError = !(_formKey
+                    _bookingNameHasError = !(_formKeyBuilder
                             .currentState?.fields['bookingName']
                             ?.validate() ??
                         false);
@@ -722,9 +771,10 @@ class _BodyState extends State<Body> {
                     .toList(),
                 onChanged: (val) {
                   setState(() {
-                    _genderHasError =
-                        !(_formKey.currentState?.fields['Sex']?.validate() ??
-                            false);
+                    _genderHasError = !(_formKeyBuilder
+                            .currentState?.fields['Sex']
+                            ?.validate() ??
+                        false);
                   });
                 },
                 valueTransformer: (val) => val?.toString(),
@@ -734,7 +784,10 @@ class _BodyState extends State<Body> {
                 name: 'DOB',
                 // locale: const Locale.fromSubtags(languageCode: 'in'),
                 initialEntryMode: DatePickerEntryMode.calendarOnly,
-                // initialValue: DateTime.now().subtract(Duration(days: 5844)),
+                initialValue: profile["DOB"]!.isNotEmpty
+                    ? new DateFormat("yyyy-MM-dd ")
+                        .parse(profile["DOB"].toString())
+                    : null,
                 initialDate: DateTime.now().subtract(Duration(days: 5844)),
                 lastDate: DateTime.now().subtract(Duration(days: 5844)),
                 firstDate: DateTime.utc(1969, 7, 20, 20, 18, 04),
@@ -768,9 +821,9 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _dobHasError =
-                        !(_formKey.currentState?.fields['DOB']?.validate() ??
-                            false);
+                    _dobHasError = !(_formKeyBuilder.currentState?.fields['DOB']
+                            ?.validate() ??
+                        false);
                   });
                 },
                 onSaved: (newValue) => {newValue?.toIso8601String()},
@@ -786,92 +839,159 @@ class _BodyState extends State<Body> {
               SizedBox(
                 height: 20,
               ),
-              GestureDetector(
-                onTap: () => pickImages(),
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(.2),
-                      border: Border.all(
-                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
+              Container(
+                child: GestureDetector(
+                  onTap: () => pickImages(),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                        border: Border.all(
+                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        // boxShadow: [
+                        //   new BoxShadow(
+                        //     color: Colors.grey.shade400.withOpacity(.6),
+                        //     blurRadius: 5.0,
+                        //   ),
+                        // ]
                       ),
-                      // boxShadow: [
-                      //   new BoxShadow(
-                      //     color: Colors.grey.shade400.withOpacity(.6),
-                      //     blurRadius: 5.0,
-                      //   ),
-                      // ]
-                    ),
-                    height: 200,
-                    width: double.infinity,
-                    // decoration: BoxDecoration(
-                    //   color: Colors.grey.withOpacity(.3),
-                    //   border: Border.all(width: 1, color: Colors.grey),
-                    // ),
-                    child: attireImages.isNotEmpty
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        width: 2, color: Colors.white),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                    boxShadow: [
-                                      new BoxShadow(
-                                        color: Colors.grey.shade400
-                                            .withOpacity(.6),
-                                        blurRadius: 5.0,
+                      height: 200,
+                      width: double.infinity,
+                      // decoration: BoxDecoration(
+                      //   color: Colors.grey.withOpacity(.3),
+                      //   border: Border.all(width: 1, color: Colors.grey),
+                      // ),
+                      child: attireImages.isNotEmpty &&
+                              attireImages[0].isAbsolute &&
+                              attireImages[1].isAbsolute
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          width: 2, color: Colors.white),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5),
                                       ),
-                                    ]),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(15),
-                                  ),
-                                  child: Image.file(
-                                    attireImages[0],
-                                    width: 110,
-                                    height: 110,
-                                    fit: BoxFit.cover,
+                                      boxShadow: [
+                                        new BoxShadow(
+                                          color: Colors.grey.shade400
+                                              .withOpacity(.6),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ]),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                    child: Image.file(
+                                      attireImages[0],
+                                      width: 110,
+                                      height: 110,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        width: 2, color: Colors.white),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                    boxShadow: [
-                                      new BoxShadow(
-                                        color: Colors.grey.shade400
-                                            .withOpacity(.6),
-                                        blurRadius: 5.0,
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          width: 2, color: Colors.white),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(5),
                                       ),
-                                    ]),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(15),
-                                  ),
-                                  child: Image.file(
-                                    attireImages[1],
-                                    width: 110,
-                                    height: 110,
-                                    fit: BoxFit.cover,
+                                      boxShadow: [
+                                        new BoxShadow(
+                                          color: Colors.grey.shade400
+                                              .withOpacity(.6),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ]),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                    child: Image.file(
+                                      attireImages[1],
+                                      width: 110,
+                                      height: 110,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        : Center(child: Text("Select images"))),
+                              ],
+                            )
+                          : attaaireImageUrlKeys.isEmpty
+                              ? Center(child: Text("Select images"))
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(5),
+                                          ),
+                                          boxShadow: [
+                                            new BoxShadow(
+                                              color: Colors.grey.shade400
+                                                  .withOpacity(.6),
+                                              blurRadius: 5.0,
+                                            ),
+                                          ]),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(15),
+                                        ),
+                                        child: Image.network(
+                                          "${globals.url}/images/${attaaireImageUrlKeys[0]}",
+                                          width: 110,
+                                          height: 110,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              width: 2, color: Colors.white),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(5),
+                                          ),
+                                          boxShadow: [
+                                            new BoxShadow(
+                                              color: Colors.grey.shade400
+                                                  .withOpacity(.6),
+                                              blurRadius: 5.0,
+                                            ),
+                                          ]),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(15),
+                                        ),
+                                        child: Image.network(
+                                          "${globals.url}/images/${attaaireImageUrlKeys[1]}",
+                                          width: 110,
+                                          height: 110,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                ),
               ),
               const SizedBox(height: 40),
               SectionTitle(title: "Address"),
@@ -909,7 +1029,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _unitNumberHasError = !(_formKey
+                    _unitNumberHasError = !(_formKeyBuilder
                             .currentState?.fields['unitNumber']
                             ?.validate() ??
                         false);
@@ -957,7 +1077,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _floorHasError = !(_formKey
+                    _floorHasError = !(_formKeyBuilder
                             .currentState?.fields['floorNumber']
                             ?.validate() ??
                         false);
@@ -1005,9 +1125,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _streetHasError =
-                        !(_formKey.currentState?.fields['street']?.validate() ??
-                            false);
+                    _streetHasError = !(_formKeyBuilder
+                            .currentState?.fields['street']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -1052,9 +1173,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _cityHasError =
-                        !(_formKey.currentState?.fields['city']?.validate() ??
-                            false);
+                    _cityHasError = !(_formKeyBuilder
+                            .currentState?.fields['city']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -1099,7 +1221,8 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _zipHasError = !(_formKey.currentState?.fields['zipCode']
+                    _zipHasError = !(_formKeyBuilder
+                            .currentState?.fields['zipCode']
                             ?.validate() ??
                         false);
                   });
@@ -1150,9 +1273,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _NRICHasError =
-                        !(_formKey.currentState?.fields['NRIC']?.validate() ??
-                            false);
+                    _NRICHasError = !(_formKeyBuilder
+                            .currentState?.fields['NRIC']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -1212,7 +1336,7 @@ class _BodyState extends State<Body> {
                 onChanged: (val) {
                   setState(() {
                     legalStatus = val.toString();
-                    _statusHasError = !(_formKey
+                    _statusHasError = !(_formKeyBuilder
                             .currentState?.fields['residentStatus']
                             ?.validate() ??
                         false);
@@ -1267,7 +1391,7 @@ class _BodyState extends State<Body> {
                       .toList(),
                   onChanged: (val) {
                     setState(() {
-                      _FSIHasError = !(_formKey
+                      _FSIHasError = !(_formKeyBuilder
                               .currentState?.fields['FSInstitute']
                               ?.validate() ??
                           false);
@@ -1309,7 +1433,7 @@ class _BodyState extends State<Body> {
                   ),
                   onChanged: (val) {
                     setState(() {
-                      _FSIDHasError = !(_formKey
+                      _FSIDHasError = !(_formKeyBuilder
                               .currentState?.fields['FSIDNumber']
                               ?.validate() ??
                           false);
@@ -1361,9 +1485,10 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _payNowHasError =
-                        !(_formKey.currentState?.fields['PayNow']?.validate() ??
-                            false);
+                    _payNowHasError = !(_formKeyBuilder
+                            .currentState?.fields['PayNow']
+                            ?.validate() ??
+                        false);
                   });
                 },
 
@@ -1408,7 +1533,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _BACCNOHasError = !(_formKey
+                    _BACCNOHasError = !(_formKeyBuilder
                             .currentState?.fields['bankAccNo']
                             ?.validate() ??
                         false);
@@ -1455,7 +1580,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _bankNameHasError = !(_formKey
+                    _bankNameHasError = !(_formKeyBuilder
                             .currentState?.fields['bankName']
                             ?.validate() ??
                         false);
@@ -1509,7 +1634,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _emergencyContactHasError = !(_formKey
+                    _emergencyContactHasError = !(_formKeyBuilder
                             .currentState?.fields['emergencyContact']
                             ?.validate() ??
                         false);
@@ -1557,7 +1682,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _emergencyContactNameHasError = !(_formKey
+                    _emergencyContactNameHasError = !(_formKeyBuilder
                             .currentState?.fields['emergencyContactName']
                             ?.validate() ??
                         false);
@@ -1606,7 +1731,7 @@ class _BodyState extends State<Body> {
                 ),
                 onChanged: (val) {
                   setState(() {
-                    _emergencyContactRelationHasError = !(_formKey
+                    _emergencyContactRelationHasError = !(_formKeyBuilder
                             .currentState?.fields['emergencyContactRelation']
                             ?.validate() ??
                         false);
@@ -1623,49 +1748,55 @@ class _BodyState extends State<Body> {
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 15),
-              FormBuilderCheckbox(
-                name: 'accept_terms',
-                initialValue: isAgreeTermsAndCondtions,
-                onChanged: ((value) {
-                  isAgreeTermsAndCondtions = value as bool;
-                }),
-                title: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'I have read and agree to the ',
-                        style: TextStyle(color: Colors.black),
+              Container(
+                height: 100,
+                child: Center(
+                  child: FormBuilderCheckbox(
+                    name: 'accept_terms',
+                    initialValue: isAgreeTermsAndCondtions,
+                    onChanged: ((value) {
+                      isAgreeTermsAndCondtions = value ?? false;
+                    }),
+                    title: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'I have read and agree to the ',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          TextSpan(
+                            text: 'Terms and Conditions',
+                            style: TextStyle(color: Colors.blue),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                var link =
+                                    "https://deaks-app-fe.vercel.app/terms-condition";
+                                openlink(link);
+                              },
+                          ),
+                          TextSpan(
+                            text: ' & ',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          TextSpan(
+                            text: 'Privacy Policy.',
+                            style: TextStyle(color: Colors.blue),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                var link =
+                                    "https://deaks-app-fe.vercel.app/privacy-policy";
+                                openlink(link);
+                              },
+                          ),
+                        ],
                       ),
-                      TextSpan(
-                        text: 'Terms and Conditions',
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            var link =
-                                "https://deaks-app-fe.vercel.app/terms-condition";
-                            openlink(link);
-                          },
-                      ),
-                      TextSpan(
-                        text: ' & ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(
-                        text: 'Privacy Policy.',
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            var link =
-                                "https://deaks-app-fe.vercel.app/privacy-policy";
-                            openlink(link);
-                          },
-                      ),
-                    ],
+                    ),
+                    validator: FormBuilderValidators.equal(
+                      true,
+                      errorText:
+                          'You must accept terms and conditions to continue',
+                    ),
                   ),
-                ),
-                validator: FormBuilderValidators.equal(
-                  true,
-                  errorText: 'You must accept terms and conditions to continue',
                 ),
               ),
               const SizedBox(height: 40),
@@ -1673,19 +1804,21 @@ class _BodyState extends State<Body> {
           ),
         ),
         Row(
-          children: <Widget>[
+          children: [
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
                   if (isEditable &&
                       isAgreeTermsAndCondtions &&
-                      profile["verificationStatus"] != "Pending") {
-                    if (_formKey.currentState?.saveAndValidate() ?? false) {
+                      profile["verificationStatus"] != "PENDING") {
+                    if (_formKeyBuilder.currentState?.saveAndValidate() ??
+                        false) {
                       // debugPrint(_formKey.currentState?.value.toString());
-                      submitUserData(_formKey.currentState?.value);
+                      submitUserData(_formKeyBuilder.currentState?.value);
                     } else {
-                      debugPrint(_formKey.currentState?.value.toString());
+                      debugPrint(
+                          _formKeyBuilder.currentState?.value.toString());
                       debugPrint('validation failed');
                     }
                   }
@@ -1711,7 +1844,7 @@ class _BodyState extends State<Body> {
               child: OutlinedButton(
                 onPressed: () {
                   if (isEditable) {
-                    _formKey.currentState?.reset();
+                    _formKeyBuilder.currentState?.reset();
                   }
                 },
                 // color: Theme.of(context).colorScheme.secondary,
