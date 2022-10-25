@@ -54,7 +54,7 @@ class _SubscriptionsState extends State<Subscriptions> {
         body: ListView.builder(
             itemCount: subcriptions.length,
             itemBuilder: ((context, index) => Dismissible(
-                key: subcriptions[index]["_id"],
+                key: UniqueKey(),
                 background: Container(
                   padding: EdgeInsets.all(15),
                   decoration: BoxDecoration(color: Colors.red),

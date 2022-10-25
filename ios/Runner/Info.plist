@@ -48,9 +48,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow access to the camera to take pictures to upload your details</string>
+	<string>Deaks App use your camera to take your profile picture. Deaks App will only upload photos you choose. We don’t share any of your data with third parties.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow access to photos to upload photos from your library.</string>
+	<string>This lets you choose which photos to add to your attire image collection. Deaks App will only upload photos you choose. We don’t share any of your data with third parties.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
