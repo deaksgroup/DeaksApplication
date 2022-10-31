@@ -123,21 +123,21 @@ class ProfileFetch with ChangeNotifier {
   Future<void> fetchAndSetProfile() async {
     print("fetchAnd SetPRofile");
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('profilePicPath')) {
-      final extractedUserData =
-          await jsonDecode(prefs.getString('profilePicPath').toString())
-              as Map<dynamic, dynamic>;
-      final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
-      profilePic = File(userProfilePath["profilePicPath"]);
-      notifyListeners();
-    }
-    if (prefs.containsKey('attaireImagesPaths')) {
-      final extractedUserData =
-          await jsonDecode(prefs.getString('attaireImagesPaths').toString())
-              as List<dynamic>;
-      attaireImages = List<File>.from(extractedUserData);
-      // attaireImages = File(userProfilePath["profilePicPath"]);
-    }
+    // if (prefs.containsKey('profilePicPath')) {
+    //   final extractedUserData =
+    //       await jsonDecode(prefs.getString('profilePicPath').toString())
+    //           as Map<dynamic, dynamic>;
+    //   final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
+    //   profilePic = File(userProfilePath["profilePicPath"]);
+    //   notifyListeners();
+    // }
+    // if (prefs.containsKey('attaireImagesPaths')) {
+    //   final extractedUserData =
+    //       await jsonDecode(prefs.getString('attaireImagesPaths').toString())
+    //           as List<dynamic>;
+    //   attaireImages = List<File>.from(extractedUserData);
+    //   // attaireImages = File(userProfilePath["profilePicPath"]);
+    // }
 
     log("profielfetch");
     Map<dynamic, dynamic> extractedData = {};
@@ -219,7 +219,11 @@ class ProfileFetch with ChangeNotifier {
     }
     profilePic = profilePic;
     var dio = Dio();
-
+    print("111");
+    print(attaireImges[0].path);
+    print("111");
+    print(attaireImges[1].path);
+    print("111");
     Response response;
     Map<String, String> convertedUserData = userData!
         .map((key, value) => MapEntry(key.toString(), value.toString()));
@@ -229,20 +233,16 @@ class ProfileFetch with ChangeNotifier {
       "profile": await MultipartFile.fromFile(
         profilePicture?.path != null ? profilePicture!.path : "",
         filename: profilePicture?.path.toString().split("/").last,
-        // attaireImges[0].path,
-        // filename: attaireImges[0].path.toString().split("/").last,
         contentType: MediaType('image', 'jpg'),
       ),
-      "attaire": await MultipartFile.fromFile(
-        attaireImges[0].path,
-        filename: attaireImges[0].path.toString().split("/").last,
-        contentType: MediaType('image', 'jpg'),
-      ),
-      "attaire": await MultipartFile.fromFile(
-        attaireImges[1].path,
-        filename: attaireImges[1].path.toString().split("/").last,
-        contentType: MediaType('image', 'jpg'),
-      ),
+      "attaire": [
+        MultipartFile.fromFileSync(attaireImges[0].path,
+            filename: profilePicture?.path.toString().split("/").last,
+            contentType: MediaType('image', 'jpg')),
+        MultipartFile.fromFileSync(attaireImges[1].path,
+            filename: profilePicture?.path.toString().split("/").last,
+            contentType: MediaType('image', 'jpg')),
+      ],
       "type": "image/jpg"
     });
 

@@ -68,7 +68,7 @@ class _BodyState extends State<Body> {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only
       if (await canLaunchUrl(whatappURL_ios)) {
-        await launchUrl(whatappURL_ios, mode: LaunchMode.externalApplication);
+        await launchUrl(whatappURL_ios, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: new Text("Youtube not installed!")));
@@ -76,8 +76,7 @@ class _BodyState extends State<Body> {
     } else {
       // android , web
       if (await canLaunchUrl(whatsappURl_android)) {
-        await launchUrl(whatsappURl_android,
-            mode: LaunchMode.externalApplication);
+        await launchUrl(whatsappURl_android, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: new Text("Youtube not installed!")));
@@ -133,7 +132,7 @@ class _BodyState extends State<Body> {
         log("aapplemap");
         if (await canLaunchUrl(appleMapsLink)) {
           log("can");
-          await launchUrl(appleMapsLink, mode: LaunchMode.externalApplication);
+          await launchUrl(appleMapsLink, mode: LaunchMode.platformDefault);
         } else {
           log("here");
           ScaffoldMessenger.of(context)
@@ -143,8 +142,7 @@ class _BodyState extends State<Body> {
         log("ggoogglemap");
         if (await canLaunchUrl(googgleMapsLink)) {
           log("can");
-          await launchUrl(googgleMapsLink,
-              mode: LaunchMode.externalApplication);
+          await launchUrl(googgleMapsLink, mode: LaunchMode.platformDefault);
         } else {
           log("here");
           ScaffoldMessenger.of(context).showSnackBar(
@@ -158,7 +156,7 @@ class _BodyState extends State<Body> {
     } else {
       // android , web
       if (await canLaunchUrl(googgleMapsLink)) {
-        await launchUrl(googgleMapsLink, mode: LaunchMode.externalApplication);
+        await launchUrl(googgleMapsLink, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: new Text("Google Maps not installed!")));

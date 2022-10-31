@@ -28,6 +28,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isInit = true;
+  bool _isLoading = false;
   List<Slot> slots = [];
   List<DisplaySlot> displaySlots = [];
 
@@ -39,38 +40,42 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
       slots = Provider.of<Slots>(context, listen: false).getSlots;
-      print("homeScreen");
+      print(slots.length);
       displaySlots = [];
       slots.forEach((slot) => {
+            displaySlots.add(DisplaySlot(
+                confirmedRequests: slot.confirmedRequests,
+                waitingListRequests: slot.waitingRequests,
+                vacancy: slot.vacancy,
+                release: slot.release,
+                slotId: slot.id,
+                jobRemarks2: slot.jobRemarks,
+                jobRemarks1: slot.outlet["jobRemarks"],
+                outletId: slot.outlet["_id"],
+                outletName: slot.outlet["outletName"],
+                outletImages: slot.outlet["outletImages"] ?? [],
+                paymentDetails: slot.outlet["payment"] ?? "",
+                groomingImages: slot.outlet["groomingImages"] ?? [],
+                howToImages: slot.outlet["howToImages"] ?? [],
+                adminNumber: slot.outlet["outletAdminNo"] ?? "",
+                youtubeLink: slot.outlet["youtubeLink"] ?? "",
+                hotelId: slot.hotel["_id"] ?? "",
+                hotelName: slot.hotel["hotelName"] ?? "",
+                hotelLogo: slot.hotel["hotelLogo"] ?? "",
+                googleMapLink: slot.hotel["googleMapLink"] ?? "",
+                appleMapLink: slot.hotel["appleMapLink"] ?? "",
+                date: slot.date,
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+                payPerHour: slot.hourlyPay,
+                totalPay: slot.totalPayForSlot,
+                priority: slot.priority)),
             setState(() {
-              displaySlots.add(DisplaySlot(
-                  confirmedRequests: slot.confirmedRequests,
-                  waitingListRequests: slot.waitingRequests,
-                  vacancy: slot.vacancy,
-                  release: slot.release,
-                  slotId: slot.id,
-                  jobRemarks2: slot.jobRemarks,
-                  jobRemarks1: slot.outlet["jobRemarks"],
-                  outletId: slot.outlet["_id"],
-                  outletName: slot.outlet["outletName"],
-                  outletImages: slot.outlet["outletImages"] ?? [],
-                  paymentDetails: slot.outlet["payment"] ?? "",
-                  groomingImages: slot.outlet["groomingImages"] ?? [],
-                  howToImages: slot.outlet["howToImages"] ?? [],
-                  adminNumber: slot.outlet["outletAdminNo"] ?? "",
-                  youtubeLink: slot.outlet["youtubeLink"] ?? "",
-                  hotelId: slot.hotel["_id"] ?? "",
-                  hotelName: slot.hotel["hotelName"] ?? "",
-                  hotelLogo: slot.hotel["hotelLogo"] ?? "",
-                  googleMapLink: slot.hotel["googleMapLink"] ?? "",
-                  appleMapLink: slot.hotel["appleMapLink"] ?? "",
-                  date: slot.date,
-                  startTime: slot.startTime,
-                  endTime: slot.endTime,
-                  payPerHour: slot.hourlyPay,
-                  totalPay: slot.totalPayForSlot,
-                  priority: slot.priority));
+              _isLoading = false;
             }),
           });
     }
@@ -143,17 +148,15 @@ class _HomeScreenState extends State<HomeScreen> {
         Stack(
       children: [
         Scaffold(
-          body: Consumer<Slots>(builder: (context, value, child) {
-            return RefreshIndicator(
-              onRefresh: () => _refreshProducts(context),
-              child: Body(
-                refresh: (() => searchRefrsh()),
-                displaySlots: displaySlots,
-              ),
-            );
-          }),
-          // bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
-        ),
+            body: RefreshIndicator(
+          onRefresh: () => _refreshProducts(context),
+          child: Body(
+            refresh: (() => searchRefrsh()),
+            displaySlots: displaySlots,
+          ),
+        )
+            // bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
+            ),
         Positioned(
             left: 20,
             bottom: 20,

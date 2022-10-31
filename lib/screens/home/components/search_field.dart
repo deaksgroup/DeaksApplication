@@ -24,22 +24,25 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   Timer? debounce;
+  bool _isInit = false;
+  bool _isLoading = false;
+  String searchWord = "";
+  String sortType = "All Jobs";
 
   void handleSearch(String value) {
     if (debounce != null) debounce?.cancel();
     setState(() {
-      debounce = Timer(Duration(seconds: 1), () {
+      debounce = Timer(Duration(milliseconds: 300), () {
         searchWord = SearchInputController.text;
         _isInit = true;
+
+        print("debounce");
         didChangeDependencies();
         //call api or other search functions here
       });
     });
   }
 
-  bool _isInit = false;
-  String searchWord = "";
-  String sortType = "All Jobs";
   @override
   void initState() {
     super.initState();
@@ -48,6 +51,9 @@ class _SearchFieldState extends State<SearchField> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
       Map<String, String> searchQuery = {
         "shiftName": searchWord,
         "sortType": sortType,
@@ -59,9 +65,15 @@ class _SearchFieldState extends State<SearchField> {
 
       Provider.of<Slots>(context, listen: false)
           .fetchAndSetSlots(searchQuery)
-          .then((value) {});
-      widget.refresh();
+          .then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      }).then((value) {
+        widget.refresh();
+      });
     }
+
     _isInit = false;
     super.didChangeDependencies();
   }
@@ -162,10 +174,18 @@ class _SearchFieldState extends State<SearchField> {
                 hintText: "Search Jobs ...",
                 hintStyle:
                     TextStyle(color: Colors.grey.withOpacity(.7), fontSize: 14),
-                suffixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey.withOpacity(.7),
-                )),
+                suffixIcon: _isLoading
+                    ? Transform.scale(
+                        scale: .5,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 1,
+                        ),
+                      )
+                    : Icon(
+                        Icons.search,
+                        color: Colors.grey.withOpacity(.7),
+                      )),
           ),
         ),
         // Row(

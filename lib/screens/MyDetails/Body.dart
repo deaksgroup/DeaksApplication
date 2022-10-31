@@ -41,6 +41,7 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   GlobalKey<FormBuilderState> _formKeyBuilder = GlobalKey<FormBuilderState>();
 //  _formKeyBuilder = GlobalKey<FormBuilderState>();
+  bool _isRestricted = false;
   File? image;
   List<File> attireImages = [];
   String profileUrlKey = "";
@@ -69,8 +70,11 @@ class _BodyState extends State<Body> {
             .getAttaireiamges();
 
         profile = Provider.of<ProfileFetch>(context, listen: false).getProfile;
+        if (profile["accountStatus"] == "AUTHORIZED") {
+          _isRestricted = true;
+        }
         print("111");
-        print(profile);
+        print(profile["accountStatus"]);
         print("111");
       });
     }
@@ -781,6 +785,8 @@ class _BodyState extends State<Body> {
               ),
               const SizedBox(height: 15),
               FormBuilderDateTimePicker(
+                enabled: !_isRestricted,
+
                 name: 'DOB',
                 // locale: const Locale.fromSubtags(languageCode: 'in'),
                 initialEntryMode: DatePickerEntryMode.calendarOnly,
@@ -794,6 +800,8 @@ class _BodyState extends State<Body> {
                 format: DateFormat("dd-MM-yyyy"),
                 inputType: InputType.date,
                 decoration: InputDecoration(
+                  fillColor: Colors.grey.withOpacity(.2),
+                  filled: _isRestricted,
                   labelText: "Date Of Birth",
                   labelStyle: TextStyle(
                       color: Colors.blueGrey,
@@ -1243,9 +1251,12 @@ class _BodyState extends State<Body> {
                 height: 20,
               ),
               FormBuilderTextField(
+                enabled: !_isRestricted,
                 name: 'NRIC',
 
                 decoration: InputDecoration(
+                  fillColor: Colors.grey.withOpacity(.2),
+                  filled: _isRestricted,
                   labelText: "NRIC",
                   labelStyle: TextStyle(
                       color: Colors.blueGrey,
