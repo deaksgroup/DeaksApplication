@@ -28,7 +28,7 @@ class DiscountBanner extends StatelessWidget {
             children: [
               TextSpan(text: "Hello"),
               TextSpan(
-                text: " Max",
+                text: " ${fullName.split(" ").first}",
                 style: TextStyle(
                   fontSize: getProportionateScreenWidth(17),
                   fontWeight: FontWeight.bold,

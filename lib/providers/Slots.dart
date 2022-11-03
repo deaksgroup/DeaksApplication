@@ -97,7 +97,11 @@ class Slots with ChangeNotifier {
       print(response.data.toString());
 
       final extractedData = response.data;
-      if (extractedData == null) {
+      print(extractedData);
+      if (extractedData == null ||
+          response.statusCode == 204 ||
+          response.statusCode == 400 ||
+          response.statusCode == 500) {
         return response.statusCode ?? 400;
       }
       print(extractedData);

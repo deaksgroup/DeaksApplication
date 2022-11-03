@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:deaksapp/providers/Hotel.dart';
 import 'package:deaksapp/providers/Slots.dart';
-import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -32,11 +30,10 @@ class _SearchFieldState extends State<SearchField> {
   void handleSearch(String value) {
     if (debounce != null) debounce?.cancel();
     setState(() {
-      debounce = Timer(Duration(milliseconds: 300), () {
+      debounce = Timer(const Duration(milliseconds: 300), () {
         searchWord = SearchInputController.text;
         _isInit = true;
 
-        print("debounce");
         didChangeDependencies();
         //call api or other search functions here
       });
@@ -102,7 +99,7 @@ class _SearchFieldState extends State<SearchField> {
       choiceChipLabel: (tag) => tag,
       validateSelectedItem: (list, val) => list!.contains(val),
       onItemSearch: (tag, query) {
-        return tag!.toLowerCase().contains(query.toLowerCase());
+        return tag.toLowerCase().contains(query.toLowerCase());
       },
       onApplyButtonClick: (list) {
         setState(() {
@@ -130,7 +127,7 @@ class _SearchFieldState extends State<SearchField> {
       choiceChipLabel: (Hotel) => Hotel,
       validateSelectedItem: (list, val) => list!.contains(val),
       onItemSearch: (Hotel, query) {
-        return Hotel!.toLowerCase().contains(query.toLowerCase());
+        return Hotel.toLowerCase().contains(query.toLowerCase());
       },
       onApplyButtonClick: (list) {
         setState(() {
@@ -177,7 +174,7 @@ class _SearchFieldState extends State<SearchField> {
                 suffixIcon: _isLoading
                     ? Transform.scale(
                         scale: .5,
-                        child: CircularProgressIndicator(
+                        child: const CircularProgressIndicator(
                           color: Colors.black,
                           strokeWidth: 1,
                         ),
@@ -233,8 +230,8 @@ class _SearchFieldState extends State<SearchField> {
         // ),
         if (isSorting)
           Container(
-            margin: EdgeInsets.only(bottom: 20),
-            padding: EdgeInsets.only(left: 10, bottom: 20),
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(left: 10, bottom: 20),
             decoration: BoxDecoration(
                 border: Border(
                     bottom: BorderSide(color: Colors.grey.withOpacity(.2)))),
@@ -246,17 +243,18 @@ class _SearchFieldState extends State<SearchField> {
                 Expanded(
                   child: GestureDetector(
                       onTap: (() {
-                        if (sort != 1)
+                        if (sort != 1) {
                           setState(() {
                             sort = 1;
                             sortType = "All jobs";
                             _isInit = true;
                             didChangeDependencies();
                           });
+                        }
                       }),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 3),
-                        decoration: BoxDecoration(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        decoration: const BoxDecoration(
                           color: Colors.white,
                         ),
                         child: Text(
@@ -271,16 +269,17 @@ class _SearchFieldState extends State<SearchField> {
                 Expanded(
                   child: GestureDetector(
                       onTap: (() {
-                        if (sort != 2)
+                        if (sort != 2) {
                           setState(() {
                             sort = 2;
                             sortType = "Latest Jobs";
                             _isInit = true;
                             didChangeDependencies();
                           });
+                        }
                       }),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 3),
+                        padding: const EdgeInsets.symmetric(vertical: 3),
                         child: Text(
                           "Latest Jobs",
                           style: TextStyle(
@@ -293,16 +292,17 @@ class _SearchFieldState extends State<SearchField> {
                 Expanded(
                   child: GestureDetector(
                       onTap: (() {
-                        if (sort != 3)
+                        if (sort != 3) {
                           setState(() {
                             sort = 3;
                             sortType = "Hourly Pay";
                             _isInit = true;
                             didChangeDependencies();
                           });
+                        }
                       }),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 3),
+                        padding: const EdgeInsets.symmetric(vertical: 3),
                         child: Text(
                           "Hourly Pay",
                           style: TextStyle(
@@ -315,16 +315,17 @@ class _SearchFieldState extends State<SearchField> {
                 Expanded(
                   child: GestureDetector(
                       onTap: (() {
-                        if (sort != 4)
+                        if (sort != 4) {
                           setState(() {
                             sort = 4;
                             sortType = "Job Date";
                             _isInit = true;
                             didChangeDependencies();
                           });
+                        }
                       }),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 3),
+                        padding: const EdgeInsets.symmetric(vertical: 3),
                         child: Text(
                           "Job Date",
                           style: TextStyle(
@@ -337,16 +338,17 @@ class _SearchFieldState extends State<SearchField> {
                 Expanded(
                   child: GestureDetector(
                       onTap: (() {
-                        if (sort != 5)
+                        if (sort != 5) {
                           setState(() {
                             sort = 5;
                             sortType = "Morning To Evening";
                             _isInit = true;
                             didChangeDependencies();
                           });
+                        }
                       }),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 3),
+                        padding: const EdgeInsets.symmetric(vertical: 3),
                         child: Text(
                           "Morning To Evening",
                           style: TextStyle(
@@ -361,8 +363,8 @@ class _SearchFieldState extends State<SearchField> {
           ),
         if (isFiltering)
           Container(
-            margin: EdgeInsets.only(bottom: 20),
-            padding: EdgeInsets.only(bottom: 20),
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
                 border: Border(
                     bottom: BorderSide(color: Colors.grey.withOpacity(.2)))),
@@ -372,12 +374,11 @@ class _SearchFieldState extends State<SearchField> {
               // crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                    child: GestureDetector(
+                GestureDetector(
                   onTap: openFilterDialogForTags,
                   child: Container(
                     // padding: EdgeInsets.symmetric(vertical: 3),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                     ),
                     child: Center(
@@ -391,26 +392,21 @@ class _SearchFieldState extends State<SearchField> {
                       ),
                     ),
                   ),
-                )),
-                Container(
-                    child: GestureDetector(
+                ),
+                GestureDetector(
                   onTap: openFilterDialogForHotels,
-                  child: Container(
-                    // padding: EdgeInsets.symmetric(vertical: 3),
-                    child: Center(
-                      child: Text(
-                        "Hotel",
-                        style: TextStyle(
-                            color:
-                                isFliterByHotel ? Colors.blue : Colors.blueGrey,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold),
-                      ),
+                  child: Center(
+                    child: Text(
+                      "Hotel",
+                      style: TextStyle(
+                          color:
+                              isFliterByHotel ? Colors.blue : Colors.blueGrey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                )),
-                Container(
-                    child: GestureDetector(
+                ),
+                GestureDetector(
                   onTap: (() {
                     setState(() {
                       if (isFliterBySubscriptions) {
@@ -424,21 +420,18 @@ class _SearchFieldState extends State<SearchField> {
                       }
                     });
                   }),
-                  child: Container(
-                    // padding: EdgeInsets.symmetric(vertical: 3),
-                    child: Center(
-                      child: Text(
-                        "Subscribed",
-                        style: TextStyle(
-                            color: isFliterBySubscriptions
-                                ? Colors.blue
-                                : Colors.blueGrey,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold),
-                      ),
+                  child: Center(
+                    child: Text(
+                      "Subscribed",
+                      style: TextStyle(
+                          color: isFliterBySubscriptions
+                              ? Colors.blue
+                              : Colors.blueGrey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                )),
+                ),
               ],
             ),
           ),

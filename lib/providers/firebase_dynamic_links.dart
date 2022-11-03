@@ -8,12 +8,12 @@ class FirebaseDynamicLinkService {
 
     final DynamicLinkParameters parameters = DynamicLinkParameters(
         uriPrefix: 'https://deaksapp.page.link',
-        link: Uri.parse('https://deaksapp.page.link/jobs/${keyString}'),
-        androidParameters: AndroidParameters(
+        link: Uri.parse('https://deaksapp.page.link/jobs/$keyString'),
+        androidParameters: const AndroidParameters(
           packageName: 'com.deaksapplication.deaks_applications',
           minimumVersion: 10,
         ),
-        iosParameters: IOSParameters(
+        iosParameters: const IOSParameters(
             bundleId: "com.deaksApplication.deaksApplication",
             minimumVersion: "11",
             appStoreId: "1635950859"));
@@ -23,8 +23,6 @@ class FirebaseDynamicLinkService {
       final ShortDynamicLink shortLink =
           await dynamicLinks.buildShortLink(parameters);
       url = shortLink.shortUrl;
-    } else {
-      url = await dynamicLinks.buildLink(parameters);
     }
 
     linkMessage = url.toString();

@@ -18,24 +18,29 @@ class TrendingJobs extends StatefulWidget {
 class _TrendingJobsState extends State<TrendingJobs> {
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
-      height: 170,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: ((context, index) {
-          return GestureDetector(
-              onTap: () => {
-                    Navigator.pushNamed(context, JobDetailsScreen.routeName,
-                        arguments: [
-                          widget.displaySlots[index],
-                          widget.displaySlots,
-                        ])
-                  },
-              child: TrendingJobsCard(displaySlot: widget.displaySlots[index]));
-        }),
-        itemCount: widget.displaySlots.length,
-      ),
-    );
+        decoration: BoxDecoration(color: Colors.white),
+        height: 170,
+        child: widget.displaySlots.isNotEmpty
+            ? ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: ((context, index) {
+                  return GestureDetector(
+                      onTap: () => {
+                            Navigator.pushNamed(
+                                context, JobDetailsScreen.routeName,
+                                arguments: [
+                                  widget.displaySlots[index],
+                                  widget.displaySlots,
+                                ])
+                          },
+                      child: TrendingJobsCard(
+                          displaySlot: widget.displaySlots[index]));
+                }),
+                itemCount: widget.displaySlots.length,
+              )
+            : Center(
+                child: Text("Jobs not available."),
+              ));
   }
 }
 

@@ -6,25 +6,14 @@ import 'package:deaksapp/providers/Notification.dart';
 import 'package:deaksapp/providers/Outlets.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
-import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
-import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
-import 'package:deaksapp/screens/home/home_screen.dart';
-import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
-import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
-import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
-import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:deaksapp/routes.dart';
-import 'package:deaksapp/screens/profile/profile_screen.dart';
 import 'package:deaksapp/screens/splash/splash_screen.dart';
 import 'package:deaksapp/theme.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:provider/provider.dart';
@@ -36,14 +25,14 @@ void main() async {
   await Firebase.initializeApp();
 
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-Future<void> backgroundHandler(RemoteMessage message) async {
-  print("background");
-}
+Future<void> backgroundHandler(RemoteMessage message) async {}
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -59,7 +48,6 @@ class _MyAppState extends State<MyApp> {
       // //print(value);
     });
     FirebaseMessaging.instance.getToken().then((token) async {
-      print(token);
       final prefs = await SharedPreferences.getInstance();
       final userPushToken = json.encode(
         {
@@ -137,14 +125,14 @@ class _MyAppState extends State<MyApp> {
                 // home: SplashScreen(),
                 // We use routeName so that we dont need to remember the name
                 home: auth.isAuth
-                    ? PageState()
+                    ? const PageState()
                     : FutureBuilder(
                         future: auth.tryAutoLogin(),
                         builder: (ctx, authResultSnapshot) =>
                             authResultSnapshot.connectionState ==
                                     ConnectionState.waiting
                                 ? SplashScreen()
-                                : PageState(),
+                                : const PageState(),
                       ),
 
                 // ProfileScreen(),

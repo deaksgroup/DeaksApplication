@@ -139,7 +139,6 @@ class ProfileFetch with ChangeNotifier {
     //   // attaireImages = File(userProfilePath["profilePicPath"]);
     // }
 
-    log("profielfetch");
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;
@@ -155,13 +154,15 @@ class ProfileFetch with ChangeNotifier {
       // print(response.data.toString());
 
       final extractedData = response.data;
+      print(extractedData);
+      log("profielfetch");
       if (response.statusCode != 200) {
         return;
       }
       if (extractedData == null) {
         return;
       }
-      print(extractedData);
+
       // ////print(extractedData["result"]);
       // ////print("Profileftech...");
       Map<dynamic, dynamic> extractedProfile =
@@ -187,7 +188,7 @@ class ProfileFetch with ChangeNotifier {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
-        ////print(e.response!.data);
+        print(e.response);
         ////print(e.response!.headers);
         ////print(e.response!.requestOptions);
       } else {

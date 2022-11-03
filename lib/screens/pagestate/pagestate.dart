@@ -5,10 +5,7 @@ import 'package:deaksapp/screens/shareJobScreen/shareJobScreen.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 // import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +14,6 @@ import '../../providers/DisplaySlot.dart';
 import '../../providers/Hotel.dart';
 import '../../providers/Hotels.dart';
 import '../../providers/Job.dart';
-import '../../providers/Jobs.dart';
 import '../../providers/Outlet.dart';
 import '../../providers/Outlets.dart';
 import '../../providers/Profile.dart';
@@ -28,7 +24,7 @@ import '../sign_in/sign_in_screen.dart';
 
 class PageState extends StatefulWidget {
   static String routeName = "/pageState";
-  PageState({super.key});
+  const PageState({super.key});
 
   @override
   State<PageState> createState() => _PageStateState();
@@ -57,9 +53,7 @@ class _PageStateState extends State<PageState> {
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
       final Uri uri = dynamicLinkData.link;
-      final String id = uri.toString().split("/").last ?? "";
-      print(id);
-      final queryParams = uri.queryParameters;
+      final String id = uri.toString().split("/").last;
 
       if (Provider.of<Auth>(context, listen: false).isAuth) {
         Provider.of<Slots>(context, listen: false)
@@ -70,10 +64,7 @@ class _PageStateState extends State<PageState> {
       } else {
         Navigator.of(context).pushNamed(SignInScreen.routeName);
       }
-    }).onError((error) {
-      print('onLink error');
-      print(error.message);
-    });
+    }).onError((error) {});
   }
 
   @override
@@ -81,7 +72,6 @@ class _PageStateState extends State<PageState> {
     super.initState();
     initDynamicLinks();
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("foreground bakc");
       Map<dynamic, dynamic> notify = {
         "title": message.notification?.title ?? "",
         "body": message.notification?.body ?? "",
@@ -116,8 +106,6 @@ class _PageStateState extends State<PageState> {
 
     ///forground work
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("foreground");
-
       if (message.notification != null) {
         Map<dynamic, dynamic> notify = {
           "title": message.notification?.title ?? "",
@@ -149,7 +137,6 @@ class _PageStateState extends State<PageState> {
       "limit": "20"
     };
     if (_isInit) {
-      print(_isInit);
       setState(() {
         _isLoading = true;
       });
@@ -162,7 +149,6 @@ class _PageStateState extends State<PageState> {
                           setState(() {
                             _isLoading = false;
                           }),
-                          print(displaySlots.length)
                         }),
               });
     }
@@ -177,21 +163,21 @@ class _PageStateState extends State<PageState> {
     SizeConfig().init(context);
     return Scaffold(
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
                 strokeWidth: 1,
               ),
             )
           : pages[selected],
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: getProportionateScreenWidth(70),
         // decoration: BoxDecoration(color: Colors.grey),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
-              new BoxShadow(
+              BoxShadow(
                 color: Colors.grey.shade400.withOpacity(.2),
                 blurRadius: 30.0,
               ),
@@ -212,7 +198,7 @@ class _PageStateState extends State<PageState> {
                       });
                     }
                   },
-                  child: Container(
+                  child: SizedBox(
                     // decoration: BoxDecoration(color: Colors.white),
                     height: double.infinity,
                     child: Icon(
@@ -238,7 +224,7 @@ class _PageStateState extends State<PageState> {
                       Navigator.pushNamed(context, SignInScreen.routeName);
                     }
                   },
-                  child: Container(
+                  child: SizedBox(
                       // decoration: BoxDecoration(color: Colors.white),
                       height: double.infinity,
                       child: Icon(
@@ -264,7 +250,7 @@ class _PageStateState extends State<PageState> {
                       Navigator.pushNamed(context, SignInScreen.routeName);
                     }
                   },
-                  child: Container(
+                  child: SizedBox(
                       // decoration: BoxDecoration(color: Colors.white),
                       height: double.infinity,
                       child: Icon(

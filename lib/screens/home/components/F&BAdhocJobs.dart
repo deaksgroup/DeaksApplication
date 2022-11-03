@@ -29,27 +29,29 @@ class _AdHocJobsState extends State<AdHocJobs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
-      child: ListView.builder(
-        reverse: true,
-        itemBuilder: ((context, index) {
-          return GestureDetector(
-            onTap: (() {
-              Navigator.pushNamed(context, JobDetailsScreen.routeName,
-                  arguments: [
-                    widget.displaySlots[index],
-                    widget.displaySlots,
-                  ]);
-            }),
-            child: AdHocJobCard(
-              displaySlot: widget.displaySlots[index],
-              displaySlots: widget.displaySlots,
-            ),
-          );
-        }),
-        itemCount: widget.displaySlots.length,
-      ),
-    );
+        height: 500,
+        child: widget.displaySlots.isNotEmpty
+            ? ListView.builder(
+                itemBuilder: ((context, index) {
+                  return GestureDetector(
+                    onTap: (() {
+                      Navigator.pushNamed(context, JobDetailsScreen.routeName,
+                          arguments: [
+                            widget.displaySlots[index],
+                            widget.displaySlots,
+                          ]);
+                    }),
+                    child: AdHocJobCard(
+                      displaySlot: widget.displaySlots[index],
+                      displaySlots: widget.displaySlots,
+                    ),
+                  );
+                }),
+                itemCount: widget.displaySlots.length,
+              )
+            : Center(
+                child: Text("Jobs not available."),
+              ));
   }
 }
 

@@ -16,20 +16,24 @@ class Jobs with ChangeNotifier {
   }
 
   Future<int> applyJob(String slotId) async {
+    try {
+      Map<dynamic, dynamic> extractedData = {};
+      var dio = Dio();
+      Response response;
+
+      Map<String, dynamic> headers = {
+        "secret_token": token,
+      };
+      response = await dio.patch("${globals.url}/ApplyJob",
+          data: {"slot_id": slotId}, options: Options(headers: headers));
+      // extractedData = Map<dynamic, dynamic>.from(response.data);
+      int? status = response.statusCode ?? 0;
+
+      return status;
+    } catch (error) {
+      return 400;
+    }
     ////print("applyjib");
-    Map<dynamic, dynamic> extractedData = {};
-    var dio = Dio();
-    Response response;
-
-    Map<String, dynamic> headers = {
-      "secret_token": token,
-    };
-    response = await dio.patch("${globals.url}/ApplyJob",
-        data: {"slot_id": slotId}, options: Options(headers: headers));
-    // extractedData = Map<dynamic, dynamic>.from(response.data);
-    int? status = response.statusCode ?? 0;
-
-    return status;
   }
 
   Future<int> cancelJob(String slotId) async {
@@ -65,6 +69,7 @@ class Jobs with ChangeNotifier {
   }
 
   Future<void> fetchAndSetJobs() async {
+    print("fetchAndSetJObs");
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -77,7 +82,7 @@ class Jobs with ChangeNotifier {
       // ////print(response.data.toString());
 
       final extractedData = response.data;
-      if (extractedData == null) {
+      if (extractedData == null || response.statusCode != 200) {
         return;
       }
       // ////print(extractedData);

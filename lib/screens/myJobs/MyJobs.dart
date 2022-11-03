@@ -30,15 +30,6 @@ class _MyJobsState extends State<MyJobs> {
   List<Slot> jobsList = [];
   List<DisplaySlot> displayJobSlots = [];
 
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
-
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -48,7 +39,7 @@ class _MyJobsState extends State<MyJobs> {
   void didChangeDependencies() async {
     if (_isInit) {
       jobsList = Provider.of<Jobs>(context, listen: false).getJobs;
-
+      print("didChangeDipendcy");
       displayJobSlots = [];
 
       jobsList.forEach((job) => {
@@ -92,7 +83,7 @@ class _MyJobsState extends State<MyJobs> {
         .then(((value) {
       _isInit = true;
       didChangeDependencies();
-      ////print("here");
+      print("refresh jobs");
     }));
 
     // didChangeDependencies();
@@ -100,7 +91,7 @@ class _MyJobsState extends State<MyJobs> {
 
   @override
   Widget build(BuildContext context) {
-    ////print("Buidling myjobs");
+    print("Buidling myjobs");
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(

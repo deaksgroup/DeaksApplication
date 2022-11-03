@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:deaksapp/globals.dart';
 import 'package:deaksapp/globals.dart' as globals;
 
 class Auth with ChangeNotifier {
@@ -63,9 +61,7 @@ class Auth with ChangeNotifier {
   }
 
   String get token {
-    if (_expiryDate != null &&
-        _expiryDate.isAfter(DateTime.now()) &&
-        _token != "") {
+    if (_expiryDate.isAfter(DateTime.now()) && _token != "") {
       return _token;
     }
     return "";
@@ -93,7 +89,6 @@ class Auth with ChangeNotifier {
       Map<dynamic, dynamic> extractedData = Map<dynamic, dynamic>.from(data);
 
       if (extractedData["token"] != null) {
-        print(extractedData["token"]);
         _token = extractedData["token"];
         _expiryDate = DateTime.now().add(const Duration(minutes: 8000));
         _userName = extractedData["user"]["name"] ?? "";
@@ -409,11 +404,9 @@ class Auth with ChangeNotifier {
     _numberIsVerified = false;
     _contactNumber = "";
     _authTimer = Timer(const Duration(seconds: 0), (() {}));
-    ;
     if (_authTimer != null) {
       _authTimer?.cancel();
       _authTimer = Timer(const Duration(seconds: 0), (() {}));
-      ;
     }
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();

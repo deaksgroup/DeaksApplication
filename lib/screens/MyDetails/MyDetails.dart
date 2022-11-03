@@ -64,11 +64,13 @@ class _MyDetailsState extends State<MyDetails> {
               fontSize: 15,
             ),
           )),
-      body: Body(
-        press: () {
-          setState(() {});
-        },
-        isEditable: isEditable,
+      body: SafeArea(
+        child: Body(
+          press: () {
+            setState(() {});
+          },
+          isEditable: isEditable,
+        ),
       ),
     );
   }

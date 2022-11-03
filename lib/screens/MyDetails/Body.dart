@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -5,17 +7,17 @@ import 'package:deaksapp/screens/MyDetails/ProfilePicture.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
 import 'package:deaksapp/screens/home/components/section_title.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as Path;
@@ -26,7 +28,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../size_config.dart';
-import "../../globals.dart" as MediaType;
+
 import 'package:deaksapp/globals.dart' as globals;
 
 class Body extends StatefulWidget {
@@ -39,7 +41,9 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  GlobalKey<FormBuilderState> _formKeyBuilder = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormBuilderState> _formKeyBuilder =
+      GlobalKey<FormBuilderState>();
+
 //  _formKeyBuilder = GlobalKey<FormBuilderState>();
   bool _isRestricted = false;
   File? image;
@@ -73,9 +77,6 @@ class _BodyState extends State<Body> {
         if (profile["accountStatus"] == "AUTHORIZED") {
           _isRestricted = true;
         }
-        print("111");
-        print(profile["accountStatus"]);
-        print("111");
       });
     }
 
@@ -87,9 +88,6 @@ class _BodyState extends State<Body> {
   bool readOnly = false;
   bool showSegmentedControl = true;
 
-  bool _ageHasError = false;
-  bool _dobHasError = false;
-  bool _genderHasError = false;
   var genderOptions = ['Male', 'Female', 'Other', 'Select'];
   var residentOptions = [
     "Select",
@@ -155,8 +153,6 @@ class _BodyState extends State<Body> {
 
   bool _unitNumberHasError = false;
 
-  bool _floorHasError = false;
-
   bool _streetHasError = false;
 
   bool _cityHasError = false;
@@ -164,8 +160,6 @@ class _BodyState extends State<Body> {
   bool _zipHasError = false;
 
   bool _statusHasError = false;
-
-  bool _FSIHasError = false;
 
   bool _FSIDHasError = false;
 
@@ -204,7 +198,7 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
@@ -212,13 +206,12 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
 
   Future<void> onReset() async {
-    print("hello");
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return showCupertinoModalPopup(
           context: context,
@@ -229,13 +222,13 @@ class _BodyState extends State<Body> {
                         pickImage(ImageSource.camera);
                         Navigator.of(context).pop();
                       }),
-                      child: Text("Camera")),
+                      child: const Text("Camera")),
                   CupertinoActionSheetAction(
                       onPressed: (() {
                         pickImage(ImageSource.gallery);
                         Navigator.of(context).pop();
                       }),
-                      child: Text("Gallery"))
+                      child: const Text("Gallery"))
                 ],
               )));
     } else {
@@ -245,14 +238,14 @@ class _BodyState extends State<Body> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    title: Text("Camera"),
+                    title: const Text("Camera"),
                     onTap: () {
                       pickImage(ImageSource.camera);
                       Navigator.of(context).pop();
                     },
                   ),
                   ListTile(
-                    title: Text("Gallery"),
+                    title: const Text("Gallery"),
                     onTap: (() {
                       pickImage(ImageSource.gallery);
                       Navigator.of(context).pop();
@@ -266,14 +259,11 @@ class _BodyState extends State<Body> {
   void pickImage(ImageSource source) async {
     try {
       final imageFile = await ImagePicker().pickImage(source: source);
-      print("pickImage");
       if (imageFile != null) {
-        print(imageFile.path);
         final baseName = Path.basename(imageFile.path);
         // final imagePermenent = await saveImagePermenently(imageFile.path);
         final path = await getApplicationDocumentsDirectory();
         log("1");
-        print(path.path);
         final File newImage =
             await File(imageFile.path).copy('${path.path}/$baseName');
         final prefs = await SharedPreferences.getInstance();
@@ -284,15 +274,12 @@ class _BodyState extends State<Body> {
         );
         await prefs.setString('profilePicPath', profilePicPath);
         setState(() {
-          print("setState");
           image = newImage;
           Provider.of<ProfileFetch>(context, listen: false)
               .setProfilePic(newImage);
         });
       }
-    } on PlatformException catch (e) {
-      print("Failed to pick image : $e");
-    }
+    } on PlatformException catch (e) {}
   }
 
   void pickImages() async {
@@ -324,11 +311,8 @@ class _BodyState extends State<Body> {
           },
         );
         await prefs.setString('attaireImagesPaths', attaireImagesPaths);
-        print(attireImages);
       }
-    } on PlatformException catch (e) {
-      print("Failed to pick image : $e");
-    }
+    } on PlatformException catch (e) {}
   }
 
   // Future<List<File>> saveImagesPermenently(Lis)
@@ -374,9 +358,9 @@ class _BodyState extends State<Body> {
         institutes.where((country) => seen.add(country)).toList();
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 17),
+      padding: const EdgeInsets.symmetric(horizontal: 17),
       child: Column(children: [
-        SizedBox(
+        const SizedBox(
           height: 30,
         ),
         Container(
@@ -394,11 +378,11 @@ class _BodyState extends State<Body> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(width: 2, color: Colors.white),
-                              borderRadius: BorderRadius.all(
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(50),
                               ),
                               boxShadow: [
-                                new BoxShadow(
+                                BoxShadow(
                                   color: Colors.grey.shade400.withOpacity(.6),
                                   blurRadius: 5.0,
                                 ),
@@ -431,19 +415,19 @@ class _BodyState extends State<Body> {
                               height: 30,
                               decoration: BoxDecoration(
                                 boxShadow: [
-                                  new BoxShadow(
+                                  BoxShadow(
                                     color: Colors.grey.shade400.withOpacity(.6),
                                     blurRadius: 5.0,
                                   ),
                                 ],
-                                color: Color.fromARGB(255, 159, 222, 249),
+                                color: const Color.fromARGB(255, 159, 222, 249),
                                 border:
                                     Border.all(width: 2, color: Colors.white),
-                                borderRadius: BorderRadius.all(
+                                borderRadius: const BorderRadius.all(
                                   Radius.circular(20),
                                 ),
                               ),
-                              child: Center(
+                              child: const Center(
                                   child: Icon(
                                 Icons.camera_alt_rounded,
                                 size: 20,
@@ -452,7 +436,7 @@ class _BodyState extends State<Body> {
                     ]),
                   )),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Container(
@@ -464,15 +448,15 @@ class _BodyState extends State<Body> {
             vertical: getProportionateScreenWidth(10),
           ),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(118, 185, 71, 1),
+            color: const Color.fromRGBO(118, 185, 71, 1),
             borderRadius: BorderRadius.circular(5),
           ),
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text.rich(
               TextSpan(
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
                 children: [
                   TextSpan(
                     text: profile["verificationStatus"] == "PENDING" ||
@@ -504,11 +488,11 @@ class _BodyState extends State<Body> {
             //   )
           ]),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         if (profile["verificationStatus"] == "PENDING")
-          Text(
+          const Text(
               "* Please wait! Your details have been submitted and waiting for verification. We may contact you during the verification process."),
         FormBuilder(
           enabled: isEditable,
@@ -524,38 +508,39 @@ class _BodyState extends State<Body> {
           skipDisabled: true,
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
-              SectionTitle(title: "Personal Details"),
-              SizedBox(
+              const SectionTitle(title: "Personal Details"),
+              const SizedBox(
                 height: 25,
               ),
               FormBuilderTextField(
                 name: 'name',
+
                 enabled: false,
                 decoration: InputDecoration(
                   labelText: "Name",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   fillColor: Colors.grey.withOpacity(.2),
                   filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.grey.withOpacity(.5)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -582,30 +567,31 @@ class _BodyState extends State<Body> {
               const SizedBox(height: 15),
               FormBuilderTextField(
                 name: 'email',
+
                 enabled: false,
 
                 decoration: InputDecoration(
                   labelText: "Email",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   fillColor: Colors.grey.withOpacity(.2),
                   filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.grey.withOpacity(.5)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -638,26 +624,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Contact Number",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -687,26 +673,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Bookin Name",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -737,26 +723,26 @@ class _BodyState extends State<Body> {
                 enabled: isEditable,
                 decoration: InputDecoration(
                   labelText: "Gender",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -774,12 +760,7 @@ class _BodyState extends State<Body> {
                         ))
                     .toList(),
                 onChanged: (val) {
-                  setState(() {
-                    _genderHasError = !(_formKeyBuilder
-                            .currentState?.fields['Sex']
-                            ?.validate() ??
-                        false);
-                  });
+                  setState(() {});
                 },
                 valueTransformer: (val) => val?.toString(),
               ),
@@ -791,11 +772,11 @@ class _BodyState extends State<Body> {
                 // locale: const Locale.fromSubtags(languageCode: 'in'),
                 initialEntryMode: DatePickerEntryMode.calendarOnly,
                 initialValue: profile["DOB"]!.isNotEmpty
-                    ? new DateFormat("yyyy-MM-dd ")
-                        .parse(profile["DOB"].toString())
+                    ? DateFormat("yyyy-MM-dd ").parse(profile["DOB"].toString())
                     : null,
-                initialDate: DateTime.now().subtract(Duration(days: 5844)),
-                lastDate: DateTime.now().subtract(Duration(days: 5844)),
+                initialDate:
+                    DateTime.now().subtract(const Duration(days: 5844)),
+                lastDate: DateTime.now().subtract(const Duration(days: 5844)),
                 firstDate: DateTime.utc(1969, 7, 20, 20, 18, 04),
                 format: DateFormat("dd-MM-yyyy"),
                 inputType: InputType.date,
@@ -803,36 +784,32 @@ class _BodyState extends State<Body> {
                   fillColor: Colors.grey.withOpacity(.2),
                   filled: _isRestricted,
                   labelText: "Date Of Birth",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 onChanged: (val) {
-                  setState(() {
-                    _dobHasError = !(_formKeyBuilder.currentState?.fields['DOB']
-                            ?.validate() ??
-                        false);
-                  });
+                  setState(() {});
                 },
                 onSaved: (newValue) => {newValue?.toIso8601String()},
                 validator: FormBuilderValidators.compose([
@@ -843,167 +820,167 @@ class _BodyState extends State<Body> {
                 // locale: const Locale.fromSubtags(languageCode: 'fr'),
               ),
               const SizedBox(height: 40),
-              SectionTitle(title: "Attire"),
-              SizedBox(
+              const SectionTitle(title: "Attire"),
+              const SizedBox(
                 height: 20,
               ),
-              Container(
-                child: GestureDetector(
-                  onTap: () => pickImages(),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
-                        border: Border.all(
-                            width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        // boxShadow: [
-                        //   new BoxShadow(
-                        //     color: Colors.grey.shade400.withOpacity(.6),
-                        //     blurRadius: 5.0,
-                        //   ),
-                        // ]
+              GestureDetector(
+                onTap: () => pickImages(),
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.2),
+                      border: Border.all(
+                          width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(15),
                       ),
-                      height: 200,
-                      width: double.infinity,
-                      // decoration: BoxDecoration(
-                      //   color: Colors.grey.withOpacity(.3),
-                      //   border: Border.all(width: 1, color: Colors.grey),
-                      // ),
-                      child: attireImages.isNotEmpty &&
-                              attireImages[0].isAbsolute &&
-                              attireImages[1].isAbsolute
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 2, color: Colors.white),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
+                      // boxShadow: [
+                      //   new BoxShadow(
+                      //     color: Colors.grey.shade400.withOpacity(.6),
+                      //     blurRadius: 5.0,
+                      //   ),
+                      // ]
+                    ),
+                    height: 200,
+                    width: double.infinity,
+                    // decoration: BoxDecoration(
+                    //   color: Colors.grey.withOpacity(.3),
+                    //   border: Border.all(width: 1, color: Colors.grey),
+                    // ),
+                    child: attireImages.isNotEmpty &&
+                            attireImages[0].isAbsolute &&
+                            attireImages[1].isAbsolute
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade400
+                                            .withOpacity(.6),
+                                        blurRadius: 5.0,
                                       ),
-                                      boxShadow: [
-                                        new BoxShadow(
-                                          color: Colors.grey.shade400
-                                              .withOpacity(.6),
-                                          blurRadius: 5.0,
-                                        ),
-                                      ]),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(15),
-                                    ),
-                                    child: Image.file(
-                                      attireImages[0],
-                                      width: 110,
-                                      height: 110,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    ]),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  child: Image.file(
+                                    attireImages[0],
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 2, color: Colors.white),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 2, color: Colors.white),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(5),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.shade400
+                                            .withOpacity(.6),
+                                        blurRadius: 5.0,
                                       ),
-                                      boxShadow: [
-                                        new BoxShadow(
-                                          color: Colors.grey.shade400
-                                              .withOpacity(.6),
-                                          blurRadius: 5.0,
-                                        ),
-                                      ]),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(15),
-                                    ),
-                                    child: Image.file(
-                                      attireImages[1],
-                                      width: 110,
-                                      height: 110,
-                                      fit: BoxFit.cover,
-                                    ),
+                                    ]),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  child: Image.file(
+                                    attireImages[1],
+                                    width: 110,
+                                    height: 110,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                              ],
-                            )
-                          : attaaireImageUrlKeys.isEmpty
-                              ? Center(child: Text("Select images"))
-                              : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              width: 2, color: Colors.white),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(5),
+                              ),
+                            ],
+                          )
+                        : attaaireImageUrlKeys.isEmpty
+                            ? const Center(
+                                child: Text(
+                                    "Please upload together.\n\n1. Fully Black formal Shoes.\n2. Black formal pants"))
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            width: 2, color: Colors.white),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.shade400
+                                                .withOpacity(.6),
+                                            blurRadius: 5.0,
                                           ),
-                                          boxShadow: [
-                                            new BoxShadow(
-                                              color: Colors.grey.shade400
-                                                  .withOpacity(.6),
-                                              blurRadius: 5.0,
-                                            ),
-                                          ]),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(15),
-                                        ),
-                                        child: Image.network(
-                                          "${globals.url}/images/${attaaireImageUrlKeys[0]}",
-                                          width: 110,
-                                          height: 110,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        ]),
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(15),
+                                      ),
+                                      child: Image.network(
+                                        "${globals.url}/images/${attaaireImageUrlKeys[0]}",
+                                        width: 110,
+                                        height: 110,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                              width: 2, color: Colors.white),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(5),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            width: 2, color: Colors.white),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(5),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.shade400
+                                                .withOpacity(.6),
+                                            blurRadius: 5.0,
                                           ),
-                                          boxShadow: [
-                                            new BoxShadow(
-                                              color: Colors.grey.shade400
-                                                  .withOpacity(.6),
-                                              blurRadius: 5.0,
-                                            ),
-                                          ]),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(15),
-                                        ),
-                                        child: Image.network(
-                                          "${globals.url}/images/${attaaireImageUrlKeys[1]}",
-                                          width: 110,
-                                          height: 110,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        ]),
+                                    child: ClipRRect(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(15),
+                                      ),
+                                      child: Image.network(
+                                        "${globals.url}/images/${attaaireImageUrlKeys[1]}",
+                                        width: 110,
+                                        height: 110,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ],
-                                )),
-                ),
+                                  ),
+                                ],
+                              )),
               ),
               const SizedBox(height: 40),
-              SectionTitle(title: "Address"),
-              SizedBox(
+              const SectionTitle(title: "Address"),
+              const SizedBox(
                 height: 20,
               ),
               FormBuilderTextField(
@@ -1011,26 +988,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Unit Number",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1059,37 +1036,32 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Block Number",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),
                 onChanged: (val) {
-                  setState(() {
-                    _floorHasError = !(_formKeyBuilder
-                            .currentState?.fields['floorNumber']
-                            ?.validate() ??
-                        false);
-                  });
+                  setState(() {});
                 },
 
                 // valueTransformer: (text) => num.tryParse(text),
@@ -1107,26 +1079,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Street",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1155,26 +1127,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "City",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1203,26 +1175,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "ZIP Code",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1246,8 +1218,8 @@ class _BodyState extends State<Body> {
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 40),
-              SectionTitle(title: "Legal Status"),
-              SizedBox(
+              const SectionTitle(title: "Legal Status"),
+              const SizedBox(
                 height: 20,
               ),
               FormBuilderTextField(
@@ -1258,26 +1230,26 @@ class _BodyState extends State<Body> {
                   fillColor: Colors.grey.withOpacity(.2),
                   filled: _isRestricted,
                   labelText: "NRIC",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1308,26 +1280,26 @@ class _BodyState extends State<Body> {
                 name: 'residentStatus',
                 decoration: InputDecoration(
                   labelText: "Legal Status",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1364,26 +1336,26 @@ class _BodyState extends State<Body> {
                   name: 'FSInstitute',
                   decoration: InputDecoration(
                     labelText: "Selelct Institute",
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                         color: Colors.blueGrey,
                         fontSize: 15,
                         fontWeight: FontWeight.bold),
                     // fillColor: Color.fromRGBO(232, 235, 243, 1),
                     // filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     disabledBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     border: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 11.5,
                             color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
@@ -1401,12 +1373,7 @@ class _BodyState extends State<Body> {
                           ))
                       .toList(),
                   onChanged: (val) {
-                    setState(() {
-                      _FSIHasError = !(_formKeyBuilder
-                              .currentState?.fields['FSInstitute']
-                              ?.validate() ??
-                          false);
-                    });
+                    setState(() {});
                   },
                   valueTransformer: (val) => val?.toString(),
                 ),
@@ -1417,26 +1384,26 @@ class _BodyState extends State<Body> {
 
                   decoration: InputDecoration(
                     labelText: "ID Number",
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                         color: Colors.blueGrey,
                         fontSize: 15,
                         fontWeight: FontWeight.bold),
                     // fillColor: Color.fromRGBO(232, 235, 243, 1),
                     // filled: true,
                     enabledBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     disabledBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
                     border: OutlineInputBorder(
-                        borderSide: new BorderSide(
+                        borderSide: BorderSide(
                             width: 11.5,
                             color: Colors.blueGrey.withOpacity(.3)),
                         borderRadius: BorderRadius.circular(5)),
@@ -1461,8 +1428,8 @@ class _BodyState extends State<Body> {
                   textInputAction: TextInputAction.next,
                 ),
               const SizedBox(height: 40),
-              SectionTitle(title: "Payment Details"),
-              SizedBox(
+              const SectionTitle(title: "Payment Details"),
+              const SizedBox(
                 height: 20,
               ),
               FormBuilderTextField(
@@ -1470,26 +1437,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "PayNow Number",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1518,26 +1485,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Bank Account Number",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1565,26 +1532,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Name of Bank",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1608,33 +1575,33 @@ class _BodyState extends State<Body> {
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 40),
-              SectionTitle(title: "Emergency Contact"),
+              const SectionTitle(title: "Emergency Contact"),
               const SizedBox(height: 20),
               FormBuilderTextField(
                 name: 'emergencyContact',
 
                 decoration: InputDecoration(
                   labelText: "Emergency Contact",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1667,26 +1634,26 @@ class _BodyState extends State<Body> {
 
                 decoration: InputDecoration(
                   labelText: "Emergency Contact Name",
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1716,26 +1683,26 @@ class _BodyState extends State<Body> {
                 decoration: InputDecoration(
                   labelText: 'Relation',
 
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                   // fillColor: Color.fromRGBO(232, 235, 243, 1),
                   // filled: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 1.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(
+                      borderSide: BorderSide(
                           width: 11.5, color: Colors.blueGrey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5)),
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -1771,13 +1738,13 @@ class _BodyState extends State<Body> {
                     title: RichText(
                       text: TextSpan(
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: 'I have read and agree to the ',
                             style: TextStyle(color: Colors.black),
                           ),
                           TextSpan(
                             text: 'Terms and Conditions',
-                            style: TextStyle(color: Colors.blue),
+                            style: const TextStyle(color: Colors.blue),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 var link =
@@ -1785,13 +1752,13 @@ class _BodyState extends State<Body> {
                                 openlink(link);
                               },
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: ' & ',
                             style: TextStyle(color: Colors.black),
                           ),
                           TextSpan(
                             text: 'Privacy Policy.',
-                            style: TextStyle(color: Colors.blue),
+                            style: const TextStyle(color: Colors.blue),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 var link =
@@ -1835,7 +1802,7 @@ class _BodyState extends State<Body> {
                   }
                 },
                 child: isLoading
-                    ? Center(
+                    ? const Center(
                         child: SizedBox(
                             width: 12,
                             height: 12,
@@ -1859,7 +1826,7 @@ class _BodyState extends State<Body> {
                   }
                 },
                 // color: Theme.of(context).colorScheme.secondary,
-                child: Text(
+                child: const Text(
                   'Reset',
                   style: TextStyle(color: Colors.black),
                 ),
@@ -1867,7 +1834,7 @@ class _BodyState extends State<Body> {
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         )
       ]),
