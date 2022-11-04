@@ -3,6 +3,7 @@ import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             title: Text("Update"),
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, MyDetails.routeName);
+              Navigator.pushNamed(context, MyDetailsPage.routeName);
             },
           ),
         ],

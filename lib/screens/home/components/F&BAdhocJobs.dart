@@ -3,6 +3,7 @@ import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:deaksapp/screens/FlushBar/ShowFlushBAr.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 // import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -137,7 +138,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
             title: Text("Update"),
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, MyDetails.routeName);
+              Navigator.pushNamed(context, MyDetailsPage.routeName);
             },
           ),
         ],

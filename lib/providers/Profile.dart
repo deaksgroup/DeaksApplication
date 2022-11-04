@@ -179,9 +179,10 @@ class ProfileFetch with ChangeNotifier {
       profile = convertedProfile;
       profileURlKey = convertedProfile["profilePicture"] ?? "";
 
-      attaireImagesURLKeys = [];
-      // List<String>.from(convertedProfile["attirePictures"]);
-      //     List<dynamic>.from(convertedProfile["attaireImages"]?? ));
+      attaireImagesURLKeys =
+          List<String>.from(extractedProfile["attirePictures"]!);
+
+      // List<dynamic>.from(convertedProfile["attaireImages"]);
       ////print(convertedProfile);
       // notifyListeners();
     } on DioError catch (e) {
@@ -220,35 +221,36 @@ class ProfileFetch with ChangeNotifier {
     }
     profilePic = profilePic;
     var dio = Dio();
-    print("111");
-    print(attaireImges[0].path);
-    print("111");
-    print(attaireImges[1].path);
-    print("111");
+
     Response response;
     Map<String, String> convertedUserData = userData!
         .map((key, value) => MapEntry(key.toString(), value.toString()));
 
     FormData formData = FormData.fromMap({
-      "data": convertedUserData,
-      "profile": await MultipartFile.fromFile(
-        profilePicture?.path != null ? profilePicture!.path : "",
-        filename: profilePicture?.path.toString().split("/").last,
-        contentType: MediaType('image', 'jpg'),
-      ),
+      "data": userData,
+      "profile": profilePicture != null && profilePicture.isAbsolute
+          ? await MultipartFile.fromFile(
+              profilePicture.path,
+              filename: profilePicture.path.toString().split("/").last,
+              contentType: MediaType('image', 'jpg'),
+            )
+          : "",
       "attaire": [
-        MultipartFile.fromFileSync(attaireImges[0].path,
-            filename: profilePicture?.path.toString().split("/").last,
-            contentType: MediaType('image', 'jpg')),
-        MultipartFile.fromFileSync(attaireImges[1].path,
-            filename: profilePicture?.path.toString().split("/").last,
-            contentType: MediaType('image', 'jpg')),
+        attaireImges.isNotEmpty && attaireImges[0].isAbsolute
+            ? MultipartFile.fromFileSync(attaireImges[0].path,
+                filename: attaireImges[0].path.toString().split("/").last,
+                contentType: MediaType('image', 'jpg'))
+            : "",
+        attaireImges.isNotEmpty && attaireImges[0].isAbsolute
+            ? MultipartFile.fromFileSync(attaireImges[1].path,
+                filename: attaireImges[1].path.toString().split("/").last,
+                contentType: MediaType('image', 'jpg'))
+            : "",
       ],
-      "type": "image/jpg"
     });
 
     Map<dynamic, dynamic> extractedData = {};
-
+    print(formData);
     Map<String, dynamic> headers = {
       "secret_token": token,
       "Content-Type": "multipart/form-data"

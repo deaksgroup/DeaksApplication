@@ -48,7 +48,7 @@ TextEditingController verificationStatus = TextEditingController();
 TextEditingController residentStatus = TextEditingController();
 TextEditingController FSInstitute = TextEditingController();
 TextEditingController FSIDNumber = TextEditingController();
-// TextEditingController residentStatus = TextEditingController();
+TextEditingController bookingName = TextEditingController();
 // TextEditingController residentStatus = TextEditingController();
 // TextEditingController residentStatus = TextEditingController();
 

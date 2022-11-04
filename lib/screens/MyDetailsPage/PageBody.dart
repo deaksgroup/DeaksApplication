@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:deaksapp/screens/MyDetailsPage/Actions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -23,7 +24,7 @@ import 'package:deaksapp/globals.dart' as globals;
 import "package:intl/src/intl/date_format.dart";
 import '../../providers/Profile.dart';
 import 'ProfilePicture.dart';
-import 'Actions.dart' as actions;
+// import 'Actions.dart' as actions;
 
 class PageBody extends StatefulWidget {
   const PageBody({super.key});
@@ -51,6 +52,32 @@ class _PageBodyState extends State<PageBody> {
   bool readOnly = false;
   bool showSegmentedControl = true;
 
+  bool checkedValue = false;
+
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController contactNumber = TextEditingController();
+  TextEditingController accountStatus = TextEditingController();
+  TextEditingController Sex = TextEditingController();
+  TextEditingController city = TextEditingController();
+  TextEditingController unitNumber = TextEditingController();
+  TextEditingController street = TextEditingController();
+  TextEditingController blockNumber = TextEditingController();
+  TextEditingController zipCode = TextEditingController();
+  TextEditingController NRIC = TextEditingController();
+  TextEditingController PayNow = TextEditingController();
+  TextEditingController bankAccNo = TextEditingController();
+  TextEditingController bankName = TextEditingController();
+  TextEditingController DOB = TextEditingController();
+  TextEditingController emergencyContact = TextEditingController();
+  TextEditingController emergencyContactName = TextEditingController();
+  TextEditingController emergencyContactRelation = TextEditingController();
+  TextEditingController verificationStatus = TextEditingController();
+  TextEditingController residentStatus = TextEditingController();
+  TextEditingController FSInstitute = TextEditingController();
+  TextEditingController FSIDNumber = TextEditingController();
+  TextEditingController bookingName = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -59,21 +86,47 @@ class _PageBodyState extends State<PageBody> {
   @override
   void didChangeDependencies() async {
     if (isInIt) {
-      setState(() {
-        image = Provider.of<ProfileFetch>(context, listen: false)
-            .getProfilePicture();
-        profileUrlKey = Provider.of<ProfileFetch>(context, listen: false)
-            .getProfileUrlKey();
-        attaaireImageUrlKeys = Provider.of<ProfileFetch>(context, listen: false)
-            .getAttaireImagesUrlKey();
-        attireImages = Provider.of<ProfileFetch>(context, listen: false)
-            .getAttaireiamges();
+      print("rebuild didichange");
+      image =
+          Provider.of<ProfileFetch>(context, listen: false).getProfilePicture();
+      profileUrlKey =
+          Provider.of<ProfileFetch>(context, listen: false).getProfileUrlKey();
+      attaaireImageUrlKeys = Provider.of<ProfileFetch>(context, listen: false)
+          .getAttaireImagesUrlKey();
+      attireImages =
+          Provider.of<ProfileFetch>(context, listen: false).getAttaireiamges();
 
-        profile = Provider.of<ProfileFetch>(context, listen: false).getProfile;
-        if (profile["accountStatus"] == "AUTHORIZED") {
-          _isRestricted = true;
-        }
-      });
+      profile = Provider.of<ProfileFetch>(context, listen: false).getProfile;
+      if (profile["accountStatus"] == "AUTHORIZED") {
+        _isRestricted = true;
+      }
+      name = TextEditingController(text: profile["name"]);
+      email = TextEditingController(text: profile["email"]);
+      contactNumber = TextEditingController(text: profile["contactNumber"]);
+      accountStatus = TextEditingController(text: profile["accountStatus"]);
+      Sex = TextEditingController(text: profile["Sex"]);
+      city = TextEditingController(text: profile["city"]);
+      unitNumber = TextEditingController(text: profile["unitNumber"]);
+      street = TextEditingController(text: profile["street"]);
+      blockNumber = TextEditingController(text: profile["blockNumber"]);
+      zipCode = TextEditingController(text: profile["zipCode"]);
+      NRIC = TextEditingController(text: profile["NRIC"]);
+      PayNow = TextEditingController(text: profile["PayNow"]);
+      bankAccNo = TextEditingController(text: profile["bankAccNo"]);
+      bankName = TextEditingController(text: profile["bankName"]);
+      DOB = TextEditingController(text: profile["DOB"]);
+      emergencyContact =
+          TextEditingController(text: profile["emergencyContact"]);
+      emergencyContactName =
+          TextEditingController(text: profile["emergencyContactName"]);
+      emergencyContactRelation =
+          TextEditingController(text: profile["emergencyContactRelation"]);
+      verificationStatus =
+          TextEditingController(text: profile["verificationStatus"]);
+      residentStatus = TextEditingController(text: profile["residentStatus"]);
+      FSInstitute = TextEditingController(text: profile["FSInstitute"]);
+      FSIDNumber = TextEditingController(text: profile["FSIDNumber"]);
+      bookingName = TextEditingController(text: profile["bookingName"]);
     }
 
     isInIt = false;
@@ -184,10 +237,33 @@ class _PageBodyState extends State<PageBody> {
     } on PlatformException catch (e) {}
   }
 
-  Future<void> submitUserData(Map<String, dynamic>? userData) async {
+  Future<void> submitUserData() async {
     setState(() {
       isLoading = true;
     });
+    Map<String, dynamic> userData = {
+      "name": name.text,
+      "email": email.text,
+      "contctNumber": contactNumber.text,
+      "bookingName": bookingName.text,
+      "Sex": Sex.text,
+      "city": city.text,
+      "unitNumber": FSIDNumber.text,
+      "blockNumber": blockNumber.text,
+      "street": street.text,
+      "zipCode": zipCode.text,
+      "NRIC": NRIC.text,
+      "PayNow": PayNow.text,
+      "bankAccNo": bankAccNo.text,
+      "bankName": bankName.text,
+      "DOB": DOB.text,
+      "emergencyContact": emergencyContact.text,
+      "emergencyContactName": emergencyContactName.text,
+      "emergencyContactRelation": emergencyContactRelation.text,
+      "residentStatus": residentStatus.text,
+      "FSInstitute": FSInstitute.text,
+      "FSIDNumber": FSIDNumber.text
+    };
 
     Provider.of<ProfileFetch>(context, listen: false)
         .submitProfile(userData, image, attireImages)
@@ -265,6 +341,7 @@ class _PageBodyState extends State<PageBody> {
     List<String> uniquelist =
         options.institutes.where((country) => seen.add(country)).toList();
     return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 17),
       child: Column(
         children: [
           const SizedBox(
@@ -307,7 +384,7 @@ class _PageBodyState extends State<PageBody> {
                                       fit: BoxFit.cover,
                                     )
                                   : Image.network(
-                                      "h${globals.url}/images/$profileUrlKey",
+                                      "${globals.url}/images/$profileUrlKey",
                                       width: 95,
                                       height: 95,
                                       fit: BoxFit.cover,
@@ -397,11 +474,10 @@ class _PageBodyState extends State<PageBody> {
                     height: 25,
                   ),
                   TextFormField(
+                    controller: name,
                     enabled: false,
                     decoration: setDisabledDecoration(labelName: "Name"),
-                    onChanged: (val) {
-                      _formKeyForm.currentState?.fields['name']?.validate();
-                    },
+                    onChanged: (val) {},
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
                       FormBuilderValidators.min(4),
@@ -411,15 +487,11 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: UniqueKey().toString(),
-
+                  TextFormField(
                     enabled: false,
+                    controller: email,
                     decoration: setDisabledDecoration(labelName: "Email"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['email']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
@@ -432,9 +504,8 @@ class _PageBodyState extends State<PageBody> {
                   ),
                   const SizedBox(height: 15),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'contactNumber',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: contactNumber,
                     decoration: InputDecoration(
                       labelText: "Contact Number",
                       labelStyle: const TextStyle(
@@ -464,10 +535,7 @@ class _PageBodyState extends State<PageBody> {
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       prefixText: "+65",
                     ),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['contactNumber']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
                       FormBuilderValidators.match(r'^(\d\d\d\d\d\d\d\d)$')
@@ -476,14 +544,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'bookingName',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: bookingName,
                     decoration: setEnabledDecoration("Booking Name"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['bookingName']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
@@ -495,10 +559,9 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderDropdown<String>(
-                    name: 'Sex',
+                  DropdownButtonFormField<String>(
                     key: UniqueKey(),
-                    enabled: true,
+                    value: Sex.text.toString(),
                     decoration: InputDecoration(
                       labelText: "Gender",
                       labelStyle: const TextStyle(
@@ -539,19 +602,21 @@ class _PageBodyState extends State<PageBody> {
                               child: Text(gender),
                             ))
                         .toList(),
-                    onChanged: (val) {},
-                    valueTransformer: (val) => val?.toString(),
+                    onChanged: (val) {
+                      Sex.text = val.toString();
+                    },
                   ),
                   const SizedBox(height: 15),
                   FormBuilderDateTimePicker(
                     enabled: !_isRestricted,
-                    key: UniqueKey(),
+                    controller: DOB,
+
                     name: 'DOB',
                     // locale: const Locale.fromSubtags(languageCode: 'in'),
                     initialEntryMode: DatePickerEntryMode.calendarOnly,
-                    initialValue: profile["DOB"]!.isNotEmpty
-                        ? DateFormat("yyyy-MM-dd ")
-                            .parse(profile["DOB"].toString())
+
+                    initialValue: DOB.text.isNotEmpty
+                        ? DateFormat("dd-MM-yyyy").parse(DOB.text.toString())
                         : null,
                     initialDate:
                         DateTime.now().subtract(const Duration(days: 5844)),
@@ -562,7 +627,10 @@ class _PageBodyState extends State<PageBody> {
                     inputType: InputType.date,
                     decoration: setDisabledDecoration(
                         labelName: "Date of birth", fillColor: _isRestricted),
-                    onChanged: (val) {},
+                    onChanged: (val) {
+                      print(val.toString().split(" ").first);
+                      DOB.text = val.toString().split(" ").first;
+                    },
                     onSaved: (newValue) => {newValue?.toIso8601String()},
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
@@ -727,14 +795,10 @@ class _PageBodyState extends State<PageBody> {
                   const SizedBox(
                     height: 20,
                   ),
-                  FormBuilderTextField(
-                    name: 'unitNumber',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: unitNumber,
                     decoration: setEnabledDecoration("Unit Number"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['unitNumber']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
                     ]),
@@ -742,12 +806,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'blockNumber',
-                    key: UniqueKey(),
+                  TextFormField(
                     decoration: setEnabledDecoration("Block Number"),
                     onChanged: (val) {},
-
+                    controller: blockNumber,
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
@@ -758,14 +820,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'street',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: street,
                     decoration: setEnabledDecoration("Street"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['street']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
@@ -777,14 +835,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'city',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: city,
                     decoration: setEnabledDecoration("City"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['city']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
@@ -796,14 +850,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderTextField(
-                    name: 'zipCode',
-                    key: UniqueKey(),
+                  TextFormField(
+                    controller: zipCode,
                     decoration: setEnabledDecoration("ZIP Code"),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['zipCode']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
@@ -819,16 +869,12 @@ class _PageBodyState extends State<PageBody> {
                   const SizedBox(
                     height: 20,
                   ),
-                  FormBuilderTextField(
+                  TextFormField(
                     enabled: !_isRestricted,
-                    name: 'NRIC',
-                    key: UniqueKey(),
+                    controller: NRIC,
                     decoration: setDisabledDecoration(
                         labelName: "NRIC", fillColor: _isRestricted),
-                    onChanged: (val) {
-                      _formKeyFormBuilder.currentState?.fields['NRIC']
-                          ?.validate();
-                    },
+                    onChanged: (val) {},
 
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
@@ -841,10 +887,10 @@ class _PageBodyState extends State<PageBody> {
                     textInputAction: TextInputAction.next,
                   ),
                   const SizedBox(height: 15),
-                  FormBuilderDropdown<String>(
+                  DropdownButtonFormField<String>(
                     // autovalidate: true,
                     key: UniqueKey(),
-                    name: 'residentStatus',
+                    value: residentStatus.text.toString(),
                     decoration: setEnabledDecoration("Legal Status"),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(),
@@ -859,18 +905,20 @@ class _PageBodyState extends State<PageBody> {
                             ))
                         .toList(),
                     onChanged: (val) {
-                      legalStatus = val.toString();
-                      _formKeyFormBuilder.currentState?.fields['residentStatus']
-                          ?.validate();
+                      setState(() {
+                        legalStatus = val.toString();
+                        residentStatus.text = val.toString();
+                      });
                     },
-                    valueTransformer: (val) => val?.toString(),
+                    // valueTransformer: (val) => val?.toString(),
                   ),
-                  if (legalStatus == "Foreign Student")
-                    FormBuilderDropdown<String>(
+                  const SizedBox(height: 15),
+                  if (residentStatus.text == "Foreign Student")
+                    DropdownButtonFormField<String>(
                       // autovalidate: true,
                       isExpanded: true,
                       key: UniqueKey(),
-                      name: 'FSInstitute',
+                      value: FSInstitute.text.toString(),
                       decoration: setEnabledDecoration("Selelct Institute"),
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(),
@@ -883,18 +931,17 @@ class _PageBodyState extends State<PageBody> {
                                 child: Text(institute),
                               ))
                           .toList(),
-                      onChanged: (val) {},
-                      valueTransformer: (val) => val?.toString(),
+                      onChanged: (val) {
+                        FSInstitute.text = val.toString();
+                      },
                     ),
                   const SizedBox(height: 15),
-                  if (legalStatus == "Foreign Student")
-                    FormBuilderTextField(
-                      name: 'FSIDNumber',
-                      key: UniqueKey(),
+                  if (residentStatus.text == "Foreign Student")
+                    TextFormField(
+                      controller: FSIDNumber,
                       decoration: setEnabledDecoration("ID Number"),
                       onChanged: (val) {
-                        _formKeyFormBuilder.currentState?.fields['FSIDNumber']
-                            ?.validate();
+                        FSIDNumber.text = val.toString();
                       },
 
                       // valueTransformer: (text) => num.tryParse(text),
@@ -911,57 +958,188 @@ class _PageBodyState extends State<PageBody> {
                   const SizedBox(
                     height: 20,
                   ),
-                  // SizedBox(
-                  //   height: 100,
-                  //   child: Center(
-                  //     child: FormBuilderCheckbox(
-                  //       name: 'accept_terms',
-                  //       initialValue: false,
-                  //       title: RichText(
-                  //         text: TextSpan(
-                  //           children: [
-                  //             const TextSpan(
-                  //               text: 'I have read and agree to the ',
-                  //               style: TextStyle(color: Colors.black),
-                  //             ),
-                  //             TextSpan(
-                  //               text: 'Terms and Conditions',
-                  //               style: const TextStyle(color: Colors.blue),
-                  //               recognizer: TapGestureRecognizer()
-                  //                 ..onTap = () {
-                  //                   var link =
-                  //                       "https://deaks-app-fe.vercel.app/terms-condition";
-                  //                   actions.openlink(context, link);
-                  //                 },
-                  //             ),
-                  //             const TextSpan(
-                  //               text: ' & ',
-                  //               style: TextStyle(color: Colors.black),
-                  //             ),
-                  //             TextSpan(
-                  //               text: 'Privacy Policy.',
-                  //               style: const TextStyle(color: Colors.blue),
-                  //               recognizer: TapGestureRecognizer()
-                  //                 ..onTap = () {
-                  //                   var link =
-                  //                       "https://deaks-app-fe.vercel.app/privacy-policy";
-                  //                   actions.openlink(context, link);
-                  //                 },
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //       validator: FormBuilderValidators.equal(
-                  //         true,
-                  //         errorText:
-                  //             'You must accept terms and conditions to continue',
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  TextFormField(
+                    controller: PayNow,
+
+                    decoration: setEnabledDecoration("PayNow Number"),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.match(r'^(\d\d\d\d\d\d\d\d)$'),
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: bankAccNo,
+
+                    decoration: setEnabledDecoration("Bank Account Number"),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: bankName,
+
+                    decoration: setEnabledDecoration("Name of Bank"),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.max(22),
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 40),
+                  const SectionTitle(title: "Emergency Contact"),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: emergencyContact,
+
+                    decoration: InputDecoration(
+                      labelText: "Emergency Contact",
+                      labelStyle: const TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold),
+                      // fillColor: Color.fromRGBO(232, 235, 243, 1),
+                      // filled: true,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1.5,
+                              color: Colors.blueGrey.withOpacity(.3)),
+                          borderRadius: BorderRadius.circular(5)),
+                      disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1.5,
+                              color: Colors.blueGrey.withOpacity(.3)),
+                          borderRadius: BorderRadius.circular(5)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1.5,
+                              color: Colors.blueGrey.withOpacity(.3)),
+                          borderRadius: BorderRadius.circular(5)),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 11.5,
+                              color: Colors.blueGrey.withOpacity(.3)),
+                          borderRadius: BorderRadius.circular(5)),
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      prefixText: "+65",
+                      // suffixIcon: _emergencyContactHasError
+                      //     ? const Icon(Icons.error, color: Colors.red)
+                      //     : const Icon(Icons.check, color: Colors.green),
+                    ),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.match(r'^(\d\d\d\d\d\d\d\d)$')
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: emergencyContactName,
+
+                    decoration: setEnabledDecoration("Emergency Contact Name"),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.max(22),
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: emergencyContactRelation,
+
+                    decoration: setEnabledDecoration('Relation'),
+                    onChanged: (val) {},
+
+                    // valueTransformer: (text) => num.tryParse(text),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.max(22),
+                    ]),
+                    // initialValue: '12',
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
                   const SizedBox(height: 40),
                 ],
               )),
+          SizedBox(
+            height: 50,
+            child: Center(
+              child: CheckboxListTile(
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'I have read and agree to the ',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Terms and Conditions',
+                        style: const TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            var link =
+                                "https://deaks-app-fe.vercel.app/terms-condition";
+                            openlink(context, link);
+                          },
+                      ),
+                      const TextSpan(
+                        text: ' & ',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Privacy Policy.',
+                        style: const TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            var link =
+                                "https://deaks-app-fe.vercel.app/privacy-policy";
+                            openlink(context, link);
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+                value: checkedValue,
+                onChanged: (newValue) {
+                  setState(() {
+                    checkedValue = true;
+                  });
+                },
+                controlAffinity:
+                    ListTileControlAffinity.leading, //  <-- leading Checkbox
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
           Row(
             children: [
               Expanded(
@@ -969,14 +1147,14 @@ class _PageBodyState extends State<PageBody> {
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
                   onPressed: () {
-                    if (true && profile["verificationStatus"] != "PENDING") {
-                      if (_formKeyFormBuilder.currentState?.saveAndValidate() ??
-                          false) {
-                        // debugPrint(_formKey.currentState?.value.toString());
-                        submitUserData(_formKeyFormBuilder.currentState?.value);
+                    if (true &&
+                        checkedValue &&
+                        profile["verificationStatus"] != "PENDING") {
+                      if (_formKeyForm.currentState?.validate() ?? false) {
+                        debugPrint(_formKeyForm.currentState?.toString());
+                        submitUserData();
                       } else {
-                        debugPrint(
-                            _formKeyFormBuilder.currentState?.value.toString());
+                        debugPrint(_formKeyForm.currentState?.toString());
                         debugPrint('validation failed');
                       }
                     }
@@ -1002,7 +1180,7 @@ class _PageBodyState extends State<PageBody> {
                 child: OutlinedButton(
                   onPressed: () {
                     if (true) {
-                      _formKeyFormBuilder.currentState?.reset();
+                      _formKeyForm.currentState?.reset();
                     }
                   },
                   // color: Theme.of(context).colorScheme.secondary,
