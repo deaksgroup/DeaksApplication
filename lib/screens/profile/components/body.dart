@@ -7,6 +7,7 @@ import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/firebase_dynamic_links.dart';
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 
 import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -61,7 +62,8 @@ class _BodyState extends State<Body> {
           ProfileMenu(
             text: "My Info",
             icon: "assets/icons/User Icon.svg",
-            press: () => {Navigator.pushNamed(context, MyDetails.routeName)},
+            press: () =>
+                {Navigator.pushNamed(context, MyDetailsPage.routeName)},
           ),
           ProfileMenu(
             text: "Subscriptions",

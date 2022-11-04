@@ -32,9 +32,8 @@ import '../../size_config.dart';
 import 'package:deaksapp/globals.dart' as globals;
 
 class Body extends StatefulWidget {
-  final VoidCallback press;
   bool isEditable;
-  Body({super.key, required this.isEditable, required this.press});
+  Body({super.key, required this.isEditable});
 
   @override
   State<Body> createState() => _BodyState();
@@ -467,25 +466,6 @@ class _BodyState extends State<Body> {
                 ],
               ),
             ),
-            // if (!(profile["verificationStatus"] == "Pending" ||
-            //     profile["verificationStatus"] == "Not Submitted" ||
-            //     profile["accountStatus"] == "Unauthorized"))
-            //   Container(
-            //     width: 30,
-            //     height: 30,
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       borderRadius: BorderRadius.all(
-            //         Radius.circular(25),
-            //       ),
-            //     ),
-            //     child: Center(
-            //         child: Image.asset(
-            //       "assets/icons/checked.png",
-            //       width: 25,
-            //       height: 25,
-            //     )),
-            //   )
           ]),
         ),
         const SizedBox(

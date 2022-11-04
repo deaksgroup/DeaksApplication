@@ -7,7 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'Body.dart';
 
 class MyDetails extends StatefulWidget {
-  static String routeName = "/mydetails";
+  static String routeName = "/mydetailsss";
   const MyDetails({
     super.key,
   });
@@ -66,9 +66,6 @@ class _MyDetailsState extends State<MyDetails> {
           )),
       body: SafeArea(
         child: Body(
-          press: () {
-            setState(() {});
-          },
           isEditable: isEditable,
         ),
       ),

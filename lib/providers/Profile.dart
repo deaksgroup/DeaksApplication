@@ -172,8 +172,8 @@ class ProfileFetch with ChangeNotifier {
       Map<String, String> convertedProfile = extractedProfile
           .map((key, value) => MapEntry(key.toString(), value.toString()));
       subscriptions =
-          List<Map<dynamic, dynamic>>.from(extractedProfile["subscriptions"]) ??
-              [];
+          List<Map<dynamic, dynamic>>.from(extractedProfile["subscriptions"]);
+
       print(subscriptions);
 
       profile = convertedProfile;

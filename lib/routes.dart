@@ -1,6 +1,7 @@
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
 import 'package:deaksapp/screens/myJobs/MyJobs.dart';
@@ -44,6 +45,7 @@ final Map<String, WidgetBuilder> routes = {
   ForgotOTPScreen.routeName: (context) => ForgotOTPScreen(),
   NewPasswordScreen.routeName: (context) => NewPasswordScreen(),
   DeleteAccount.routeName: (context) => DeleteAccount(),
+  MyDetailsPage.routeName: (context) => MyDetailsPage(),
 
   NotoficationPage.routeName: (context) => NotoficationPage(
         payload: {},

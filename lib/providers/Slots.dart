@@ -58,9 +58,9 @@ class Slots with ChangeNotifier {
         priority: extractedSlot["priority"] ?? "",
         startTime: extractedSlot["startTime"] ?? "",
         totalPayForSlot: extractedSlot["totalPayForSlot"] ?? "",
-        release: extractedSlot["release"].toString() ?? "",
+        release: extractedSlot["release"].toString(),
         jobRemarks: extractedSlot["jobRemarks"] ?? "",
-        vacancy: extractedSlot["vacancy"].toString() ?? "",
+        vacancy: extractedSlot["vacancy"].toString(),
         confirmedRequests: extractedSlot["confirmedRequests"] ?? [],
         waitingRequests: extractedSlot["waitingRequests"] ?? [],
       );
@@ -125,9 +125,9 @@ class Slots with ChangeNotifier {
             priority: slot["priority"] ?? "",
             startTime: slot["startTime"] ?? "",
             totalPayForSlot: slot["totalPayForSlot"] ?? "",
-            release: slot["release"].toString() ?? "",
+            release: slot["release"].toString(),
             jobRemarks: slot["jobRemarks"] ?? "",
-            vacancy: slot["vacancy"].toString() ?? "",
+            vacancy: slot["vacancy"].toString(),
             confirmedRequests: slot["confirmedRequests"] ?? [],
             waitingRequests: slot["waitingRequests"] ?? [],
           ));
@@ -136,7 +136,7 @@ class Slots with ChangeNotifier {
       }
 
       slots = loadedSlots;
-      print(slots);
+
       notifyListeners();
       return response.statusCode ?? 200;
     } on DioError catch (e) {

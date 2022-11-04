@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:deaksapp/providers/Job.dart';
 import 'package:deaksapp/providers/Slot.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -108,9 +105,9 @@ class Jobs with ChangeNotifier {
             priority: job["priority"] ?? "",
             startTime: job["startTime"] ?? "",
             totalPayForSlot: job["totalPayForSlot"] ?? "",
-            release: job["release"].toString() ?? "",
+            release: job["release"].toString(),
             jobRemarks: job["jobRemarks"] ?? "",
-            vacancy: job["vacancy"].toString() ?? "",
+            vacancy: job["vacancy"].toString(),
             confirmedRequests: job["confirmedRequests"] ?? [],
             waitingRequests: job["waitingRequests"] ?? [],
           ));
