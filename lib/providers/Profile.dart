@@ -241,7 +241,7 @@ class ProfileFetch with ChangeNotifier {
                 filename: attaireImges[0].path.toString().split("/").last,
                 contentType: MediaType('image', 'jpg'))
             : "",
-        attaireImges.isNotEmpty && attaireImges[0].isAbsolute
+        attaireImges.isNotEmpty && attaireImges[1].isAbsolute
             ? MultipartFile.fromFileSync(attaireImges[1].path,
                 filename: attaireImges[1].path.toString().split("/").last,
                 contentType: MediaType('image', 'jpg'))

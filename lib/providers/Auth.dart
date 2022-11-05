@@ -73,10 +73,10 @@ class Auth with ChangeNotifier {
 
   Future<Map<dynamic, dynamic>> loginUser(Map<String, String> loginData) async {
     // log("message");
-    Map<dynamic, dynamic> extracteddata = {};
+
     var dio = Dio();
     Response response;
-
+    Map<dynamic, dynamic> extractedData = {};
     try {
       //404
       response = await dio.post("${globals.url}/userLogin", data: loginData);
@@ -84,9 +84,9 @@ class Auth with ChangeNotifier {
 
       final data = response.data;
       if (data == null) {
-        return extracteddata;
+        return extractedData;
       }
-      Map<dynamic, dynamic> extractedData = Map<dynamic, dynamic>.from(data);
+      extractedData = Map<dynamic, dynamic>.from(data);
 
       if (extractedData["token"] != null) {
         _token = extractedData["token"];
@@ -121,13 +121,18 @@ class Auth with ChangeNotifier {
         //////print(e.response!.data);
         //////print(e.response!.headers);
         //////print(e.response!.requestOptions);
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
       } else {
         // Something happened in setting up or sending the request that triggered an Error
         //////print(e.requestOptions);
         //////print(e.message);
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
       }
     }
-    return extracteddata;
   }
 
   Future<Map<dynamic, dynamic>> signUpUser() async {
@@ -157,6 +162,7 @@ class Auth with ChangeNotifier {
         return extractedData;
       }
       extractedData = Map<dynamic, dynamic>.from(data);
+      print(extractedData);
 
       if (extractedData["token"] != null) {
         _token = extractedData["token"];
@@ -192,13 +198,18 @@ class Auth with ChangeNotifier {
         //////print(e.response!.data);
         //////print(e.response!.headers);
         //////print(e.response!.requestOptions);
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
       } else {
         // Something happened in setting up or sending the request that triggered an Error
         //////print(e.requestOptions);
         //////print(e.message);
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
       }
     }
-    return extractedData;
   }
 
   Future<Map<dynamic, dynamic>> verifyOtpCreate() async {
@@ -207,12 +218,25 @@ class Auth with ChangeNotifier {
       "secret_token": _token,
     };
     var dio = Dio();
-    Response response = await dio.post("${globals.url}/verifyNumberCreate",
-        data: {"contactNumber": _contactNumber},
-        options: Options(headers: headers));
-    extractedData = Map<dynamic, dynamic>.from(response.data);
+    Response response;
+    try {
+      response = await dio.post("${globals.url}/verifyNumberCreate",
+          data: {"contactNumber": _contactNumber},
+          options: Options(headers: headers));
+      extractedData = Map<dynamic, dynamic>.from(response.data);
 
-    return extractedData;
+      return extractedData;
+    } on DioError catch (e) {
+      if (e.response != null) {
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
+      } else {
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
+      }
+    }
   }
 
   Future<Map<dynamic, dynamic>> verifyOtp(String otp) async {
@@ -221,33 +245,46 @@ class Auth with ChangeNotifier {
     };
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
-    ////print(_contactNumber);
-    Response response = await dio.post("${globals.url}/verifyNumberCheck",
-        data: {"otp": otp, "contactNumber": _contactNumber},
-        options: Options(headers: headers));
 
-    //////print(response.data);
-    extractedData = Map<dynamic, dynamic>.from(response.data);
-    if (extractedData["errorCode"] == 0) {
-      //////print(extractedData["errorCode"]);
-      _numberIsVerified = true;
-      _autoLogout();
-      notifyListeners();
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode(
-        {
-          'token': _token,
-          'userName': _userName,
-          'expiryDate': _expiryDate.toIso8601String(),
-          "email": _email,
-          "contactNumber": _contactNumber,
-          "numberIsVerified": _numberIsVerified.toString(),
-        },
-      );
-      prefs.setString('userData', userData);
-      return extractedData;
-    } else {
-      return extractedData;
+    Response response;
+    try {
+      response = await dio.post("${globals.url}/verifyNumberCheck",
+          data: {"otp": otp, "contactNumber": _contactNumber},
+          options: Options(headers: headers));
+
+      //////print(response.data);
+      extractedData = Map<dynamic, dynamic>.from(response.data);
+      if (extractedData["errorCode"] == 0) {
+        //////print(extractedData["errorCode"]);
+        _numberIsVerified = true;
+        _autoLogout();
+        notifyListeners();
+        final prefs = await SharedPreferences.getInstance();
+        final userData = json.encode(
+          {
+            'token': _token,
+            'userName': _userName,
+            'expiryDate': _expiryDate.toIso8601String(),
+            "email": _email,
+            "contactNumber": _contactNumber,
+            "numberIsVerified": _numberIsVerified.toString(),
+          },
+        );
+        prefs.setString('userData', userData);
+        return extractedData;
+      } else {
+        return extractedData;
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
+      } else {
+        extractedData["message"] = "Something wend wrong!,please try again";
+        extractedData["errorCode"] = 1;
+        return extractedData;
+      }
     }
   }
 
@@ -257,25 +294,30 @@ class Auth with ChangeNotifier {
     };
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
+    try {
+      Response response = await dio.post("${globals.url}/setNewPassword",
+          data: {"newPassword": _password}, options: Options(headers: headers));
 
-    Response response = await dio.post("${globals.url}/setNewPassword",
-        data: {"newPassword": _password}, options: Options(headers: headers));
+      //////print(response.data);
+      extractedData = Map<dynamic, dynamic>.from(response.data);
 
-    //////print(response.data);
-    extractedData = Map<dynamic, dynamic>.from(response.data);
+      if (response.data == null) {
+        return extractedData;
+      }
+      if (extractedData["errorCode"] == 0) {
+        //////print(extractedData["errorCode"]);
+        _numberIsVerified = true;
+        _setPassword = false;
+        _autoLogout();
+        notifyListeners();
 
-    if (response.data == null) {
-      return extractedData;
-    }
-    if (extractedData["errorCode"] == 0) {
-      //////print(extractedData["errorCode"]);
-      _numberIsVerified = true;
-      _setPassword = false;
-      _autoLogout();
-      notifyListeners();
-
-      return extractedData;
-    } else {
+        return extractedData;
+      } else {
+        return extractedData;
+      }
+    } catch (e) {
+      extractedData["message"] = "Something wend wrong!,please try again";
+      extractedData["errorCode"] = 1;
       return extractedData;
     }
   }
@@ -283,49 +325,54 @@ class Auth with ChangeNotifier {
   Future<Map<dynamic, dynamic>> verifyForgotOtp(String otp) async {
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
-
-    Response response = await dio.post(
-      "${globals.url}/forgotPasswordOTPVerify",
-      data: {"otp": otp, "email": _email},
-    );
-
-    //////print(response.data);
-    final data = response.data;
-    if (data == null) {
-      return extractedData;
-    }
-    extractedData = Map<dynamic, dynamic>.from(data);
-
-    if (extractedData["token"] != null) {
-      _token = extractedData["token"];
-      _expiryDate = DateTime.now().add(const Duration(minutes: 8000));
-      _userName = extractedData["user"]["name"] ?? "";
-      _email = extractedData["user"]["email"] ?? "";
-      _numberIsVerified = extractedData["user"]["numberIsVerified"] ?? false;
-      _contactNumber = extractedData["user"]["contactNumber"] ?? "";
-      _setPassword = true;
-    } else {
-      return extractedData;
-    }
-    if (extractedData["errorCode"] == 0) {
-      //////print(extractedData["errorCode"]);
-      _numberIsVerified = true;
-      _autoLogout();
-      // notifyListeners();
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode(
-        {
-          'token': _token,
-          'userName': _userName,
-          'expiryDate': _expiryDate.toIso8601String(),
-          "email": _email,
-          "contactNumber": _contactNumber,
-          "numberIsVerified": _numberIsVerified.toString(),
-        },
+    try {
+      Response response = await dio.post(
+        "${globals.url}/forgotPasswordOTPVerify",
+        data: {"otp": otp, "email": _email},
       );
-      prefs.setString('userData', userData);
-      return extractedData;
-    } else {
+
+      //////print(response.data);
+      final data = response.data;
+      if (data == null) {
+        return extractedData;
+      }
+      extractedData = Map<dynamic, dynamic>.from(data);
+
+      if (extractedData["token"] != null) {
+        _token = extractedData["token"];
+        _expiryDate = DateTime.now().add(const Duration(minutes: 8000));
+        _userName = extractedData["user"]["name"] ?? "";
+        _email = extractedData["user"]["email"] ?? "";
+        _numberIsVerified = extractedData["user"]["numberIsVerified"] ?? false;
+        _contactNumber = extractedData["user"]["contactNumber"] ?? "";
+        _setPassword = true;
+      } else {
+        return extractedData;
+      }
+      if (extractedData["errorCode"] == 0) {
+        //////print(extractedData["errorCode"]);
+        _numberIsVerified = true;
+        _autoLogout();
+        // notifyListeners();
+        final prefs = await SharedPreferences.getInstance();
+        final userData = json.encode(
+          {
+            'token': _token,
+            'userName': _userName,
+            'expiryDate': _expiryDate.toIso8601String(),
+            "email": _email,
+            "contactNumber": _contactNumber,
+            "numberIsVerified": _numberIsVerified.toString(),
+          },
+        );
+        prefs.setString('userData', userData);
+        return extractedData;
+      } else {
+        return extractedData;
+      }
+    } catch (e) {
+      extractedData["message"] = "Something wend wrong!,please try again";
+      extractedData["errorCode"] = 1;
       return extractedData;
     }
   }
