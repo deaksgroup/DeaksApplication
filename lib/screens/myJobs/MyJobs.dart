@@ -2,23 +2,14 @@ import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
 import 'package:deaksapp/providers/Slot.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/Hotel.dart';
-import '../../providers/Hotels.dart';
-import '../../providers/Job.dart';
-import '../../providers/Outlet.dart';
-import '../../providers/Outlets.dart';
-
-import '../../providers/Slots.dart';
 import 'Body.dart';
 
 class MyJobs extends StatefulWidget {
   static String routeName = "/myjobs";
 
-  MyJobs({super.key});
+  const MyJobs({super.key});
 
   @override
   State<MyJobs> createState() => _MyJobsState();
@@ -26,7 +17,6 @@ class MyJobs extends StatefulWidget {
 
 class _MyJobsState extends State<MyJobs> {
   var _isInit = true;
-  var _isLoading = false;
   List<Slot> jobsList = [];
   List<DisplaySlot> displayJobSlots = [];
 
@@ -39,7 +29,6 @@ class _MyJobsState extends State<MyJobs> {
   void didChangeDependencies() async {
     if (_isInit) {
       jobsList = Provider.of<Jobs>(context, listen: false).getJobs;
-      print("didChangeDipendcy");
       displayJobSlots = [];
 
       jobsList.forEach((job) => {
@@ -83,7 +72,6 @@ class _MyJobsState extends State<MyJobs> {
         .then(((value) {
       _isInit = true;
       didChangeDependencies();
-      print("refresh jobs");
     }));
 
     // didChangeDependencies();
@@ -91,12 +79,11 @@ class _MyJobsState extends State<MyJobs> {
 
   @override
   Widget build(BuildContext context) {
-    print("Buidling myjobs");
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
                 centerTitle: true,
-                title: Text(
+                title: const Text(
                   "Upcoming Jobs",
                   style: TextStyle(
                     color: Colors.blueGrey,

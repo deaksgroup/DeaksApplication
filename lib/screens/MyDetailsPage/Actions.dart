@@ -25,31 +25,3 @@ Future<void> openlink(BuildContext context, String link) async {
     }
   }
 }
-
-TextEditingController name = TextEditingController();
-TextEditingController email = TextEditingController();
-TextEditingController contactNumber = TextEditingController();
-TextEditingController accountStatus = TextEditingController();
-TextEditingController Sex = TextEditingController();
-TextEditingController city = TextEditingController();
-TextEditingController unitNumber = TextEditingController();
-TextEditingController street = TextEditingController();
-TextEditingController blockNumber = TextEditingController();
-TextEditingController zipCode = TextEditingController();
-TextEditingController NRIC = TextEditingController();
-TextEditingController PayNow = TextEditingController();
-TextEditingController bankAccNo = TextEditingController();
-TextEditingController bankName = TextEditingController();
-TextEditingController DOB = TextEditingController();
-TextEditingController emergencyContact = TextEditingController();
-TextEditingController emergencyContactName = TextEditingController();
-TextEditingController emergencyContactRelation = TextEditingController();
-TextEditingController verificationStatus = TextEditingController();
-TextEditingController residentStatus = TextEditingController();
-TextEditingController FSInstitute = TextEditingController();
-TextEditingController FSIDNumber = TextEditingController();
-TextEditingController bookingName = TextEditingController();
-// TextEditingController residentStatus = TextEditingController();
-// TextEditingController residentStatus = TextEditingController();
-
-

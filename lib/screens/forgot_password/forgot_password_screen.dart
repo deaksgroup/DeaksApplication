@@ -4,12 +4,14 @@ import 'components/body.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   static String routeName = "/forgot_password";
+
+  const ForgotPasswordScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "Forgot Password",
             style: TextStyle(
               color: Colors.blueGrey,
@@ -17,7 +19,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             ),
           )),
       body: Stack(children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: Image.asset(
@@ -28,7 +30,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         Container(
           decoration: BoxDecoration(color: Colors.white.withOpacity(.3)),
         ),
-        Body()
+        const Body()
       ]),
     );
   }

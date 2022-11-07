@@ -8,13 +8,15 @@ import 'components/body.dart';
 
 class OtpScreen extends StatelessWidget {
   static String routeName = "/otp";
+
+  const OtpScreen({super.key});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           "OTP Verify",
           style: TextStyle(
             color: Colors.blueGrey,
@@ -27,17 +29,17 @@ class OtpScreen extends StatelessWidget {
                 Provider.of<Auth>(context, listen: false).logout();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => PageState()),
+                    MaterialPageRoute(builder: (context) => const PageState()),
                     ModalRoute.withName("/pagestate"));
               }),
-              child: Text(
+              child: const Text(
                 "Logout",
                 style: TextStyle(color: Colors.blue),
               ))
         ],
       ),
       body: Stack(children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: Image.asset(
@@ -48,7 +50,7 @@ class OtpScreen extends StatelessWidget {
         Container(
           decoration: BoxDecoration(color: Colors.white.withOpacity(.3)),
         ),
-        Body()
+        const Body()
       ]),
     );
   }

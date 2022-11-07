@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:deaksapp/providers/Hotels.dart';
 import 'package:deaksapp/providers/Jobs.dart';
 import 'package:deaksapp/providers/Notification.dart';
-import 'package:deaksapp/providers/Outlets.dart';
+
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
@@ -40,8 +39,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    // TODO: implement initState
-
     FirebaseMessaging.instance
         .requestPermission(alert: true, badge: true, sound: true)
         .then((value) {
@@ -94,20 +91,6 @@ class _MyAppState extends State<MyApp> {
           ),
           update: (context, auth, previous) =>
               NotificationFetch(token: auth.token),
-        ),
-        ChangeNotifierProxyProvider<Auth, Outlets>(
-          create: (
-            ctx,
-          ) =>
-              Outlets(),
-          update: (context, value, previous) => Outlets(),
-        ),
-        ChangeNotifierProxyProvider<Auth, Hotels>(
-          create: (
-            ctx,
-          ) =>
-              Hotels(),
-          update: (context, value, previous) => Hotels(),
         ),
       ],
       child: Consumer<Auth>(

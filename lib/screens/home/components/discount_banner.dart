@@ -24,9 +24,9 @@ class DiscountBanner extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text.rich(
           TextSpan(
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             children: [
-              TextSpan(text: "Hello"),
+              const TextSpan(text: "Hello"),
               TextSpan(
                 text: " ${fullName.split(" ").first}",
                 style: TextStyle(

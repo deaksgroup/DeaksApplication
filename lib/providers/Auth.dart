@@ -162,7 +162,6 @@ class Auth with ChangeNotifier {
         return extractedData;
       }
       extractedData = Map<dynamic, dynamic>.from(data);
-      print(extractedData);
 
       if (extractedData["token"] != null) {
         _token = extractedData["token"];

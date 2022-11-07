@@ -1,18 +1,18 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
-import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:deaksapp/components/custom_surfix_icon.dart';
 import 'package:deaksapp/components/default_button.dart';
 import 'package:deaksapp/components/form_error.dart';
-import 'package:deaksapp/components/no_account_text.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -32,12 +32,12 @@ class Body extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
+              const Text(
                 "Please enter your email and we will send \nyou a link to return to your account",
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: SizeConfig.screenHeight * 0.04),
-              ForgotPassForm(),
+              const ForgotPassForm(),
             ],
           ),
         ),
@@ -47,6 +47,8 @@ class Body extends StatelessWidget {
 }
 
 class ForgotPassForm extends StatefulWidget {
+  const ForgotPassForm({super.key});
+
   @override
   _ForgotPassFormState createState() => _ForgotPassFormState();
 }
@@ -76,7 +78,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                   errors.remove(kInvalidEmailError);
                 });
               }
-              return null;
+              return;
             },
             validator: (value) {
               if (value!.isEmpty && !errors.contains(kEmailNullError)) {
@@ -95,21 +97,22 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
               labelText: "Email",
               hintText: "Enter your email",
               enabledBorder: OutlineInputBorder(
-                  borderSide: new BorderSide(width: 1, color: Colors.grey),
+                  borderSide: const BorderSide(width: 1, color: Colors.grey),
                   borderRadius: BorderRadius.circular(5)),
               disabledBorder: OutlineInputBorder(
-                  borderSide: new BorderSide(width: 1, color: Colors.grey),
+                  borderSide: const BorderSide(width: 1, color: Colors.grey),
                   borderRadius: BorderRadius.circular(5)),
               focusedBorder: OutlineInputBorder(
-                  borderSide: new BorderSide(width: 1, color: Colors.grey),
+                  borderSide: const BorderSide(width: 1, color: Colors.grey),
                   borderRadius: BorderRadius.circular(5)),
               border: OutlineInputBorder(
-                  borderSide: new BorderSide(width: 1, color: Colors.grey),
+                  borderSide: const BorderSide(width: 1, color: Colors.grey),
                   borderRadius: BorderRadius.circular(5)),
               // If  you are using latest version of flutter then lable text and hint text shown like this
               // if you r using flutter less then 1.20.* then maybe this is not working properly
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+              suffixIcon:
+                  const CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
             ),
           ),
           SizedBox(height: getProportionateScreenHeight(30)),
@@ -128,10 +131,10 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                           if (value["errorCode"] == 1)
                             {
                               Flushbar(
-                                margin: EdgeInsets.all(8),
+                                margin: const EdgeInsets.all(8),
                                 borderRadius: BorderRadius.circular(5),
                                 message: value["message"],
-                                duration: Duration(seconds: 3),
+                                duration: const Duration(seconds: 3),
                               )..show(context),
                             }
                           else if (value["errorCode"] == 0)

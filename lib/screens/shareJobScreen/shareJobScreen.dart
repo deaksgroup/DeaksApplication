@@ -1,18 +1,13 @@
 import 'package:deaksapp/providers/Slot.dart';
 import 'package:deaksapp/providers/Slots.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
-import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/Profile.dart';
@@ -37,37 +32,40 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
 
   @override
   void didChangeDependencies() async {
-    Slot? slot = Provider.of<Slots>(context, listen: false).getShareSlot;
+    if (_isInIt) {
+      Slot? slot = Provider.of<Slots>(context, listen: false).getShareSlot;
 
-    if (slot != null) {
-      displaySlot = DisplaySlot(
-          slotId: slot.id,
-          jobRemarks2: slot.jobRemarks,
-          jobRemarks1: slot.outlet["jobRemarks"],
-          outletId: slot.outlet["id"],
-          outletName: slot.outlet["outletName"],
-          outletImages: slot.outlet["outletImages"] ?? [],
-          paymentDetails: slot.outlet["payment"] ?? [],
-          groomingImages: slot.outlet["groomingImages"] ?? [],
-          howToImages: slot.outlet["howToImages"] ?? [],
-          adminNumber: slot.outlet["outletAdminNo"] ?? "",
-          youtubeLink: slot.outlet["youtubeLink"] ?? "",
-          hotelId: slot.hotel["id"] ?? "",
-          hotelName: slot.hotel["hotelName"] ?? "",
-          hotelLogo: slot.hotel["hotelLogo"] ?? "",
-          googleMapLink: slot.hotel["googleMapLink"] ?? "",
-          appleMapLink: slot.hotel["appleMapLink"] ?? "",
-          date: slot.date,
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-          payPerHour: slot.hourlyPay,
-          totalPay: slot.totalPayForSlot,
-          priority: slot.priority,
-          confirmedRequests: slot.confirmedRequests,
-          waitingListRequests: slot.waitingRequests,
-          release: slot.release,
-          vacancy: slot.vacancy);
+      if (slot != null) {
+        displaySlot = DisplaySlot(
+            slotId: slot.id,
+            jobRemarks2: slot.jobRemarks,
+            jobRemarks1: slot.outlet["jobRemarks"],
+            outletId: slot.outlet["id"],
+            outletName: slot.outlet["outletName"],
+            outletImages: slot.outlet["outletImages"] ?? [],
+            paymentDetails: slot.outlet["payment"] ?? [],
+            groomingImages: slot.outlet["groomingImages"] ?? [],
+            howToImages: slot.outlet["howToImages"] ?? [],
+            adminNumber: slot.outlet["outletAdminNo"] ?? "",
+            youtubeLink: slot.outlet["youtubeLink"] ?? "",
+            hotelId: slot.hotel["id"] ?? "",
+            hotelName: slot.hotel["hotelName"] ?? "",
+            hotelLogo: slot.hotel["hotelLogo"] ?? "",
+            googleMapLink: slot.hotel["googleMapLink"] ?? "",
+            appleMapLink: slot.hotel["appleMapLink"] ?? "",
+            date: slot.date,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            payPerHour: slot.hourlyPay,
+            totalPay: slot.totalPayForSlot,
+            priority: slot.priority,
+            confirmedRequests: slot.confirmedRequests,
+            waitingListRequests: slot.waitingRequests,
+            release: slot.release,
+            vacancy: slot.vacancy);
+      }
     }
+
     _isInIt = false;
 
     super.didChangeDependencies();
@@ -78,21 +76,21 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: Text("Not Verified!"),
-        content: Text(
+        title: const Text("Not Verified!"),
+        content: const Text(
             "Your Account needs to be verified before applying a job.Please sumbit your details for verification."),
         actions: <Widget>[
           BasicDialogAction(
-            title: Text("Skip"),
+            title: const Text("Skip"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           BasicDialogAction(
-            title: Text("Update"),
+            title: const Text("Update"),
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, MyDetails.routeName);
+              Navigator.pushNamed(context, MyDetailsPage.routeName);
             },
           ),
         ],
@@ -104,17 +102,17 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: Text("Confirm your booking"),
-        content: Text("Please confirm again for applying for this job"),
+        title: const Text("Confirm your booking"),
+        content: const Text("Please confirm again for applying for this job"),
         actions: <Widget>[
           BasicDialogAction(
-            title: Text("Cancel"),
+            title: const Text("Cancel"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           BasicDialogAction(
-            title: Text("Confirm"),
+            title: const Text("Confirm"),
             onPressed: () {
               Navigator.pop(context);
               applyJob(slotId);
@@ -135,12 +133,12 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
             //print("Hello"),
             //print(value),
             Flushbar(
-              margin: EdgeInsets.all(8),
+              margin: const EdgeInsets.all(8),
               borderRadius: BorderRadius.circular(5),
               message: value == 200
                   ? "Booking Succesfull"
                   : "Something went wrong! Please try again.",
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             )..show(context),
             setState(() {
               _isLading = false;
@@ -158,28 +156,26 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
             ? Body(
                 displaySlot: displaySlot,
               )
-            : Container(
-                child: Center(
-                  child: Container(
-                      width: double.infinity,
-                      child: Column(children: [
-                        Spacer(),
-                        Text("Sorry! This job is currently Unavailbale."),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text("Back to Home Page")),
-                        Spacer()
-                      ])),
-                ),
+            : Center(
+                child: SizedBox(
+                    width: double.infinity,
+                    child: Column(children: [
+                      const Spacer(),
+                      const Text("Sorry! This job is currently Unavailbale."),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("Back to Home Page")),
+                      const Spacer()
+                    ])),
               ),
         bottomNavigationBar: Container(
           height: 65,
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
-              new BoxShadow(
+              BoxShadow(
                 color: Colors.grey.shade400.withOpacity(.3),
                 blurRadius: 30.0,
               ),
@@ -188,7 +184,7 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
           child: Container(
             width: 100,
             height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
@@ -204,7 +200,7 @@ class _shreJobDetailsScreenState extends State<shreJobDetailsScreen> {
                   }
                 },
                 child: _isLading
-                    ? Center(
+                    ? const Center(
                         child: SizedBox(
                           width: 15,
                           height: 15,

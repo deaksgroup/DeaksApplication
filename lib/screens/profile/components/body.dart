@@ -1,28 +1,21 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:deaksapp/providers/Auth.dart';
-import 'package:deaksapp/providers/Profile.dart';
-import 'package:deaksapp/providers/firebase_dynamic_links.dart';
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+
 import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 
 import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../pagestate/pagestate.dart';
 import 'profile_menu.dart';
-import 'package:flutter_share/flutter_share.dart';
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
   State<Body> createState() => _BodyState();
 }
@@ -38,25 +31,23 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
-      if (await canLaunchUrl(iosLink)) {
-        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    File profilePic =
-        Provider.of<ProfileFetch>(context, listen: false).getProfilePicture();
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
           ProfileMenu(
@@ -102,7 +93,7 @@ class _BodyState extends State<Body> {
               Navigator.pushNamed(context, DeleteAccount.routeName);
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           ProfileMenu(
@@ -112,7 +103,7 @@ class _BodyState extends State<Body> {
               Provider.of<Auth>(context, listen: false).logout();
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => PageState()),
+                  MaterialPageRoute(builder: (context) => const PageState()),
                   ModalRoute.withName("/pagestate"));
             },
           ),

@@ -1,26 +1,19 @@
 import "package:flutter/foundation.dart";
 import 'package:deaksapp/providers/DisplaySlot.dart';
-import 'package:deaksapp/providers/Hotel.dart';
-import 'package:deaksapp/providers/Hotels.dart';
-import 'package:deaksapp/providers/Outlets.dart';
-import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:flutter/material.dart';
 // import 'package:deaksapp/components/coustom_bottom_nav_bar.dart';
-import 'package:deaksapp/enums.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../providers/Outlet.dart';
 import '../../providers/Slot.dart';
 import '../../size_config.dart';
-import '../JobDetailsScreen/JobDetailsScreen.dart';
 import 'components/body.dart';
 
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
 
-  HomeScreen();
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -28,7 +21,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isInit = true;
-  bool _isLoading = false;
   List<Slot> slots = [];
   List<DisplaySlot> displaySlots = [];
 
@@ -40,11 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() {});
       slots = Provider.of<Slots>(context, listen: false).getSlots;
-      print(slots.length);
       displaySlots = [];
       slots.forEach((slot) => {
             displaySlots.add(DisplaySlot(
@@ -74,9 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 payPerHour: slot.hourlyPay,
                 totalPay: slot.totalPayForSlot,
                 priority: slot.priority)),
-            setState(() {
-              _isLoading = false;
-            }),
+            setState(() {}),
           });
     }
 
@@ -89,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void searchRefrsh() {
-    print("hello");
     _isInit = true;
     didChangeDependencies();
   }
@@ -116,8 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> openWhatsapp() async {
     var whatsapp = "+6598596440";
     var whatsappURl_android =
-        Uri.parse("whatsapp://send?phone=" + whatsapp + "&text=hello");
-    "whatsapp://send?phone=" + whatsapp + "&text=hello";
+        Uri.parse("whatsapp://send?phone=$whatsapp&text=hello");
+    "whatsapp://send?phone=$whatsapp&text=hello";
     var whatappURL_ios = Uri.parse("https://wa.me/$whatsapp?text=hello");
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only
@@ -125,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await launchUrl(whatappURL_ios, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     } else {
       // android , web
@@ -134,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     }
   }
@@ -169,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 45,
                 decoration: BoxDecoration(
                   boxShadow: [
-                    new BoxShadow(
+                    BoxShadow(
                       color: Colors.grey.shade400.withOpacity(.5),
                       blurRadius: 20.0,
                     ),

@@ -9,7 +9,6 @@ import 'package:deaksapp/components/custom_surfix_icon.dart';
 import 'package:deaksapp/components/form_error.dart';
 import 'package:deaksapp/helper/keyboard.dart';
 import 'package:deaksapp/screens/forgot_password/forgot_password_screen.dart';
-import 'package:deaksapp/screens/login_success/login_success_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,36 +17,37 @@ import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class SignForm extends StatefulWidget {
+  const SignForm({super.key});
+
   @override
   _SignFormState createState() => _SignFormState();
 }
 
 class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
   String? email;
   String? password;
   bool? remember = false;
   final List<String?> errors = [];
 
   void addError({String? error}) {
-    if (!errors.contains(error))
+    if (!errors.contains(error)) {
       setState(() {
         errors.add(error);
       });
+    }
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error))
+    if (errors.contains(error)) {
       setState(() {
         errors.remove(error);
       });
+    }
   }
 
   Future<void> authenticateUser() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() {});
     final prefs = await SharedPreferences.getInstance();
     final extractedUserPushToken =
         await jsonDecode(prefs.getString('userPushToken').toString())
@@ -62,16 +62,14 @@ class _SignFormState extends State<SignForm> {
     Provider.of<Auth>(context, listen: false)
         .loginUser(loginData)
         .then((value) => {
-              setState(() {
-                _isLoading = false;
-              }),
+              setState(() {}),
               if (value["message"] != null)
                 {
                   Flushbar(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(5),
                     message: value["message"],
-                    duration: Duration(seconds: 3),
+                    duration: const Duration(seconds: 3),
                   )..show(context),
                 },
               // //print(!Provider.of<Auth>(context, listen: false).isAuth),
@@ -84,14 +82,16 @@ class _SignFormState extends State<SignForm> {
                           .verifyOtpCreate(),
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => OtpScreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const OtpScreen()),
                           ModalRoute.withName("/otp"))
                     }
                   else
                     {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => PageState()),
+                          MaterialPageRoute(
+                              builder: (context) => const PageState()),
                           ModalRoute.withName("/pagestate"))
                     }
                 }
@@ -108,16 +108,16 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(15)),
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Spacer(),
+                const Spacer(),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(
                       context, ForgotPasswordScreen.routeName),
-                  child: Text(
+                  child: const Text(
                     "Forgot Password",
                     style: TextStyle(decoration: TextDecoration.underline),
                   ),
@@ -153,7 +153,7 @@ class _SignFormState extends State<SignForm> {
         } else if (value.length >= 8) {
           removeError(error: kShortPassError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -167,23 +167,23 @@ class _SignFormState extends State<SignForm> {
       },
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         labelText: "Password",
 
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.auto,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
     );
   }
@@ -198,7 +198,7 @@ class _SignFormState extends State<SignForm> {
         } else if (emailValidatorRegExp.hasMatch(value)) {
           removeError(error: kInvalidEmailError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -213,18 +213,18 @@ class _SignFormState extends State<SignForm> {
       decoration: InputDecoration(
           labelText: 'Email',
           enabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           disabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           focusedBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           border: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
-          suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+          suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
           floatingLabelBehavior: FloatingLabelBehavior.auto),
       // decoration: InputDecoration(
       //   labelText: "Email",

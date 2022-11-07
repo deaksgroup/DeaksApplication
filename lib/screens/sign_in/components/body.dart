@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:deaksapp/components/no_account_text.dart';
-import 'package:deaksapp/components/socal_card.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
 class Body extends StatelessWidget {
+  const Body({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,14 +26,14 @@ class Body extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   "Sign in with your email and password.",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.05),
-                SignForm(),
+                const SignForm(),
                 SizedBox(height: getProportionateScreenHeight(20)),
-                NoAccountText(),
+                const NoAccountText(),
               ],
             ),
           ),

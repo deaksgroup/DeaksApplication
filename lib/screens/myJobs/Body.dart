@@ -2,8 +2,6 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:deaksapp/globals.dart' as globals;
 import 'package:provider/provider.dart';
 import '../../size_config.dart';
@@ -20,16 +18,16 @@ class Body extends StatelessWidget {
         Expanded(
             child: jobsDispaySlots.isEmpty
                 ? SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Container(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
                       height: getProportionateScreenHeight(400),
-                      child: Center(
+                      child: const Center(
                         child: Text("No Upcoming jobs."),
                       ),
                     ),
                   )
                 : ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: jobsDispaySlots.length,
                     itemBuilder: ((context, index) {
                       return JobCard(displaySlot: jobsDispaySlots[index]);
@@ -42,7 +40,7 @@ class Body extends StatelessWidget {
               fontSize: 15,
               fontWeight: FontWeight.w200),
         )),
-        SizedBox(
+        const SizedBox(
           height: 5,
         )
       ],
@@ -63,14 +61,14 @@ class JobCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
-          new BoxShadow(
+          BoxShadow(
             color: Colors.grey.shade400.withOpacity(.3),
             blurRadius: 5.0,
           ),
         ],
         color: Colors.white,
         border: Border.all(
-          color: Color.fromRGBO(
+          color: const Color.fromRGBO(
             255,
             243,
             218,
@@ -87,7 +85,7 @@ class JobCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Container(
+            SizedBox(
               width: 120,
               height: 90,
               child: ClipRRect(
@@ -98,59 +96,57 @@ class JobCard extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "\$${displaySlot.payPerHour}",
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  "\$${displaySlot.payPerHour}",
+                  style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(children: [
+                  const Text(
+                    "ExpectedPay | ",
                     style: TextStyle(
+                        fontSize: 12,
+                        // color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "\$${displaySlot.totalPay}",
+                    style: const TextStyle(
                         fontSize: 17,
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
-                  ),
-                  Row(children: [
-                    Text(
-                      "ExpectedPay | ",
-                      style: TextStyle(
-                          fontSize: 12,
-                          // color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "\$${displaySlot.totalPay}",
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold),
-                    )
-                  ]),
-                  Text(
-                    "${displaySlot.date}",
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "${displaySlot.startTime} to ${displaySlot.endTime}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+                  )
+                ]),
+                Text(
+                  displaySlot.date,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${displaySlot.startTime} to ${displaySlot.endTime}",
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
             )
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Container(
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             decoration: BoxDecoration(
-                color: Color.fromRGBO(
+                color: const Color.fromRGBO(
                   255,
                   243,
                   218,
@@ -164,15 +160,15 @@ class JobCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${displaySlot.hotelName}",
-                      style: TextStyle(
+                      displaySlot.hotelName,
+                      style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${displaySlot.outletName}",
-                      style: TextStyle(
+                      displaySlot.outletName,
+                      style: const TextStyle(
                           fontSize: 12,
                           color: Colors.blueGrey,
                           fontWeight: FontWeight.w200),
@@ -187,16 +183,16 @@ class JobCard extends StatelessWidget {
                           .cancelJob(displaySlot.slotId)
                           .then((value) => {
                                 Flushbar(
-                                  margin: EdgeInsets.all(8),
+                                  margin: const EdgeInsets.all(8),
                                   borderRadius: BorderRadius.circular(5),
                                   message: value == 200
                                       ? "Job Canceled Succesfully"
                                       : "Something went wrong! Please contact our support.",
-                                  duration: Duration(seconds: 3),
+                                  duration: const Duration(seconds: 3),
                                 )..show(context),
                               });
                     }),
-                    child: Text("Cancel"))
+                    child: const Text("Cancel"))
               ],
             ))
       ]),

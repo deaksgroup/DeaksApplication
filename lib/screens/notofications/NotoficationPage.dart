@@ -1,15 +1,8 @@
-import 'dart:convert';
-
-import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Notification.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
-import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotoficationPage extends StatefulWidget {
   static String routeName = "/notoficationpage";
@@ -37,7 +30,6 @@ class _NotoficationPageState extends State<NotoficationPage> {
   }
 
   void askConfirmation(Map<dynamic, dynamic> notify) {
-    print("herer");
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
@@ -92,7 +84,7 @@ class _NotoficationPageState extends State<NotoficationPage> {
     return Scaffold(
         appBar: AppBar(
             centerTitle: true,
-            title: Text(
+            title: const Text(
               "Notofications",
               style: TextStyle(
                 color: Colors.blueGrey,
@@ -100,40 +92,38 @@ class _NotoficationPageState extends State<NotoficationPage> {
               ),
             )),
         body: widget.payload["title"] != null
-            ? Container(
-                child: BasicDialogAlert(
-                  title: Text(widget.payload["title"]),
-                  content: Text(widget.payload["body"]),
-                  actions: <Widget>[
-                    BasicDialogAction(
-                      title: Text(widget.payload["action1"]),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .popAndPushNamed(PageState.routeName);
-                        Map<String, String> responseData = {
-                          "tokenNumber": widget.payload["tokenNumber"],
-                          "slotId": widget.payload["slotId"],
-                          "response": widget.payload["action1"],
-                        };
-                        sendNotificationResponse(responseData);
-                      },
-                    ),
-                    BasicDialogAction(
-                      title: Text(widget.payload["action2"]),
-                      onPressed: () {
-                        Navigator.of(context).popUntil((route) => true);
-                        Map<String, String> responseData = {
-                          "tokenNumber": widget.payload["tokenNumber"],
-                          "slotId": widget.payload["slotId"],
-                          "response": widget.payload["action2"],
-                        };
-                        sendNotificationResponse(responseData);
-                      },
-                    ),
-                  ],
-                ),
+            ? BasicDialogAlert(
+                title: Text(widget.payload["title"]),
+                content: Text(widget.payload["body"]),
+                actions: <Widget>[
+                  BasicDialogAction(
+                    title: Text(widget.payload["action1"]),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .popAndPushNamed(PageState.routeName);
+                      Map<String, String> responseData = {
+                        "tokenNumber": widget.payload["tokenNumber"],
+                        "slotId": widget.payload["slotId"],
+                        "response": widget.payload["action1"],
+                      };
+                      sendNotificationResponse(responseData);
+                    },
+                  ),
+                  BasicDialogAction(
+                    title: Text(widget.payload["action2"]),
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => true);
+                      Map<String, String> responseData = {
+                        "tokenNumber": widget.payload["tokenNumber"],
+                        "slotId": widget.payload["slotId"],
+                        "response": widget.payload["action2"],
+                      };
+                      sendNotificationResponse(responseData);
+                    },
+                  ),
+                ],
               )
-            : Center(
+            : const Center(
                 child: Text("You dont have any new notifications!"),
               ));
   }

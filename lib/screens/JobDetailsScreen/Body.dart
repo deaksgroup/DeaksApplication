@@ -6,8 +6,6 @@ import 'package:deaksapp/size_config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:deaksapp/globals.dart' as globals;
 import 'package:flutter_share/flutter_share.dart';
@@ -22,7 +20,8 @@ class Body extends StatefulWidget {
   final List<DisplaySlot> displaySlots;
   final DisplaySlot displaySlot;
 
-  Body({super.key, required this.displaySlot, required this.displaySlots});
+  const Body(
+      {super.key, required this.displaySlot, required this.displaySlots});
 
   @override
   State<Body> createState() => _BodyState();
@@ -37,7 +36,7 @@ class _BodyState extends State<Body> {
   List<DisplaySlot> moreDisplaySlots = [];
   Future<void> openWhatsapp(String whatsapp) async {
     var whatsappURl_android =
-        Uri.parse("whatsapp://send?phone=" + whatsapp + "&text=hello");
+        Uri.parse("whatsapp://send?phone=$whatsapp&text=hello");
 
     var whatappURL_ios = Uri.parse("https://wa.me/$whatsapp?text=hello");
     if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -47,7 +46,7 @@ class _BodyState extends State<Body> {
       } else {
         log("here");
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     } else {
       // android , web
@@ -56,7 +55,7 @@ class _BodyState extends State<Body> {
             mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     }
   }
@@ -71,7 +70,7 @@ class _BodyState extends State<Body> {
         await launchUrl(whatappURL_ios, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Youtube not installed!")));
+            const SnackBar(content: Text("Youtube not installed!")));
       }
     } else {
       // android , web
@@ -79,7 +78,7 @@ class _BodyState extends State<Body> {
         await launchUrl(whatsappURl_android, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Youtube not installed!")));
+            const SnackBar(content: Text("Youtube not installed!")));
       }
     }
   }
@@ -102,7 +101,6 @@ class _BodyState extends State<Body> {
 
   Future<void> _show(BuildContext ctx) async {
     availableMaps = await MapLauncher.installedMaps;
-    print(availableMaps);
 
     showCupertinoModalPopup(
         context: ctx,
@@ -135,8 +133,8 @@ class _BodyState extends State<Body> {
           await launchUrl(appleMapsLink, mode: LaunchMode.platformDefault);
         } else {
           log("here");
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: new Text("Maps not installed!")));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Maps not installed!")));
         }
       } else if (_selectedOption == "MapType.google") {
         log("ggoogglemap");
@@ -146,20 +144,19 @@ class _BodyState extends State<Body> {
         } else {
           log("here");
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: new Text("Google M Maps not installed!")));
+              const SnackBar(content: Text("Google M Maps not installed!")));
         }
       }
       setState(() {
         _selectedOption = "";
       });
-      print("retrun");
     } else {
       // android , web
       if (await canLaunchUrl(googgleMapsLink)) {
         await launchUrl(googgleMapsLink, mode: LaunchMode.platformDefault);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Google Maps not installed!")));
+            const SnackBar(content: Text("Google Maps not installed!")));
       }
     }
   }
@@ -172,7 +169,7 @@ class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -187,7 +184,7 @@ class _BodyState extends State<Body> {
                         builder: (BuildContext context) {
                           return Container(
                               width: double.infinity,
-                              margin: EdgeInsets.symmetric(horizontal: 0),
+                              margin: const EdgeInsets.symmetric(horizontal: 0),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(5)),
@@ -210,17 +207,18 @@ class _BodyState extends State<Body> {
                       enableInfiniteScroll: true,
                       reverse: false,
                       autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 3),
-                      autoPlayAnimationDuration: Duration(milliseconds: 800),
+                      autoPlayInterval: const Duration(seconds: 3),
+                      autoPlayAnimationDuration:
+                          const Duration(milliseconds: 800),
                       autoPlayCurve: Curves.fastOutSlowIn,
                       enlargeCenterPage: true,
                       // onPageChanged: callbackFunction,
                       scrollDirection: Axis.horizontal,
                     )),
-                Positioned(
-                  child: CustomAppBar(),
+                const Positioned(
                   top: 20,
                   left: 15,
+                  child: CustomAppBar(),
                 ),
               ],
             ),
@@ -230,10 +228,10 @@ class _BodyState extends State<Body> {
           ),
           Container(
             width: double.infinity,
-            margin: EdgeInsets.symmetric(horizontal: 5),
-            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             decoration: BoxDecoration(
-                color: Color.fromRGBO(
+                color: const Color.fromRGBO(
                   255,
                   243,
                   218,
@@ -245,78 +243,67 @@ class _BodyState extends State<Body> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${widget.displaySlot.hotelName}",
-                    style: TextStyle(
+                    widget.displaySlot.hotelName,
+                    style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "${widget.displaySlot.outletName}",
-                    style: TextStyle(
+                    widget.displaySlot.outletName,
+                    style: const TextStyle(
                         fontSize: 15,
                         color: Colors.blueGrey,
                         fontWeight: FontWeight.w200),
                   )
                 ],
               ),
-              Spacer(),
-              Container(
-                child: GestureDetector(
-                  onTap: (() {
-                    print(sSubscribed);
-                    if (sSubscribed) {
-                      Provider.of<Slots>(context, listen: false)
-                          .unSubscribeOutlet(widget.displaySlot.outletId)
-                          .then((value) => {
-                                if (value == 200)
-                                  {
-                                    print("here"),
-                                    setState(() {
-                                      sSubscribed = false;
-                                    }),
-                                  }
-                              });
-                      sSubscribed = false;
-                    } else {
-                      Provider.of<Slots>(context, listen: false)
-                          .subscribeOutlet(widget.displaySlot.outletId)
-                          .then((value) => {
-                                if (value == 200)
-                                  {
-                                    print("here"),
-                                    setState(() {
-                                      sSubscribed = true;
-                                    })
-                                  }
-                              });
-                    }
-                  }),
-                  child: Container(
-                    child: Icon(
-                      Icons.notification_add,
-                      color: sSubscribed ? Colors.red : Colors.blueGrey,
-                    ),
-                  ),
+              const Spacer(),
+              GestureDetector(
+                onTap: (() {
+                  if (sSubscribed) {
+                    Provider.of<Slots>(context, listen: false)
+                        .unSubscribeOutlet(widget.displaySlot.outletId)
+                        .then((value) => {
+                              if (value == 200)
+                                {
+                                  setState(() {
+                                    sSubscribed = false;
+                                  }),
+                                }
+                            });
+                    sSubscribed = false;
+                  } else {
+                    Provider.of<Slots>(context, listen: false)
+                        .subscribeOutlet(widget.displaySlot.outletId)
+                        .then((value) => {
+                              if (value == 200)
+                                {
+                                  setState(() {
+                                    sSubscribed = true;
+                                  })
+                                }
+                            });
+                  }
+                }),
+                child: Icon(
+                  Icons.notification_add,
+                  color: sSubscribed ? Colors.red : Colors.blueGrey,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 15,
               ),
-              Container(
-                child: GestureDetector(
-                    onTap: () async {
-                      // share();
-                      print("ferfg");
-                      String generatedDeepLink =
-                          await FirebaseDynamicLinkService.createdynamiclink(
-                              false, widget.displaySlot.slotId);
-                      print(generatedDeepLink);
-                      share(generatedDeepLink);
-                    },
-                    child: Icon(Icons.share_rounded)),
-              ),
-              SizedBox(
+              GestureDetector(
+                  onTap: () async {
+                    // share();
+                    String generatedDeepLink =
+                        await FirebaseDynamicLinkService.createdynamiclink(
+                            false, widget.displaySlot.slotId);
+                    share(generatedDeepLink);
+                  },
+                  child: const Icon(Icons.share_rounded)),
+              const SizedBox(
                 width: 10,
               )
             ]),
@@ -329,177 +316,172 @@ class _BodyState extends State<Body> {
                 horizontal: getProportionateScreenWidth(5)),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${widget.displaySlot.startTime} to ${widget.displaySlot.endTime}",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${widget.displaySlot.startTime} to ${widget.displaySlot.endTime}",
+                        style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        widget.displaySlot.date,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.blueGrey,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Row(children: [
+                        Text("\$${widget.displaySlot.payPerHour} /h",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        SizedBox(
+                          width: getProportionateScreenWidth(10),
                         ),
-                        Text(
-                          widget.displaySlot.date,
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.blueGrey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Row(children: [
-                          Text("\$${widget.displaySlot.payPerHour} /h",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              )),
-                          SizedBox(
-                            width: getProportionateScreenWidth(10),
-                          ),
-                          Text("Expected Pay ",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w200,
-                              )),
-                          Text(
-                            "\$${widget.displaySlot.totalPay}",
+                        const Text("Expected Pay ",
                             style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]),
+                              fontSize: 15,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w200,
+                            )),
+                        Text(
+                          "\$${widget.displaySlot.totalPay}",
+                          style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ]),
+                    ],
+                  ),
+                  Container(
+                    width: 100,
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.15),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          onTap: (() {
+                            openWhatsapp(widget.displaySlot.adminNumber);
+                          }),
+                          child: SizedBox(
+                            width: 35,
+                            height: 35,
+                            child: Image.asset("assets/icons/whatsapp.png"),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     openYoutube(widget.displaySlot.youtubeLink);
+                        //   },
+                        //   child: Container(
+                        //     width: 30,
+                        //     height: 30,
+                        //     child: Image.asset("assets/icons/youtube.png"),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   width: 10,
+                        // ),
+                        GestureDetector(
+                          onTap: (() {
+                            _show(context);
+                            // _show(context);
+                          }),
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset("assets/icons/placeholder.png"),
+                          ),
+                        )
                       ],
                     ),
-                    Container(
-                      width: 100,
-                      padding: EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(.15),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          GestureDetector(
-                            onTap: (() {
-                              openWhatsapp(widget.displaySlot.adminNumber);
-                            }),
-                            child: Container(
-                              width: 35,
-                              height: 35,
-                              child: Image.asset("assets/icons/whatsapp.png"),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     openYoutube(widget.displaySlot.youtubeLink);
-                          //   },
-                          //   child: Container(
-                          //     width: 30,
-                          //     height: 30,
-                          //     child: Image.asset("assets/icons/youtube.png"),
-                          //   ),
-                          // ),
-                          // SizedBox(
-                          //   width: 10,
-                          // ),
-                          GestureDetector(
-                            onTap: (() {
-                              _show(context);
-                              // _show(context);
-                            }),
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              child:
-                                  Image.asset("assets/icons/placeholder.png"),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               )
             ]),
           ),
-          Container(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                  horizontal: getProportionateScreenWidth(2)),
-              scrollDirection: Axis.horizontal,
-              child: Row(children: [
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selection = 0;
-                    });
-                  },
-                  child: Text(
-                    "Job Remarks",
-                    style: TextStyle(color: Colors.blue),
-                  ),
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(2)),
+            scrollDirection: Axis.horizontal,
+            child: Row(children: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selection = 0;
+                  });
+                },
+                child: const Text(
+                  "Job Remarks",
+                  style: TextStyle(color: Colors.blue),
                 ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selection = 1;
-                      moreDisplaySlots = widget.displaySlots
-                          .where((element) =>
-                              element.outletId == widget.displaySlot.outletId &&
-                              element.slotId != widget.displaySlot.slotId)
-                          .toList();
-                      //print(moreDisplaySlots);
-                    });
-                  },
-                  child: Text(
-                    "More Slots",
-                    style: TextStyle(color: Colors.blue),
-                  ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selection = 1;
+                    moreDisplaySlots = widget.displaySlots
+                        .where((element) =>
+                            element.outletId == widget.displaySlot.outletId &&
+                            element.slotId != widget.displaySlot.slotId)
+                        .toList();
+                    //print(moreDisplaySlots);
+                  });
+                },
+                child: const Text(
+                  "More Slots",
+                  style: TextStyle(color: Colors.blue),
                 ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selection = 2;
-                    });
-                  },
-                  child: Text(
-                    "Grooming",
-                    style: TextStyle(color: Colors.blue),
-                  ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selection = 2;
+                  });
+                },
+                child: const Text(
+                  "Grooming",
+                  style: TextStyle(color: Colors.blue),
                 ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selection = 3;
-                    });
-                  },
-                  child: Text(
-                    "How To Report",
-                    style: TextStyle(color: Colors.blue),
-                  ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selection = 3;
+                  });
+                },
+                child: const Text(
+                  "How To Report",
+                  style: TextStyle(color: Colors.blue),
                 ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      selection = 4;
-                    });
-                  },
-                  child: Text(
-                    "Payment",
-                    style: TextStyle(color: Colors.blue),
-                  ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selection = 4;
+                  });
+                },
+                child: const Text(
+                  "Payment",
+                  style: TextStyle(color: Colors.blue),
                 ),
-              ]),
-            ),
+              ),
+            ]),
           ),
           Container(
             padding: EdgeInsets.symmetric(
@@ -516,8 +498,8 @@ class _BodyState extends State<Body> {
                   ),
                 if (selection == 1)
                   Expanded(
-                    child: moreDisplaySlots.length == 0
-                        ? Center(
+                    child: moreDisplaySlots.isEmpty
+                        ? const Center(
                             child: Text("No similar slots availbale."),
                           )
                         : ListView.builder(
@@ -552,14 +534,12 @@ class _BodyState extends State<Body> {
                 if (selection == 3)
                   Expanded(
                     child: Column(children: [
-                      Container(
-                        child: Center(
-                          child: TextButton(
-                              onPressed: () {
-                                openYoutube(widget.displaySlot.youtubeLink);
-                              },
-                              child: Text("Open Youtube")),
-                        ),
+                      Center(
+                        child: TextButton(
+                            onPressed: () {
+                              openYoutube(widget.displaySlot.youtubeLink);
+                            },
+                            child: const Text("Open Youtube")),
                       ),
                       Expanded(
                         child: ListView.builder(
@@ -575,7 +555,7 @@ class _BodyState extends State<Body> {
                   ),
                 if (selection == 4)
                   Expanded(
-                    child: Text("${widget.displaySlot.paymentDetails}"),
+                    child: Text(widget.displaySlot.paymentDetails),
                   ),
               ],
             ),
@@ -596,7 +576,7 @@ class MoreSlotCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 150,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       padding: EdgeInsets.symmetric(
         horizontal: getProportionateScreenWidth(5),
       ),
@@ -608,62 +588,60 @@ class MoreSlotCard extends StatelessWidget {
             Container(
               width: 3,
               height: 100,
-              decoration: BoxDecoration(color: Colors.blueGrey),
-              margin: EdgeInsets.only(right: 10),
+              decoration: const BoxDecoration(color: Colors.blueGrey),
+              margin: const EdgeInsets.only(right: 10),
             ),
-            Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "\$${displaySlot.payPerHour} /h",
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "\$${displaySlot.payPerHour} /h",
+                  style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(children: [
+                  const Text(
+                    "ExpectedPay | ",
                     style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "\$${displaySlot.totalPay}",
+                    style: const TextStyle(
                         fontSize: 20,
                         color: Colors.red,
                         fontWeight: FontWeight.bold),
-                  ),
-                  Row(children: [
-                    Text(
-                      "ExpectedPay | ",
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "\$${displaySlot.totalPay}",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold),
-                    )
-                  ]),
-                  Text(
-                    "${displaySlot.startTime} to ${displaySlot.endTime}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "${displaySlot.date}",
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.blueGrey,
-                        fontWeight: FontWeight.bold),
                   )
-                ],
-              ),
+                ]),
+                Text(
+                  "${displaySlot.startTime} to ${displaySlot.endTime}",
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  displaySlot.date,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
             )
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Container(
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             decoration: BoxDecoration(
-                color: Color.fromRGBO(
+                color: const Color.fromRGBO(
                   255,
                   243,
                   218,
@@ -677,15 +655,15 @@ class MoreSlotCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${displaySlot.hotelName}",
-                      style: TextStyle(
+                      displaySlot.hotelName,
+                      style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "${displaySlot.outletName}",
-                      style: TextStyle(
+                      displaySlot.outletName,
+                      style: const TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey,
                           fontWeight: FontWeight.w200),
@@ -711,7 +689,7 @@ class CustomAppBar extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             boxShadow: [
-              new BoxShadow(
+              BoxShadow(
                 color: Colors.grey.shade400.withOpacity(.7),
                 blurRadius: 5.0,
               ),
@@ -720,7 +698,7 @@ class CustomAppBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(5)),
         width: 40,
         height: 40,
-        child: Center(
+        child: const Center(
           child: Icon(
             CupertinoIcons.back,
             size: 30,

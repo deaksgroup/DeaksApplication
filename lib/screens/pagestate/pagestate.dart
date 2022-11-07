@@ -11,11 +11,9 @@ import 'package:provider/provider.dart';
 
 import '../../providers/Auth.dart';
 import '../../providers/DisplaySlot.dart';
-import '../../providers/Hotel.dart';
-import '../../providers/Hotels.dart';
+
 import '../../providers/Job.dart';
-import '../../providers/Outlet.dart';
-import '../../providers/Outlets.dart';
+
 import '../../providers/Profile.dart';
 import '../../providers/Slot.dart';
 import '../../providers/Slots.dart';
@@ -40,29 +38,28 @@ class _PageStateState extends State<PageState> {
   List<Job> jobsList = [];
   List<DisplaySlot> displayJobSlots = [];
   var selected = 0;
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
-
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
-  }
 
   // This widget is the root of your application.
   Future<void> initDynamicLinks() async {
     dynamicLinks.onLink.listen((dynamicLinkData) {
       final Uri uri = dynamicLinkData.link;
-      final String id = uri.toString().split("/").last;
 
-      if (Provider.of<Auth>(context, listen: false).isAuth) {
-        Provider.of<Slots>(context, listen: false)
-            .fetchSingleSlot(id)
-            .then((value) {
-          Navigator.of(context).pushNamed(shreJobDetailsScreen.routeName);
-        });
+      final String id = uri.toString();
+      if (id.contains("/welcome")) {
+        return;
+      } else if (id.contains("https://deaksapp.page.link/jobs")) {
+        String jobId = id.split("/").last;
+        if (Provider.of<Auth>(context, listen: false).isAuth) {
+          Provider.of<Slots>(context, listen: false)
+              .fetchSingleSlot(jobId)
+              .then((value) {
+            Navigator.of(context).pushNamed(shreJobDetailsScreen.routeName);
+          });
+        } else {
+          Navigator.of(context).pushNamed(SignInScreen.routeName);
+        }
       } else {
-        Navigator.of(context).pushNamed(SignInScreen.routeName);
+        return;
       }
     }).onError((error) {});
   }
@@ -159,7 +156,7 @@ class _PageStateState extends State<PageState> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [HomeScreen(), MyJobs(), ProfileScreen()];
+    List<Widget> pages = [const HomeScreen(), const MyJobs(), ProfileScreen()];
     SizeConfig().init(context);
     return Scaffold(
       body: _isLoading

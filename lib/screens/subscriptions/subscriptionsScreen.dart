@@ -1,8 +1,6 @@
 import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 // final subcriptions = List<SubscriptionCard>.generate(
@@ -14,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class Subscriptions extends StatefulWidget {
   static String routeName = "/subscriptions";
-  Subscriptions({super.key});
+  const Subscriptions({super.key});
 
   @override
   State<Subscriptions> createState() => _SubscriptionsState();
@@ -44,7 +42,7 @@ class _SubscriptionsState extends State<Subscriptions> {
     return Scaffold(
         appBar: AppBar(
             centerTitle: true,
-            title: Text(
+            title: const Text(
               "Subscriptions",
               style: TextStyle(
                 color: Colors.blueGrey,
@@ -56,9 +54,9 @@ class _SubscriptionsState extends State<Subscriptions> {
             itemBuilder: ((context, index) => Dismissible(
                 key: UniqueKey(),
                 background: Container(
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(color: Colors.red),
-                  child: Row(children: [
+                  padding: const EdgeInsets.all(15),
+                  decoration: const BoxDecoration(color: Colors.red),
+                  child: Row(children: const [
                     Spacer(),
                     Text(
                       "Unsubscribe",
@@ -76,7 +74,6 @@ class _SubscriptionsState extends State<Subscriptions> {
                       .then((value) {
                     if (value == 200) {
                       setState(() {
-                        print("removed");
                         subcriptions.removeAt(index);
                       });
                     }
@@ -112,14 +109,14 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      padding: EdgeInsets.all(15),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
           color: Colors.white,
           border: Border.all(color: Colors.grey.withOpacity(.2)),
           boxShadow: [
-            new BoxShadow(
+            BoxShadow(
               color: Colors.grey.shade400.withOpacity(.3),
               blurRadius: 5.0,
             ),
@@ -132,31 +129,29 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(widget.hotelName,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 17)),
               Text(widget.outletName,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.black, fontWeight: FontWeight.w200))
             ],
           ),
-          Container(
-            child: Center(
-                child: Icon(
-              Icons.arrow_left_outlined,
-              size: 50,
-              color: Colors.red,
-            )
-                //  Text(
-                //   "Unsubscribe",
-                //   style: TextStyle(
-                //       color: Colors.red,
-                //       fontWeight: FontWeight.bold,
-                //       fontSize: 17),
-                // ),
-                ),
+          const Center(
+              child: Icon(
+            Icons.arrow_left_outlined,
+            size: 50,
+            color: Colors.red,
           )
+              //  Text(
+              //   "Unsubscribe",
+              //   style: TextStyle(
+              //       color: Colors.red,
+              //       fontWeight: FontWeight.bold,
+              //       fontSize: 17),
+              // ),
+              )
         ],
       ),
     );

@@ -1,12 +1,10 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:flutter/material.dart';
-import 'package:deaksapp/components/default_button.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants.dart';
 import '../../../providers/Auth.dart';
 
 class OtpForm extends StatefulWidget {
@@ -32,10 +30,10 @@ class _OtpFormState extends State<OtpForm> {
             if (value["errorCode"] == 1)
               {
                 Flushbar(
-                  margin: EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
                   borderRadius: BorderRadius.circular(5),
                   message: value["message"],
-                  duration: Duration(seconds: 3),
+                  duration: const Duration(seconds: 3),
                 )..show(context),
               },
             if (value["errorCode"] != null && value["message"] != null) {},
@@ -45,7 +43,8 @@ class _OtpFormState extends State<OtpForm> {
                   {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => PageState()),
+                        MaterialPageRoute(
+                            builder: (context) => const PageState()),
                         ModalRoute.withName("/pagestate"))
                   }
               }
@@ -57,7 +56,7 @@ class _OtpFormState extends State<OtpForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Container(
+      child: SizedBox(
         width: getProportionateScreenWidth(250),
         height: getProportionateScreenWidth(130),
         child: Column(children: [

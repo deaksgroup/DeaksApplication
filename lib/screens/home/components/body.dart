@@ -1,19 +1,12 @@
 import 'package:deaksapp/providers/DisplaySlot.dart';
-import 'package:deaksapp/providers/Slots.dart';
-import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
 import 'package:deaksapp/screens/home/components/F&BAdhocJobs.dart';
 import 'package:deaksapp/screens/home/components/TendingJobs.dart';
 import 'package:deaksapp/screens/home/components/section_title.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../../providers/Slot.dart';
 import '../../../size_config.dart';
-import 'categories.dart';
 import 'discount_banner.dart';
 import 'home_header.dart';
-import 'popular_product.dart';
-import 'special_offers.dart';
 
 class Body extends StatefulWidget {
   final VoidCallback refresh;
@@ -88,27 +81,27 @@ class _BodyState extends State<Body> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
-            DiscountBanner(),
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
+            const DiscountBanner(),
+            const SizedBox(height: 10),
             HomeHeader(
               refrsh: () => widget.refresh(),
             ),
-            SizedBox(height: 20),
-            SectionTitle(
+            const SizedBox(height: 20),
+            const SectionTitle(
               title: "Trending",
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TrendingJobs(
               displaySlots: widget.displaySlots
                   .where((element) => element.priority == "HIGH")
                   .toList(),
             ),
-            SizedBox(height: 20),
-            SectionTitle(
+            const SizedBox(height: 20),
+            const SectionTitle(
               title: "F&B Ad-hoc Jobs",
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             AdHocJobs(
                 displaySlots: widget.displaySlots
                     .where((element) => element.priority == "LOW")

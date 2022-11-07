@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:deaksapp/providers/Slot.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +18,6 @@ class Slots with ChangeNotifier {
   }
 
   Future<void> fetchSingleSlot(String id) async {
-    print("fetch Sigle slot");
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -29,18 +25,14 @@ class Slots with ChangeNotifier {
     };
     try {
       //404
-      print(".....");
       response = await dio.get("${globals.url}/getSlot/$id",
           options: Options(headers: headers));
-      print(response.data.toString());
-      print(response.data);
 
       final extractedData = response.data;
       if (extractedData == null || extractedData == "") {
         shareSlot = null;
         return;
       }
-      print(extractedData);
       // print(extractedData["result"]);
 
       Map<dynamic, dynamic> extractedSlot =
@@ -64,7 +56,6 @@ class Slots with ChangeNotifier {
         confirmedRequests: extractedSlot["confirmedRequests"] ?? [],
         waitingRequests: extractedSlot["waitingRequests"] ?? [],
       );
-      print(shareSlot);
       return;
     } on DioError catch (e) {
       // The request was made and the server responded with a status code
@@ -83,8 +74,6 @@ class Slots with ChangeNotifier {
   }
 
   Future<int> fetchAndSetSlots(Map<String, String> searchQuery) async {
-    print("slotsFetch");
-    print(searchQuery);
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -94,17 +83,14 @@ class Slots with ChangeNotifier {
       //404
       response = await dio.post("${globals.url}/getSlotsUser",
           options: Options(headers: headers), data: searchQuery);
-      print(response.data.toString());
 
       final extractedData = response.data;
-      print(extractedData);
       if (extractedData == null ||
           response.statusCode == 204 ||
           response.statusCode == 400 ||
           response.statusCode == 500) {
         return response.statusCode ?? 400;
       }
-      print(extractedData);
       // print(extractedData["result"]);
 
       List<Map<dynamic, dynamic>> extractedSlots =
@@ -132,7 +118,6 @@ class Slots with ChangeNotifier {
             waitingRequests: slot["waitingRequests"] ?? [],
           ));
         }
-        ;
       }
 
       slots = loadedSlots;
@@ -157,7 +142,6 @@ class Slots with ChangeNotifier {
   }
 
   Future<int> subscribeOutlet(String outletId) async {
-    Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -167,7 +151,6 @@ class Slots with ChangeNotifier {
       response = await dio.patch("${globals.url}/subscribeOutlet",
           data: {"outlet_id": outletId}, options: Options(headers: headers));
       // extractedData = Map<dynamic, dynamic>.from(response.data);
-      print(response.statusCode);
       return response.statusCode ?? 400;
     } on DioError catch (e) {
       // The request was made and the server responded with a status code
@@ -187,7 +170,6 @@ class Slots with ChangeNotifier {
   }
 
   Future<int> unSubscribeOutlet(String outletId) async {
-    Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -197,7 +179,6 @@ class Slots with ChangeNotifier {
       response = await dio.patch("${globals.url}/unSubscribeOutlet",
           data: {"outlet_id": outletId}, options: Options(headers: headers));
       // extractedData = Map<dynamic, dynamic>.from(response.data);
-      print(response.statusCode);
       return response.statusCode ?? 400;
     } on DioError catch (e) {
       // The request was made and the server responded with a status code

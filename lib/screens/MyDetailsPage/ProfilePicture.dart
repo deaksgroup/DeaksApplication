@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class ProfilePicture extends StatefulWidget {
   final File image;
@@ -16,10 +14,9 @@ class ProfilePicture extends StatefulWidget {
 class _ProfilePictureState extends State<ProfilePicture> {
   @override
   Widget build(BuildContext context) {
-    print("Here");
     return GestureDetector(
         onTap: () => widget.onReset(),
-        child: Container(
+        child: SizedBox(
           width: 110,
           height: 115,
           child: Stack(children: [
@@ -29,11 +26,11 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(width: 2, color: Colors.white),
-                    borderRadius: BorderRadius.all(
+                    borderRadius: const BorderRadius.all(
                       Radius.circular(50),
                     ),
                     boxShadow: [
-                      new BoxShadow(
+                      BoxShadow(
                         color: Colors.grey.shade400.withOpacity(.6),
                         blurRadius: 5.0,
                       ),
@@ -59,18 +56,18 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     height: 30,
                     decoration: BoxDecoration(
                       boxShadow: [
-                        new BoxShadow(
+                        BoxShadow(
                           color: Colors.grey.shade400.withOpacity(.6),
                           blurRadius: 5.0,
                         ),
                       ],
-                      color: Color.fromARGB(255, 159, 222, 249),
+                      color: const Color.fromARGB(255, 159, 222, 249),
                       border: Border.all(width: 2, color: Colors.white),
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(20),
                       ),
                     ),
-                    child: Center(
+                    child: const Center(
                         child: Icon(
                       Icons.camera_alt_rounded,
                       size: 20,

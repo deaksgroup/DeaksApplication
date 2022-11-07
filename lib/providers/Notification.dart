@@ -19,13 +19,10 @@ class NotificationFetch with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     // prefs.remove('userNotifications');
     if (prefs.containsKey('userNotifications')) {
-      print("saved");
-      print(prefs.getString('userNotifications').toString());
       final List<dynamic> extracteddata =
           await jsonDecode(prefs.getString('userNotifications').toString())
               as List<dynamic>;
       notifications = List<Map<dynamic, dynamic>>.from(extracteddata);
-      print("Hello");
       notifyListeners();
       return notifications;
     }
@@ -34,7 +31,6 @@ class NotificationFetch with ChangeNotifier {
 
   Future<Map<dynamic, dynamic>> sendNotificationResponse(
       Map<String, String> responseMessage) async {
-    print("notification response");
     Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;

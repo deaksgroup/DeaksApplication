@@ -14,7 +14,6 @@ class Jobs with ChangeNotifier {
 
   Future<int> applyJob(String slotId) async {
     try {
-      Map<dynamic, dynamic> extractedData = {};
       var dio = Dio();
       Response response;
 
@@ -34,7 +33,6 @@ class Jobs with ChangeNotifier {
   }
 
   Future<int> cancelJob(String slotId) async {
-    Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -66,7 +64,6 @@ class Jobs with ChangeNotifier {
   }
 
   Future<void> fetchAndSetJobs() async {
-    print("fetchAndSetJObs");
     var dio = Dio();
     Response response;
     Map<String, dynamic> headers = {
@@ -112,7 +109,6 @@ class Jobs with ChangeNotifier {
             waitingRequests: job["waitingRequests"] ?? [],
           ));
         }
-        ;
       }
       // ////print(loadedSlots);
 

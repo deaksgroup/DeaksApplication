@@ -1,13 +1,10 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
-import 'package:deaksapp/screens/pagestate/pagestate.dart';
 import 'package:flutter/material.dart';
-import 'package:deaksapp/components/default_button.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants.dart';
 import '../../../providers/Auth.dart';
 
 class ForgotOTPForm extends StatefulWidget {
@@ -34,10 +31,10 @@ class _ForgotOTPFormState extends State<ForgotOTPForm> {
               if (value["message"] != null)
                 {
                   Flushbar(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(5),
                     message: value["message"],
-                    duration: Duration(seconds: 3),
+                    duration: const Duration(seconds: 3),
                   )..show(context),
                 },
               ////print(value),
@@ -58,7 +55,7 @@ class _ForgotOTPFormState extends State<ForgotOTPForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Container(
+      child: SizedBox(
         width: getProportionateScreenWidth(250),
         height: getProportionateScreenWidth(200),
         child: Column(children: [
@@ -120,7 +117,7 @@ class _ForgotOTPFormState extends State<ForgotOTPForm> {
                 verifiyForgotOtp();
               }),
               child: const Text("Verifiy OTP")),
-          Spacer()
+          const Spacer()
         ]),
       ),
     );
