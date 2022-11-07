@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:deaksapp/components/socal_card.dart';
 import 'package:deaksapp/constants.dart';
 import 'package:deaksapp/size_config.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'sign_up_form.dart';
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
   State<Body> createState() => _BodyState();
 }
@@ -24,15 +25,15 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
-      if (await canLaunchUrl(iosLink)) {
-        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
@@ -48,15 +49,15 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
-      if (await canLaunchUrl(iosLink)) {
-        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
@@ -74,16 +75,16 @@ class _BodyState extends State<Body> {
               children: [
                 SizedBox(height: SizeConfig.screenHeight * 0.04), // 4%
                 Text("Register Account", style: headingStyle),
-                Text(
+                const Text(
                   "Complete your details.",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
-                SignUpForm(),
+                const SignUpForm(),
 
                 SizedBox(height: getProportionateScreenHeight(20)),
                 TextButton(
-                  child: Text("PrivacyPolicy."),
+                  child: const Text("PrivacyPolicy."),
                   onPressed: () {
                     openPrivacy();
                   },
@@ -92,7 +93,7 @@ class _BodyState extends State<Body> {
                     onPressed: () {
                       openlink();
                     },
-                    child: Text("Terms and Conditons")),
+                    child: const Text("Terms and Conditons")),
                 Text(
                   'By continuing your confirm that you agree \nwith our Term and Condition',
                   textAlign: TextAlign.center,

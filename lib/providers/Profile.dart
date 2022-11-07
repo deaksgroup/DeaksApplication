@@ -1,8 +1,14 @@
 import 'dart:convert';
+import 'dart:core';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
 import 'package:deaksapp/globals.dart' as globals;
+import 'package:http_parser/http_parser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile {
   final String name;
@@ -70,16 +76,48 @@ class Profile {
 }
 
 class ProfileFetch with ChangeNotifier {
+  File profilePic = File("");
+  List<File> attaireImages = [];
+  List<String> attaireImagesURLKeys = [];
   final String token;
+  String profileURlKey = "";
   Map<String, String> profile;
+  List<Map<dynamic, dynamic>> subscriptions = [];
   ProfileFetch({required this.profile, required this.token});
 
   Map<String, String> get getProfile {
     return profile;
   }
 
+  File getProfilePicture() {
+    return profilePic;
+  }
+
+  String getProfileUrlKey() {
+    return profileURlKey;
+  }
+
+  List<String> getAttaireImagesUrlKey() {
+    return attaireImagesURLKeys;
+  }
+
+  List<File> getAttaireiamges() {
+    return attaireImages;
+  }
+
+  void setProfilePic(File profilepIc) {
+    profilePic = profilepIc;
+  }
+
+  void setAttaireIamges(List<File> attaImages) {
+    attaireImages = attaImages;
+  }
+
+  List<Map<dynamic, dynamic>> get getSubscriptions {
+    return subscriptions;
+  }
+
   Future<void> fetchAndSetProfile() async {
-    Map<dynamic, dynamic> extractedData = {};
     var dio = Dio();
     Response response;
 
@@ -89,31 +127,42 @@ class ProfileFetch with ChangeNotifier {
 
     try {
       //404
-      response = await dio.get("${globals.url}/profile",
+      response = await dio.get("${globals.url}/getUserInfo",
           options: Options(headers: headers));
-      // ////print(response.data.toString());
+      // print(response.data.toString());
 
       final extractedData = response.data;
+
+      if (response.statusCode != 200) {
+        return;
+      }
       if (extractedData == null) {
         return;
       }
-      // ////print(extractedData);
+
       // ////print(extractedData["result"]);
       // ////print("Profileftech...");
       Map<dynamic, dynamic> extractedProfile =
           Map<dynamic, dynamic>.from(extractedData);
-      // ////print(extractedProfile);
       //  Map<dynamic, dynamic> e = {"id": 3};
       Map<String, String> convertedProfile = extractedProfile
           .map((key, value) => MapEntry(key.toString(), value.toString()));
+      subscriptions =
+          List<Map<dynamic, dynamic>>.from(extractedProfile["subscriptions"]);
+
       profile = convertedProfile;
+      profileURlKey = convertedProfile["profilePicture"] ?? "";
+
+      attaireImagesURLKeys =
+          List<String>.from(extractedProfile["attirePictures"]!);
+
+      // List<dynamic>.from(convertedProfile["attaireImages"]);
       ////print(convertedProfile);
-      notifyListeners();
+      // notifyListeners();
     } on DioError catch (e) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
-        ////print(e.response!.data);
         ////print(e.response!.headers);
         ////print(e.response!.requestOptions);
       } else {
@@ -124,44 +173,70 @@ class ProfileFetch with ChangeNotifier {
     }
   }
 
-  Future<Map<dynamic, dynamic>> submitProfile(
-      Map<String, dynamic>? userData) async {
-    Map<dynamic, dynamic> extractedData = {};
+  Future<Map<dynamic, dynamic>> submitProfile(Map<String, dynamic>? userData,
+      File? profilePicture, List<File> attaireImges) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('profilePicPath')) {
+      final extractedUserData =
+          await jsonDecode(prefs.getString('profilePicPath').toString())
+              as Map<dynamic, dynamic>;
+      final userProfilePath = Map<dynamic, dynamic>.from(extractedUserData);
+      profilePic = File(userProfilePath["profilePicPath"]);
+    }
+
+    if (prefs.containsKey('attaireImagesPaths')) {
+      // attaireImages = List<File>.from(extractedUserData);
+      // attaireImages = File(userProfilePath["profilePicPath"]);
+    }
+    profilePic = profilePic;
     var dio = Dio();
+
     Response response;
 
+    FormData formData = FormData.fromMap({
+      "data": userData,
+      "profile": profilePicture != null && profilePicture.isAbsolute
+          ? await MultipartFile.fromFile(
+              profilePicture.path,
+              filename: profilePicture.path.toString().split("/").last,
+              contentType: MediaType('image', 'jpg'),
+            )
+          : "",
+      "attaire": [
+        attaireImges.isNotEmpty && attaireImges[0].isAbsolute
+            ? MultipartFile.fromFileSync(attaireImges[0].path,
+                filename: attaireImges[0].path.toString().split("/").last,
+                contentType: MediaType('image', 'jpg'))
+            : "",
+        attaireImges.isNotEmpty && attaireImges[1].isAbsolute
+            ? MultipartFile.fromFileSync(attaireImges[1].path,
+                filename: attaireImges[1].path.toString().split("/").last,
+                contentType: MediaType('image', 'jpg'))
+            : "",
+      ],
+    });
+
+    Map<dynamic, dynamic> extractedData = {};
     Map<String, dynamic> headers = {
       "secret_token": token,
+      "Content-Type": "multipart/form-data"
     };
 
-    Map<String, String> convertedUserData = userData!
-        .map((key, value) => MapEntry(key.toString(), value.toString()));
-
+    // Map<String, String> convertedUserData = userData!
+    //     .map((key, value) => MapEntry(key.toString(), value.toString()));
     try {
       //404
-      response = await dio.post("${globals.url}/submit",
-          data: convertedUserData, options: Options(headers: headers));
+      response = await dio.patch("${globals.url}/updateUserInfoApp",
+          data: formData, options: Options(headers: headers));
       // ////print(response.data.toString());
-
       final extractedData = response.data;
-      if (extractedData == null || extractedData["result"] == null) {
+      if (extractedData == null) {
         return extractedData;
       }
-
-      // ////print(extractedData);
-      // ////print(extractedData["result"]);
-      ////print("ProfileftechFterAubmission...");
       Map<dynamic, dynamic> extractedProfile =
           Map<dynamic, dynamic>.from(extractedData);
-      ////print(extractedData);
-      Map<dynamic, dynamic> extractedProfileDetails =
-          Map<dynamic, dynamic>.from(extractedProfile["result"]);
-      // ////print(extractedData);
-      ////print("Hello");
-      // ////print(extractedProfile["result"]);
-      ////print("Hello");
-      //  Map<dynamic, dynamic> e = {"id": 3};
-      Map<String, String> convertedProfile = extractedProfileDetails
+
+      Map<String, String> convertedProfile = extractedProfile
           .map((key, value) => MapEntry(key.toString(), value.toString()));
       profile = convertedProfile;
       notifyListeners();
@@ -181,5 +256,32 @@ class ProfileFetch with ChangeNotifier {
     }
 
     return extractedData;
+  }
+
+  Future<void> cancelSubscription(String outletId) async {
+    var dio = Dio();
+    Response response;
+
+    Map<String, dynamic> headers = {
+      "secret_token": token,
+    };
+    try {
+      response = await dio.patch("${globals.url}/profile",
+          options: Options(headers: headers));
+    } on DioError catch (e) {}
+  }
+
+  Future<void> subscribe(String outletId) async {
+    var dio = Dio();
+    Response response;
+
+    Map<String, dynamic> headers = {
+      "secret_token": token,
+    };
+
+    try {
+      response = await dio.patch("${globals.url}/profile",
+          options: Options(headers: headers));
+    } on DioError catch (e) {}
   }
 }

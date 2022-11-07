@@ -5,13 +5,15 @@ import 'components/body.dart';
 
 class SignInScreen extends StatelessWidget {
   static String routeName = "/sign_in";
+
+  const SignInScreen({super.key});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "Sign In",
             style: TextStyle(
               color: Colors.blueGrey,
@@ -19,7 +21,7 @@ class SignInScreen extends StatelessWidget {
             ),
           )),
       body: Stack(children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: Image.asset(
@@ -30,7 +32,7 @@ class SignInScreen extends StatelessWidget {
         Container(
           decoration: BoxDecoration(color: Colors.white.withOpacity(.3)),
         ),
-        Body()
+        const Body()
       ]),
     );
   }

@@ -1,28 +1,35 @@
 class Slot {
   final String id;
-  final String hotelName;
-  final String hotelId;
-  final String outletName;
-  final String outletId;
+
+  final Map<dynamic, dynamic> hotel;
+  final Map<dynamic, dynamic> outlet;
+
   final String startTime;
   final String endTime;
   final String date;
-  final String payPerHour;
-  final String totalPay;
+  final String hourlyPay;
+  final String totalPayForSlot;
   final String priority;
-  final String slotStatus;
+  final String vacancy;
+  final String release;
+  final String jobRemarks;
+  final List<dynamic> confirmedRequests;
+  final List<dynamic> waitingRequests;
 
-  Slot(
-      {required this.date,
-      required this.slotStatus,
-      required this.id,
-      required this.endTime,
-      required this.hotelId,
-      required this.hotelName,
-      required this.outletId,
-      required this.outletName,
-      required this.payPerHour,
-      required this.priority,
-      required this.startTime,
-      required this.totalPay});
+  Slot({
+    required this.hotel,
+    required this.confirmedRequests,
+    required this.waitingRequests,
+    required this.endTime,
+    required this.hourlyPay,
+    required this.totalPayForSlot,
+    required this.vacancy,
+    required this.release,
+    required this.jobRemarks,
+    required this.date,
+    required this.id,
+    required this.outlet,
+    required this.priority,
+    required this.startTime,
+  });
 }

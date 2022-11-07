@@ -1,23 +1,15 @@
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
+import 'package:deaksapp/providers/Slot.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/Hotel.dart';
-import '../../providers/Hotels.dart';
-import '../../providers/Job.dart';
-import '../../providers/Outlet.dart';
-import '../../providers/Outlets.dart';
-
-import '../../providers/Slots.dart';
 import 'Body.dart';
 
 class MyJobs extends StatefulWidget {
   static String routeName = "/myjobs";
 
-  MyJobs({super.key});
+  const MyJobs({super.key});
 
   @override
   State<MyJobs> createState() => _MyJobsState();
@@ -25,18 +17,8 @@ class MyJobs extends StatefulWidget {
 
 class _MyJobsState extends State<MyJobs> {
   var _isInit = true;
-  var _isLoading = false;
-  List<Job> jobsList = [];
+  List<Slot> jobsList = [];
   List<DisplaySlot> displayJobSlots = [];
-
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
-
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
-  }
 
   @override
   void initState() {
@@ -47,33 +29,36 @@ class _MyJobsState extends State<MyJobs> {
   void didChangeDependencies() async {
     if (_isInit) {
       jobsList = Provider.of<Jobs>(context, listen: false).getJobs;
-
       displayJobSlots = [];
 
       jobsList.forEach((job) => {
             displayJobSlots.add(DisplaySlot(
+                vacancy: job.vacancy,
+                confirmedRequests: job.confirmedRequests,
+                waitingListRequests: job.waitingRequests,
+                release: job.release,
                 slotId: job.id,
-                jobRemarks: getOulet(job.outletId).jobRemarks,
-                outletId: job.outletId,
-                outletName: job.outletName,
-                outletImages: getOulet(job.outletId).outletImages ?? [],
-                paymentDetails: getOulet(job.outletId).paymentDescription,
-                groomingImages: getOulet(job.outletId).groomingImages ?? [],
-                hoeToImages: getOulet(job.outletId).howToImages ?? [],
-                adminNumber: getOulet(job.outletId).adminNumber,
-                youtubeLink: getOulet(job.outletId).youtubeLink,
-                hotelId: job.hotelId,
-                hotelName: job.hotelName,
-                hotelLogo: getHotel(job.hotelId).logo ?? "",
-                longitude: getHotel(job.hotelId).longitude ?? "",
-                latitude: getHotel(job.hotelId).latitude ?? "",
+                jobRemarks2: job.jobRemarks,
+                jobRemarks1: job.outlet["jobRemarks"],
+                outletId: job.outlet["id"],
+                outletName: job.outlet["outletName"],
+                outletImages: job.outlet["outletImages"] ?? [],
+                paymentDetails: job.outlet["payment"] ?? [],
+                groomingImages: job.outlet["groomingImages"] ?? [],
+                howToImages: job.outlet["howToImages"] ?? [],
+                adminNumber: job.outlet["outletAdminNo"] ?? "",
+                youtubeLink: job.outlet["youtubeLink"] ?? "",
+                hotelId: job.hotel["id"] ?? "",
+                hotelName: job.hotel["hotelName"] ?? "",
+                hotelLogo: job.hotel["hotelLogo"] ?? "",
+                googleMapLink: job.hotel["googleMapLink"] ?? "",
+                appleMapLink: job.hotel["appleMapLink"] ?? "",
                 date: job.date,
                 startTime: job.startTime,
                 endTime: job.endTime,
-                payPerHour: job.payPerHour,
-                totalPay: job.totalPay,
-                slotStatus: job.slotStatus,
-                priority: job.priority)),
+                payPerHour: job.hourlyPay,
+                totalPay: job.totalPayForSlot,
+                priority: job.priority))
           });
       setState(() {});
       _isInit = false;
@@ -87,7 +72,6 @@ class _MyJobsState extends State<MyJobs> {
         .then(((value) {
       _isInit = true;
       didChangeDependencies();
-      ////print("here");
     }));
 
     // didChangeDependencies();
@@ -95,12 +79,11 @@ class _MyJobsState extends State<MyJobs> {
 
   @override
   Widget build(BuildContext context) {
-    ////print("Buidling myjobs");
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
                 centerTitle: true,
-                title: Text(
+                title: const Text(
                   "Upcoming Jobs",
                   style: TextStyle(
                     color: Colors.blueGrey,

@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'complete_profile_form.dart';
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
   State<Body> createState() => _BodyState();
 }
@@ -23,15 +25,15 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
-      if (await canLaunchUrl(iosLink)) {
-        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
@@ -47,15 +49,15 @@ class _BodyState extends State<Body> {
         await launchUrl(iosLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     } else {
       // android , web
-      if (await canLaunchUrl(iosLink)) {
-        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Sorry! Unable open URL")));
+            const SnackBar(content: Text("Sorry! Unable open URL")));
       }
     }
   }
@@ -73,15 +75,15 @@ class _BodyState extends State<Body> {
               children: [
                 SizedBox(height: SizeConfig.screenHeight * 0.03),
                 Text("Complete Profile", style: headingStyle),
-                Text(
-                  "Complete your details or continue  \nwith social media",
+                const Text(
+                  "Complete your details.",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.06),
-                CompleteProfileForm(),
+                const CompleteProfileForm(),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 TextButton(
-                  child: Text("PrivacyPolicy."),
+                  child: const Text("PrivacyPolicy."),
                   onPressed: () {
                     openPrivacy();
                   },
@@ -90,7 +92,7 @@ class _BodyState extends State<Body> {
                     onPressed: () {
                       openlink();
                     },
-                    child: Text("Terms and Conditons")),
+                    child: const Text("Terms and Conditons")),
                 Text(
                   "By continuing your confirm that you agree \nwith our Term and Condition",
                   textAlign: TextAlign.center,

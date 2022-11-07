@@ -10,6 +10,8 @@ import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
   @override
   _SignUpFormState createState() => _SignUpFormState();
 }
@@ -23,17 +25,19 @@ class _SignUpFormState extends State<SignUpForm> {
   final List<String?> errors = [];
 
   void addError({String? error}) {
-    if (!errors.contains(error))
+    if (!errors.contains(error)) {
       setState(() {
         errors.add(error);
       });
+    }
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error))
+    if (errors.contains(error)) {
       setState(() {
         errors.remove(error);
       });
+    }
   }
 
   @override
@@ -91,16 +95,16 @@ class _SignUpFormState extends State<SignUpForm> {
       },
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
 
         labelText: "Confirm Password",
@@ -111,7 +115,7 @@ class _SignUpFormState extends State<SignUpForm> {
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
 
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
     );
   }
@@ -140,16 +144,16 @@ class _SignUpFormState extends State<SignUpForm> {
       },
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
 
         labelText: "Password",
@@ -160,7 +164,7 @@ class _SignUpFormState extends State<SignUpForm> {
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
 
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
     );
   }
@@ -175,7 +179,7 @@ class _SignUpFormState extends State<SignUpForm> {
         } else if (emailValidatorRegExp.hasMatch(value)) {
           removeError(error: kInvalidEmailError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -191,21 +195,21 @@ class _SignUpFormState extends State<SignUpForm> {
         labelText: "Email",
         hintText: "Enter your email",
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),
     );
   }

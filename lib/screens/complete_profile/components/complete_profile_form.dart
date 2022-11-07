@@ -11,6 +11,7 @@ import '../../../constants.dart';
 import '../../../size_config.dart';
 
 class CompleteProfileForm extends StatefulWidget {
+  const CompleteProfileForm({super.key});
   @override
   _CompleteProfileFormState createState() => _CompleteProfileFormState();
 }
@@ -24,17 +25,19 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   String? address;
 
   void addError({String? error}) {
-    if (!errors.contains(error))
+    if (!errors.contains(error)) {
       setState(() {
         errors.add(error);
       });
+    }
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error))
+    if (errors.contains(error)) {
       setState(() {
         errors.remove(error);
       });
+    }
   }
 
   void authenticateUser() async {
@@ -43,10 +46,10 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
           if (value["message"] != null)
             {
               Flushbar(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 borderRadius: BorderRadius.circular(5),
                 message: value["message"],
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
               )..show(context),
             },
           if (value["errorCode"] != null)
@@ -66,7 +69,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         children: [
           buildFullNameFormField(),
           SizedBox(height: getProportionateScreenHeight(20)),
-          Text("*Singapore region only."),
+          const Text("*Singapore region only."),
           SizedBox(height: getProportionateScreenHeight(10)),
           buildPhoneNumberFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
@@ -96,7 +99,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         if (value.isNotEmpty) {
           removeError(error: kAddressNullError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -105,7 +108,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         }
         return null;
       },
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Address",
         hintText: "Enter your phone address",
         // If  you are using latest version of flutter then lable text and hint text shown like this
@@ -125,10 +128,10 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         if (value.isNotEmpty) {
           removeError(error: kPhoneNumberNullError);
         }
-        return null;
+        return;
       },
       validator: (value) {
-        if (value!.isEmpty || value!.length != 8) {
+        if (value!.isEmpty || value.length != 8) {
           addError(error: kPhoneNumberNullError);
           return "";
         }
@@ -138,22 +141,22 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         labelText: "Phone Number",
 
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         prefixText: "+65",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Phone.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Phone.svg"),
       ),
     );
   }
@@ -179,7 +182,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         if (value.isNotEmpty) {
           removeError(error: kNamelNullError);
         }
-        return null;
+        return;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -192,21 +195,21 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         labelText: "First Name",
         hintText: "Enter your first name",
         enabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         disabledBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         focusedBorder: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         border: OutlineInputBorder(
-            borderSide: new BorderSide(width: 1, color: Colors.grey),
+            borderSide: const BorderSide(width: 1, color: Colors.grey),
             borderRadius: BorderRadius.circular(5)),
         // If  you are using latest version of flutter then lable text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
+        suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
       ),
     );
   }

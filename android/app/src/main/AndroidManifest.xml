@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.deaksapplication.deaks_applications">
+ package="com.deaksapplication.deaks_applications">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
    <application
@@ -25,6 +25,21 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+              <!-- Provide required visibility configuration for API level 30 and above -->
+    
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="deaksapp.page.link/jobs"
+                    android:scheme="http"/>
+                
+                 <data
+                    android:host="deaksapp.com/welcome"
+                    android:scheme="http"/>
+                <data android:scheme="https" />    
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -35,5 +50,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
     </application>
 </manifest>

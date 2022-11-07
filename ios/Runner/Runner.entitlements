@@ -4,5 +4,10 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:deaksapp.page.link/jobs</string>
+		<string>applinks:deaksapp.com/welcome</string>
+	</array>
 </dict>
 </plist>

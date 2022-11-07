@@ -1,26 +1,19 @@
 import "package:flutter/foundation.dart";
 import 'package:deaksapp/providers/DisplaySlot.dart';
-import 'package:deaksapp/providers/Hotel.dart';
-import 'package:deaksapp/providers/Hotels.dart';
-import 'package:deaksapp/providers/Outlets.dart';
-import 'package:deaksapp/providers/Profile.dart';
 import 'package:deaksapp/providers/Slots.dart';
 import 'package:flutter/material.dart';
-import 'package:deaksapp/components/coustom_bottom_nav_bar.dart';
-import 'package:deaksapp/enums.dart';
+// import 'package:deaksapp/components/coustom_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../providers/Outlet.dart';
 import '../../providers/Slot.dart';
 import '../../size_config.dart';
-import '../JobDetailsScreen/JobDetailsScreen.dart';
 import 'components/body.dart';
 
 class HomeScreen extends StatefulWidget {
   static String routeName = "/home";
 
-  HomeScreen();
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -29,16 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isInit = true;
   List<Slot> slots = [];
-  List<DisplaySlot> displaySlotss = [];
-
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
-
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
-  }
+  List<DisplaySlot> displaySlots = [];
 
   @override
   void initState() {
@@ -47,36 +31,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() async {
-    slots = Provider.of<Slots>(context, listen: false).getSlots;
-
-    displaySlotss = [];
-    slots.forEach((slot) => {
-          setState(() {
-            displaySlotss.add(DisplaySlot(
+    if (_isInit) {
+      setState(() {});
+      slots = Provider.of<Slots>(context, listen: false).getSlots;
+      displaySlots = [];
+      slots.forEach((slot) => {
+            displaySlots.add(DisplaySlot(
+                confirmedRequests: slot.confirmedRequests,
+                waitingListRequests: slot.waitingRequests,
+                vacancy: slot.vacancy,
+                release: slot.release,
                 slotId: slot.id,
-                jobRemarks: getOulet(slot.outletId).jobRemarks,
-                outletId: slot.outletId,
-                outletName: slot.outletName,
-                outletImages: getOulet(slot.outletId).outletImages ?? [],
-                paymentDetails: getOulet(slot.outletId).paymentDescription,
-                groomingImages: getOulet(slot.outletId).groomingImages ?? [],
-                hoeToImages: getOulet(slot.outletId).howToImages ?? [],
-                adminNumber: getOulet(slot.outletId).adminNumber,
-                youtubeLink: getOulet(slot.outletId).youtubeLink,
-                hotelId: slot.hotelId,
-                hotelName: slot.hotelName,
-                hotelLogo: getHotel(slot.hotelId).logo ?? "",
-                longitude: getHotel(slot.hotelId).longitude ?? "",
-                latitude: getHotel(slot.hotelId).latitude ?? "",
+                jobRemarks2: slot.jobRemarks,
+                jobRemarks1: slot.outlet["jobRemarks"],
+                outletId: slot.outlet["_id"],
+                outletName: slot.outlet["outletName"],
+                outletImages: slot.outlet["outletImages"] ?? [],
+                paymentDetails: slot.outlet["payment"] ?? "",
+                groomingImages: slot.outlet["groomingImages"] ?? [],
+                howToImages: slot.outlet["howToImages"] ?? [],
+                adminNumber: slot.outlet["outletAdminNo"] ?? "",
+                youtubeLink: slot.outlet["youtubeLink"] ?? "",
+                hotelId: slot.hotel["_id"] ?? "",
+                hotelName: slot.hotel["hotelName"] ?? "",
+                hotelLogo: slot.hotel["hotelLogo"] ?? "",
+                googleMapLink: slot.hotel["googleMapLink"] ?? "",
+                appleMapLink: slot.hotel["appleMapLink"] ?? "",
                 date: slot.date,
                 startTime: slot.startTime,
                 endTime: slot.endTime,
-                payPerHour: slot.payPerHour,
-                totalPay: slot.totalPay,
-                slotStatus: slot.slotStatus,
-                priority: slot.priority));
-          }),
-        });
+                payPerHour: slot.hourlyPay,
+                totalPay: slot.totalPayForSlot,
+                priority: slot.priority)),
+            setState(() {}),
+          });
+    }
+
     _isInit = false;
 
     ////print("HomeScreen1111");
@@ -85,9 +75,22 @@ class _HomeScreenState extends State<HomeScreen> {
     super.didChangeDependencies();
   }
 
+  void searchRefrsh() {
+    _isInit = true;
+    didChangeDependencies();
+  }
+
   Future<void> _refreshProducts(BuildContext context) async {
+    Map<String, String> searchQuery = {
+      "search": "",
+      "sortType": "All Jobs",
+      "Hotels": "",
+      "Tags": "",
+      "subscribed": "",
+      "limit": "20"
+    };
     await Provider.of<Slots>(context, listen: false)
-        .fetchAndSetSlots()
+        .fetchAndSetSlots(searchQuery)
         .then(((value) {
       didChangeDependencies();
       ////print("here");
@@ -97,10 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> openWhatsapp() async {
-    var whatsapp = "+6588279462";
+    var whatsapp = "+6598596440";
     var whatsappURl_android =
-        Uri.parse("whatsapp://send?phone=" + whatsapp + "&text=hello");
-    "whatsapp://send?phone=" + whatsapp + "&text=hello";
+        Uri.parse("whatsapp://send?phone=$whatsapp&text=hello");
+    "whatsapp://send?phone=$whatsapp&text=hello";
     var whatappURL_ios = Uri.parse("https://wa.me/$whatsapp?text=hello");
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // for iOS phone only
@@ -108,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await launchUrl(whatappURL_ios, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     } else {
       // android , web
@@ -117,16 +120,13 @@ class _HomeScreenState extends State<HomeScreen> {
             mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: new Text("Whatsapp not installed!")));
+            const SnackBar(content: Text("Whatsapp not installed!")));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      didChangeDependencies();
-    });
     SizeConfig().init(context);
     ////print("rebuilding");
     return
@@ -134,14 +134,15 @@ class _HomeScreenState extends State<HomeScreen> {
         Stack(
       children: [
         Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () => _refreshProducts(context),
-            child: Body(
-              displaySlots: displaySlotss,
-            ),
+            body: RefreshIndicator(
+          onRefresh: () => _refreshProducts(context),
+          child: Body(
+            refresh: (() => searchRefrsh()),
+            displaySlots: displaySlots,
           ),
-          // bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
-        ),
+        )
+            // bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
+            ),
         Positioned(
             left: 20,
             bottom: 20,
@@ -154,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 45,
                 decoration: BoxDecoration(
                   boxShadow: [
-                    new BoxShadow(
+                    BoxShadow(
                       color: Colors.grey.shade400.withOpacity(.5),
                       blurRadius: 20.0,
                     ),

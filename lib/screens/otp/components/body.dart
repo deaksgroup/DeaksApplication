@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'otp_form.dart';
 
 class Body extends StatefulWidget {
+  const Body({super.key});
+
   @override
   State<Body> createState() => _BodyState();
 }
@@ -28,14 +30,14 @@ class _BodyState extends State<Body> {
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
-      child: Text("Cancel"),
+      child: const Text("Cancel"),
       onPressed: () {
         // _FormKey.currentState!.save();
         Navigator.of(context).pop();
       },
     );
     Widget continueButton = TextButton(
-      child: Text("Continue"),
+      child: const Text("Continue"),
       onPressed: () {
         if (_FormKey.currentState!.validate()) {
           _FormKey.currentState!.save();
@@ -51,7 +53,7 @@ class _BodyState extends State<Body> {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(
+      title: const Text(
         "Please enter your contact number!",
         style: TextStyle(fontSize: 15),
       ),
@@ -60,16 +62,16 @@ class _BodyState extends State<Body> {
         child: TextFormField(
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
-                borderSide: new BorderSide(width: 1, color: Colors.grey),
+                borderSide: const BorderSide(width: 1, color: Colors.grey),
                 borderRadius: BorderRadius.circular(5)),
             disabledBorder: OutlineInputBorder(
-                borderSide: new BorderSide(width: 1, color: Colors.grey),
+                borderSide: const BorderSide(width: 1, color: Colors.grey),
                 borderRadius: BorderRadius.circular(5)),
             focusedBorder: OutlineInputBorder(
-                borderSide: new BorderSide(width: 1, color: Colors.grey),
+                borderSide: const BorderSide(width: 1, color: Colors.grey),
                 borderRadius: BorderRadius.circular(5)),
             border: OutlineInputBorder(
-                borderSide: new BorderSide(width: 1, color: Colors.grey),
+                borderSide: const BorderSide(width: 1, color: Colors.grey),
                 borderRadius: BorderRadius.circular(5)),
             // labelText: "Password",
             prefixText: "+65",
@@ -79,7 +81,7 @@ class _BodyState extends State<Body> {
             floatingLabelBehavior: FloatingLabelBehavior.auto,
           ),
           validator: (value) {
-            if (value!.isEmpty || value!.length != 8) {
+            if (value!.isEmpty || value.length != 8) {
               return "";
             }
             return null;
@@ -107,7 +109,7 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(Duration(seconds: 45), (() {
+    Timer(const Duration(seconds: 45), (() {
       setState(() {
         isEnabeld = true;
       });
@@ -131,14 +133,14 @@ class _BodyState extends State<Body> {
               ),
               SizedBox(height: SizeConfig.screenHeight * 0.01),
               Container(
-                  padding: EdgeInsets.symmetric(horizontal: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Text(
                     "Hello $fullName, We sent an OTP to $contactNumber",
                     maxLines: 2,
                   )),
               buildTimer(),
               SizedBox(height: SizeConfig.screenHeight * 0.03),
-              OtpForm(),
+              const OtpForm(),
               SizedBox(height: SizeConfig.screenHeight * 0.1),
               GestureDetector(
                 onTap: () {
@@ -159,7 +161,7 @@ class _BodyState extends State<Body> {
                   onPressed: (() {
                     showAlertDialog(context);
                   }),
-                  child: Text("Change Number")),
+                  child: const Text("Change Number")),
             ],
           ),
         ),
@@ -171,13 +173,13 @@ class _BodyState extends State<Body> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("This code will expired in "),
+        const Text("This code will expired in "),
         TweenAnimationBuilder(
           tween: Tween(begin: 45.00, end: 0.00),
-          duration: Duration(seconds: 45),
+          duration: const Duration(seconds: 45),
           builder: (_, dynamic value, child) => Text(
             "00:${value.toInt()}",
-            style: TextStyle(color: kPrimaryColor),
+            style: const TextStyle(color: kPrimaryColor),
           ),
         ),
       ],

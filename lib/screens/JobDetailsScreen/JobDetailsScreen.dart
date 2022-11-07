@@ -2,12 +2,10 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/providers/DisplaySlot.dart';
 import 'package:deaksapp/providers/Jobs.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
 import 'package:deaksapp/screens/sign_in/sign_in_screen.dart';
-import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../providers/Profile.dart';
@@ -31,21 +29,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: Text("Not Verified!"),
-        content: Text(
+        title: const Text("Not Verified!"),
+        content: const Text(
             "Your Account needs to be verified before applying a job.Please sumbit your details for verification."),
         actions: <Widget>[
           BasicDialogAction(
-            title: Text("Skip"),
+            title: const Text("Skip"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           BasicDialogAction(
-            title: Text("Update"),
+            title: const Text("Update"),
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, MyDetails.routeName);
+              Navigator.pushNamed(context, MyDetailsPage.routeName);
             },
           ),
         ],
@@ -57,17 +55,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: Text("Confirm your booking"),
-        content: Text("Please confirm again for applying for this job"),
+        title: const Text("Confirm your booking"),
+        content: const Text("Please confirm again for applying for this job"),
         actions: <Widget>[
           BasicDialogAction(
-            title: Text("Cancel"),
+            title: const Text("Cancel"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
           BasicDialogAction(
-            title: Text("Confirm"),
+            title: const Text("Confirm"),
             onPressed: () {
               Navigator.pop(context);
               applyJob(slotId);
@@ -88,10 +86,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             //print("Hello"),
             //print(value),
             Flushbar(
-              margin: EdgeInsets.all(8),
+              margin: const EdgeInsets.all(8),
               borderRadius: BorderRadius.circular(5),
-              message: value["message"],
-              duration: Duration(seconds: 3),
+              message: value == 200
+                  ? "Booking Succesfull"
+                  : "Something went wrong! Please try again.",
+              duration: const Duration(seconds: 3),
             )..show(context),
             setState(() {
               _isLading = false;
@@ -106,7 +106,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ModalRoute.of(context)!.settings.arguments as List<dynamic>;
     List<DisplaySlot> displaySlots = args[1] as List<DisplaySlot>;
     DisplaySlot displaySlot = args[0] as DisplaySlot;
-    //print(displaySlots);
     return SafeArea(
       bottom: false,
       child: Scaffold(
@@ -119,7 +118,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
-              new BoxShadow(
+              BoxShadow(
                 color: Colors.grey.shade400.withOpacity(.3),
                 blurRadius: 30.0,
               ),
@@ -128,7 +127,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           child: Container(
             width: 100,
             height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 onPressed: () {
@@ -137,14 +136,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           .getProfile;
                   if (!Provider.of<Auth>(context, listen: false).isAuth) {
                     Navigator.pushNamed(context, SignInScreen.routeName);
-                  } else if (profile["accountStatus"] == "Unauthorized") {
+                  } else if (profile["accountStatus"] == "UNAUTORIZED") {
                     showAlert();
                   } else {
                     askConfirmation(displaySlot.slotId);
                   }
                 },
                 child: _isLading
-                    ? Center(
+                    ? const Center(
                         child: SizedBox(
                           width: 15,
                           height: 15,
@@ -154,7 +153,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           ),
                         ),
                       )
-                    : Text("${displaySlot.slotStatus}")),
+                    : const Text("Book Now")),
           ),
         ),
       ),

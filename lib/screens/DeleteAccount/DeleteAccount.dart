@@ -1,11 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
-import 'package:deaksapp/constants.dart';
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/providers/Profile.dart';
-import 'package:deaksapp/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/custom_surfix_icon.dart';
@@ -28,17 +24,18 @@ class _DeleteAccountState extends State<DeleteAccount> {
         .deleteAccount(password)
         .then((value) => {
               Flushbar(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 borderRadius: BorderRadius.circular(5),
                 message: value["message"],
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
               )..show(context),
               if (value["errorCode"] == 0)
                 {
                   Provider.of<Auth>(context, listen: false).logout(),
                   Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => PageState()),
+                      MaterialPageRoute(
+                          builder: (context) => const PageState()),
                       ModalRoute.withName("/pagestate")),
                 }
               else
@@ -52,7 +49,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "Delete Account",
             style: TextStyle(
               color: Colors.blueGrey,
@@ -62,8 +59,8 @@ class _DeleteAccountState extends State<DeleteAccount> {
       body: Form(
         key: _formKey,
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           height: 335,
           decoration: BoxDecoration(
               color: Colors.black, borderRadius: BorderRadius.circular(5)),
@@ -72,17 +69,17 @@ class _DeleteAccountState extends State<DeleteAccount> {
             children: [
               Text(
                 "Hello, ${profile["name"]}",
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: const TextStyle(fontSize: 20, color: Colors.white),
               ),
-              Text("Now just a minute.",
+              const Text("Now just a minute.",
                   style: TextStyle(fontSize: 15, color: Colors.white)),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Text(
+              const Text(
                   "Are you sure you want to delete your whole account? Your data will be deleted permanently, and this can't be undone. If you're sure, confirm by your password.",
                   style: TextStyle(color: Colors.white)),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               TextFormField(
@@ -97,16 +94,20 @@ class _DeleteAccountState extends State<DeleteAccount> {
                 onChanged: (value) {},
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.grey),
                       borderRadius: BorderRadius.circular(5)),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.grey),
                       borderRadius: BorderRadius.circular(5)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.grey),
                       borderRadius: BorderRadius.circular(5)),
                   border: OutlineInputBorder(
-                      borderSide: new BorderSide(width: 1, color: Colors.grey),
+                      borderSide:
+                          const BorderSide(width: 1, color: Colors.grey),
                       borderRadius: BorderRadius.circular(5)),
                   labelText: "Password",
                   fillColor: Colors.white,
@@ -116,10 +117,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
                   // if you r using flutter less then 1.20.* then maybe this is not working properly
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   suffixIcon:
-                      CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+                      const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SizedBox(
@@ -135,7 +136,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                     },
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    child: Text("Permenently delete my account")),
+                    child: const Text("Permenently delete my account")),
               )
             ],
           ),

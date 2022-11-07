@@ -1,19 +1,20 @@
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
 import 'package:deaksapp/screens/JobDetailsScreen/JobDetailsScreen.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
-import 'package:deaksapp/screens/PrivacyPolicy/PrivacyPolicy.dart';
-import 'package:deaksapp/screens/TermsAndCondtion/TermsAndCondtions.dart';
+
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
+
 import 'package:deaksapp/screens/forgot_password/components/ForgotOTPScreen.dart';
-import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/newPasswordForm/newPasswordScreen.dart';
+import 'package:deaksapp/screens/notofications/NotoficationPage.dart';
 import 'package:deaksapp/screens/pagestate/pagestate.dart';
-import 'package:deaksapp/screens/support/Support.dart';
+import 'package:deaksapp/screens/shareJobScreen/shareJobScreen.dart';
+import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
+
 import 'package:flutter/widgets.dart';
 
 import 'package:deaksapp/screens/complete_profile/complete_profile_screen.dart';
 
 import 'package:deaksapp/screens/forgot_password/forgot_password_screen.dart';
-import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:deaksapp/screens/login_success/login_success_screen.dart';
 import 'package:deaksapp/screens/otp/otp_screen.dart';
 import 'package:deaksapp/screens/profile/profile_screen.dart';
@@ -30,19 +31,23 @@ final Map<String, WidgetBuilder> routes = {
   ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
   LoginSuccessScreen.routeName: (context) => LoginSuccessScreen(),
   SignUpScreen.routeName: (context) => SignUpScreen(),
-  CompleteProfileScreen.routeName: (context) => CompleteProfileScreen(),
+  CompleteProfileScreen.routeName: (context) => const CompleteProfileScreen(),
   OtpScreen.routeName: (context) => OtpScreen(),
   // HomeScreen.routeName: (context) => HomeScreen(),
 
   ProfileScreen.routeName: (context) => ProfileScreen(),
-  PageState.routeName: (context) => PageState(),
-  JobDetailsScreen.routeName: (context) => JobDetailsScreen(),
+  PageState.routeName: (context) => const PageState(),
+  JobDetailsScreen.routeName: (context) => const JobDetailsScreen(),
   // MyJobs.routeName: (context) => MyJobs(),
-  MyDetails.routeName: (context) => MyDetails(),
-  ForgotOTPScreen.routeName: (context) => ForgotOTPScreen(),
+
+  ForgotOTPScreen.routeName: (context) => const ForgotOTPScreen(),
   NewPasswordScreen.routeName: (context) => NewPasswordScreen(),
-  DeleteAccount.routeName: (context) => DeleteAccount(),
-  Support.routeName: (context) => Support(),
-  TermsAndCondition.routeName: (context) => TermsAndCondition(),
-  PrivacyPolicy.routeName: (context) => PrivacyPolicy()
+  DeleteAccount.routeName: (context) => const DeleteAccount(),
+  MyDetailsPage.routeName: (context) => const MyDetailsPage(),
+
+  NotoficationPage.routeName: (context) => NotoficationPage(
+        payload: const {},
+      ),
+  Subscriptions.routeName: (context) => Subscriptions(),
+  shreJobDetailsScreen.routeName: (context) => const shreJobDetailsScreen()
 };

@@ -1,47 +1,89 @@
 import 'package:deaksapp/providers/Auth.dart';
 import 'package:deaksapp/screens/DeleteAccount/DeleteAccount.dart';
-import 'package:deaksapp/screens/MyDetails/MyDetails.dart';
-import 'package:deaksapp/screens/PrivacyPolicy/PrivacyPolicy.dart';
-import 'package:deaksapp/screens/TermsAndCondtion/TermsAndCondtions.dart';
-import 'package:deaksapp/screens/support/Support.dart';
+
+import 'package:deaksapp/screens/MyDetailsPage/MyDetailsPage.dart';
+
+import 'package:deaksapp/screens/subscriptions/subscriptionsScreen.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../pagestate/pagestate.dart';
 import 'profile_menu.dart';
-import 'profile_pic.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
+  const Body({super.key});
+
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  Future<void> openlink(String link) async {
+    var androidLink = Uri.parse(link);
+
+    var iosLink = Uri.parse(link);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // for iOS phone only
+      if (await canLaunchUrl(iosLink)) {
+        await launchUrl(iosLink, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Sorry! Unable open URL")));
+      }
+    } else {
+      // android , web
+      if (await canLaunchUrl(androidLink)) {
+        await launchUrl(androidLink, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Sorry! Unable open URL")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
           ProfileMenu(
             text: "My Info",
             icon: "assets/icons/User Icon.svg",
-            press: () => {Navigator.pushNamed(context, MyDetails.routeName)},
+            press: () =>
+                {Navigator.pushNamed(context, MyDetailsPage.routeName)},
+          ),
+          ProfileMenu(
+            text: "Subscriptions",
+            icon: "assets/icons/User Icon.svg",
+            press: () =>
+                {Navigator.pushNamed(context, Subscriptions.routeName)},
           ),
           ProfileMenu(
             text: "Support",
             icon: "assets/icons/Bell.svg",
             press: () {
-              Navigator.pushNamed(context, Support.routeName);
+              var link = "https://deaks-app-fe.vercel.app/support-channel";
+              openlink(link);
             },
           ),
           ProfileMenu(
             text: "Terms and Condtions",
             icon: "assets/icons/Settings.svg",
             press: () {
-              Navigator.pushNamed(context, TermsAndCondition.routeName);
+              var link = "https://deaks-app-fe.vercel.app/terms-condition";
+              openlink(link);
             },
           ),
           ProfileMenu(
             text: "Privacy Policy",
             icon: "assets/icons/Question mark.svg",
             press: () {
-              Navigator.pushNamed(context, PrivacyPolicy.routeName);
+              var link = "https://deaks-app-fe.vercel.app/privacy-policy";
+              openlink(link);
             },
           ),
           ProfileMenu(
@@ -51,7 +93,7 @@ class Body extends StatelessWidget {
               Navigator.pushNamed(context, DeleteAccount.routeName);
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           ProfileMenu(
@@ -61,7 +103,7 @@ class Body extends StatelessWidget {
               Provider.of<Auth>(context, listen: false).logout();
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => PageState()),
+                  MaterialPageRoute(builder: (context) => const PageState()),
                   ModalRoute.withName("/pagestate"));
             },
           ),

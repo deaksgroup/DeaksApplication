@@ -1,36 +1,36 @@
 import 'package:deaksapp/screens/home/home_screen.dart';
 import 'package:deaksapp/screens/myJobs/MyJobs.dart';
 import 'package:deaksapp/screens/profile/profile_screen.dart';
+import 'package:deaksapp/screens/shareJobScreen/shareJobScreen.dart';
 import 'package:deaksapp/size_config.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_svg/svg.dart';
+// import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/Auth.dart';
 import '../../providers/DisplaySlot.dart';
-import '../../providers/Hotel.dart';
-import '../../providers/Hotels.dart';
+
 import '../../providers/Job.dart';
-import '../../providers/Jobs.dart';
-import '../../providers/Outlet.dart';
-import '../../providers/Outlets.dart';
+
 import '../../providers/Profile.dart';
 import '../../providers/Slot.dart';
 import '../../providers/Slots.dart';
+import '../notofications/NotoficationPage.dart';
 import '../sign_in/sign_in_screen.dart';
 
 class PageState extends StatefulWidget {
   static String routeName = "/pageState";
-  PageState({super.key});
+  const PageState({super.key});
 
   @override
   State<PageState> createState() => _PageStateState();
 }
 
 class _PageStateState extends State<PageState> {
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+
   var _isInit = true;
   var _isLoading = false;
   List<DisplaySlot> displaySlots = [];
@@ -38,24 +38,102 @@ class _PageStateState extends State<PageState> {
   List<Job> jobsList = [];
   List<DisplaySlot> displayJobSlots = [];
   var selected = 0;
-  Outlet getOulet(String OutletId) {
-    return Provider.of<Outlets>(context, listen: false)
-        .getOutletDetails(OutletId);
-  }
 
-  Hotel getHotel(String hotelId) {
-    return Provider.of<Hotels>(context, listen: false).getHotelDetails(hotelId);
+  // This widget is the root of your application.
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      final Uri uri = dynamicLinkData.link;
+
+      final String id = uri.toString();
+      if (id.contains("/welcome")) {
+        return;
+      } else if (id.contains("https://deaksapp.page.link/jobs")) {
+        String jobId = id.split("/").last;
+        if (Provider.of<Auth>(context, listen: false).isAuth) {
+          Provider.of<Slots>(context, listen: false)
+              .fetchSingleSlot(jobId)
+              .then((value) {
+            Navigator.of(context).pushNamed(shreJobDetailsScreen.routeName);
+          });
+        } else {
+          Navigator.of(context).pushNamed(SignInScreen.routeName);
+        }
+      } else {
+        return;
+      }
+    }).onError((error) {});
   }
 
   @override
   void initState() {
     super.initState();
+    initDynamicLinks();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      Map<dynamic, dynamic> notify = {
+        "title": message.notification?.title ?? "",
+        "body": message.notification?.body ?? "",
+        "slotId": message.data["slotId"] ?? "",
+        "tokenNumber": message.data["tokenNumber"] ?? "",
+        "action1": message.data["action1"] ?? "",
+        "action2": message.data["action2"] ?? ""
+      };
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => NotoficationPage(payload: notify)));
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
+      if (message != null) {
+        Map<dynamic, dynamic> notify = {
+          "title": message.notification?.title ?? "",
+          "body": message.notification?.body ?? "",
+          "slotId": message.data["slotId"] ?? "",
+          "tokenNumber": message.data["tokenNumber"] ?? "",
+          "action1": message.data["action1"] ?? "",
+          "action2": message.data["action2"] ?? ""
+        };
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NotoficationPage(payload: notify)));
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      if (message.notification != null) {
+        Map<dynamic, dynamic> notify = {
+          "title": message.notification?.title ?? "",
+          "body": message.notification?.body ?? "",
+          "slotId": message.data["slotId"] ?? "",
+          "tokenNumber": message.data["tokenNumber"] ?? "",
+          "action1": message.data["action1"] ?? "",
+          "action2": message.data["action2"] ?? ""
+        };
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NotoficationPage(payload: notify)));
+      }
+    });
   }
+
+  //
 
   @override
   void didChangeDependencies() async {
+    Map<String, String> searchQuery = {
+      "shiftName": "",
+      "sortType": "All Jobs",
+      "Hotels": "",
+      "Tags": "",
+      "subscribed": "",
+      "limit": "20"
+    };
     if (_isInit) {
-      ////print(_isInit);
       setState(() {
         _isLoading = true;
       });
@@ -63,159 +141,40 @@ class _PageStateState extends State<PageState> {
           .fetchAndSetProfile()
           .then((value) => {
                 Provider.of<Slots>(context, listen: false)
-                    .fetchAndSetSlots()
+                    .fetchAndSetSlots(searchQuery)
                     .then((value) => {
-                          Provider.of<Outlets>(context, listen: false)
-                              .fetchAndSetOulets()
-                              .then((value) => {
-                                    Provider.of<Hotels>(context, listen: false)
-                                        .fetchAndSetHotels()
-                                        .then((value) => {
-                                              slots = Provider.of<Slots>(
-                                                      context,
-                                                      listen: false)
-                                                  .getSlots,
-                                              slots.forEach((slot) => {
-                                                    //////print("222"),
-                                                    //////print(slot),
-                                                    //////print("333"),
-                                                    displaySlots.add(DisplaySlot(
-                                                        slotId: slot.id,
-                                                        jobRemarks:
-                                                            getOulet(slot.outletId)
-                                                                .jobRemarks,
-                                                        outletId: slot.outletId,
-                                                        outletName:
-                                                            slot.outletName,
-                                                        outletImages: getOulet(slot.outletId)
-                                                                .outletImages ??
-                                                            [],
-                                                        paymentDetails:
-                                                            getOulet(slot.outletId)
-                                                                .paymentDescription,
-                                                        groomingImages:
-                                                            getOulet(slot.outletId).groomingImages ??
-                                                                [],
-                                                        hoeToImages: getOulet(slot.outletId)
-                                                                .howToImages ??
-                                                            [],
-                                                        adminNumber:
-                                                            getOulet(slot.outletId)
-                                                                .adminNumber,
-                                                        youtubeLink:
-                                                            getOulet(slot.outletId)
-                                                                .youtubeLink,
-                                                        hotelId: slot.hotelId,
-                                                        hotelName: slot.hotelName,
-                                                        hotelLogo: getHotel(slot.hotelId).logo ?? "",
-                                                        longitude: getHotel(slot.hotelId).longitude ?? "",
-                                                        latitude: getHotel(slot.hotelId).latitude ?? "",
-                                                        date: slot.date,
-                                                        startTime: slot.startTime,
-                                                        endTime: slot.endTime,
-                                                        payPerHour: slot.payPerHour,
-                                                        totalPay: slot.totalPay,
-                                                        slotStatus: slot.slotStatus,
-                                                        priority: slot.priority)),
-                                                  }),
-                                              ////print("pagestate"),
-                                              ////print(displaySlots),
-                                            })
-                                        .then((value) => {
-                                              Provider.of<Jobs>(context,
-                                                      listen: false)
-                                                  .fetchAndSetJobs()
-                                                  .then((value) => {
-                                                        jobsList =
-                                                            Provider.of<Jobs>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .getJobs,
-                                                        //////print(jobsList),
-                                                        jobsList
-                                                            .forEach((job) => {
-                                                                  //////print("222"),
-                                                                  //////print(job),
-                                                                  //////print("333"),
-                                                                  displayJobSlots.add(DisplaySlot(
-                                                                      slotId: job
-                                                                          .id,
-                                                                      jobRemarks: getOulet(job.outletId)
-                                                                          .jobRemarks,
-                                                                      outletId: job
-                                                                          .outletId,
-                                                                      outletName: job
-                                                                          .outletName,
-                                                                      outletImages:
-                                                                          getOulet(job.outletId).outletImages ??
-                                                                              [],
-                                                                      paymentDetails: getOulet(job.outletId)
-                                                                          .paymentDescription,
-                                                                      groomingImages:
-                                                                          getOulet(job.outletId).groomingImages ??
-                                                                              [],
-                                                                      hoeToImages:
-                                                                          getOulet(job.outletId).howToImages ??
-                                                                              [],
-                                                                      adminNumber:
-                                                                          getOulet(job.outletId)
-                                                                              .adminNumber,
-                                                                      youtubeLink:
-                                                                          getOulet(job.outletId)
-                                                                              .youtubeLink,
-                                                                      hotelId: job
-                                                                          .hotelId,
-                                                                      hotelName:
-                                                                          job.hotelName,
-                                                                      hotelLogo: getHotel(job.hotelId).logo ?? "",
-                                                                      longitude: getHotel(job.hotelId).longitude ?? "",
-                                                                      latitude: getHotel(job.hotelId).latitude ?? "",
-                                                                      date: job.date,
-                                                                      startTime: job.startTime,
-                                                                      endTime: job.endTime,
-                                                                      payPerHour: job.payPerHour,
-                                                                      totalPay: job.totalPay,
-                                                                      slotStatus: job.slotStatus,
-                                                                      priority: job.priority)),
-                                                                }),
-                                                        setState(() {
-                                                          _isLoading = false;
-                                                        }),
-                                                        //////print("5"),
-                                                      }),
-                                            })
-                                  })
+                          setState(() {
+                            _isLoading = false;
+                          }),
                         }),
               });
     }
     _isInit = false;
-    ////print("HomeScreen");
-    ////print(_isInit);
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [HomeScreen(), MyJobs(), ProfileScreen()];
+    List<Widget> pages = [const HomeScreen(), const MyJobs(), ProfileScreen()];
     SizeConfig().init(context);
     return Scaffold(
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
                 strokeWidth: 1,
               ),
             )
           : pages[selected],
-      bottomNavigationBar: Container(
+      bottomNavigationBar: SizedBox(
         height: getProportionateScreenWidth(70),
         // decoration: BoxDecoration(color: Colors.grey),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
-              new BoxShadow(
+              BoxShadow(
                 color: Colors.grey.shade400.withOpacity(.2),
                 blurRadius: 30.0,
               ),
@@ -225,6 +184,7 @@ class _PageStateState extends State<PageState> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -235,19 +195,19 @@ class _PageStateState extends State<PageState> {
                       });
                     }
                   },
-                  child: Container(
+                  child: SizedBox(
                     // decoration: BoxDecoration(color: Colors.white),
-
-                    child: SvgPicture.asset(
-                      "assets/icons/home.svg",
+                    height: double.infinity,
+                    child: Icon(
+                      Icons.home_outlined,
                       color: selected == 0 ? Colors.red : Colors.grey,
-                      width: selected == 0 ? 25 : 22,
-                      height: selected == 0 ? 25 : 22,
+                      size: selected == 0 ? 27 : 23,
                     ),
                   ),
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -261,18 +221,18 @@ class _PageStateState extends State<PageState> {
                       Navigator.pushNamed(context, SignInScreen.routeName);
                     }
                   },
-                  child: Container(
-                    // decoration: BoxDecoration(color: Colors.white),
-                    child: SvgPicture.asset(
-                      "assets/icons/briefcase.svg",
-                      color: selected == 1 ? Colors.red : Colors.grey,
-                      width: selected == 1 ? 25 : 22,
-                      height: selected == 1 ? 25 : 22,
-                    ),
-                  ),
+                  child: SizedBox(
+                      // decoration: BoxDecoration(color: Colors.white),
+                      height: double.infinity,
+                      child: Icon(
+                        Icons.work_outline,
+                        color: selected == 1 ? Colors.red : Colors.grey,
+                        size: selected == 1 ? 27 : 23,
+                      )),
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -287,15 +247,14 @@ class _PageStateState extends State<PageState> {
                       Navigator.pushNamed(context, SignInScreen.routeName);
                     }
                   },
-                  child: Container(
-                    // decoration: BoxDecoration(color: Colors.white),
-                    child: SvgPicture.asset(
-                      "assets/icons/user 2.svg",
-                      color: selected == 2 ? Colors.red : Colors.grey,
-                      width: selected == 2 ? 25 : 22,
-                      height: selected == 2 ? 25 : 22,
-                    ),
-                  ),
+                  child: SizedBox(
+                      // decoration: BoxDecoration(color: Colors.white),
+                      height: double.infinity,
+                      child: Icon(
+                        Icons.account_box_outlined,
+                        color: selected == 2 ? Colors.red : Colors.grey,
+                        size: selected == 2 ? 27 : 23,
+                      )),
                 ),
               ),
             ],

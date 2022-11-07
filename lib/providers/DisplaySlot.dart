@@ -4,45 +4,54 @@ class DisplaySlot {
   final String outletName;
   final List<dynamic> outletImages;
   final List<dynamic> groomingImages;
-  final List<dynamic> hoeToImages;
+  final List<dynamic> howToImages;
   final String adminNumber;
   final String youtubeLink;
-  final String jobRemarks;
+  final String jobRemarks1;
+  final String jobRemarks2;
   final String paymentDetails;
   final String hotelId;
   final String hotelName;
   final String hotelLogo;
-  final String longitude;
-  final String latitude;
+  final String googleMapLink;
+  final String appleMapLink;
   final String date;
   final String startTime;
   final String endTime;
   final String payPerHour;
   final String totalPay;
-  final String slotStatus;
+  final String vacancy;
+  final String release;
+  final List<dynamic> confirmedRequests;
+  final List<dynamic> waitingListRequests;
+
   final String priority;
 
   DisplaySlot(
       {required this.slotId,
-      required this.jobRemarks,
+      required this.confirmedRequests,
+      required this.waitingListRequests,
+      required this.release,
+      required this.vacancy,
+      required this.jobRemarks1,
+      required this.jobRemarks2,
       required this.outletId,
       required this.outletName,
       required this.paymentDetails,
       required this.outletImages,
       required this.groomingImages,
-      required this.hoeToImages,
+      required this.howToImages,
       required this.adminNumber,
       required this.youtubeLink,
       required this.hotelId,
       required this.hotelName,
       required this.hotelLogo,
-      required this.longitude,
-      required this.latitude,
+      required this.googleMapLink,
+      required this.appleMapLink,
       required this.date,
       required this.startTime,
       required this.endTime,
       required this.payPerHour,
       required this.totalPay,
-      required this.slotStatus,
       required this.priority});
 }

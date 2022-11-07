@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:deaksapp/components/custom_surfix_icon.dart';
 import 'package:deaksapp/components/default_button.dart';
 import 'package:deaksapp/components/form_error.dart';
-import 'package:deaksapp/screens/complete_profile/complete_profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
@@ -11,6 +10,8 @@ import '../../../size_config.dart';
 import '../pagestate/pagestate.dart';
 
 class NewPasswordForm extends StatefulWidget {
+  const NewPasswordForm({super.key});
+
   @override
   _NewPasswordFormState createState() => _NewPasswordFormState();
 }
@@ -24,17 +25,19 @@ class _NewPasswordFormState extends State<NewPasswordForm> {
   final List<String?> errors = [];
 
   void addError({String? error}) {
-    if (!errors.contains(error))
+    if (!errors.contains(error)) {
       setState(() {
         errors.add(error);
       });
+    }
   }
 
   void removeError({String? error}) {
-    if (errors.contains(error))
+    if (errors.contains(error)) {
       setState(() {
         errors.remove(error);
       });
+    }
   }
 
   @override
@@ -67,7 +70,7 @@ class _NewPasswordFormState extends State<NewPasswordForm> {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PageState()),
+                                      builder: (context) => const PageState()),
                                   ModalRoute.withName("/pagestate"))
                             }
                         });
@@ -103,23 +106,23 @@ class _NewPasswordFormState extends State<NewPasswordForm> {
         },
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           disabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           focusedBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           border: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           labelText: "Confirm Password",
 
           // If  you are using latest version of flutter then lable text and hint text shown like this
           // if you r using flutter less then 1.20.* then maybe this is not working properly
           floatingLabelBehavior: FloatingLabelBehavior.auto,
-          suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+          suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
         ));
   }
 
@@ -147,23 +150,23 @@ class _NewPasswordFormState extends State<NewPasswordForm> {
         },
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           disabledBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           focusedBorder: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           border: OutlineInputBorder(
-              borderSide: new BorderSide(width: 1, color: Colors.grey),
+              borderSide: const BorderSide(width: 1, color: Colors.grey),
               borderRadius: BorderRadius.circular(5)),
           labelText: "Password",
 
           // If  you are using latest version of flutter then lable text and hint text shown like this
           // if you r using flutter less then 1.20.* then maybe this is not working properly
           floatingLabelBehavior: FloatingLabelBehavior.auto,
-          suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+          suffixIcon: const CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
         ));
   }
 }
