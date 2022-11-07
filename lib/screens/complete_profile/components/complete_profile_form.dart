@@ -131,7 +131,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         return;
       },
       validator: (value) {
-        if (value!.isEmpty || value.length != 10) {
+        if (value!.isEmpty || value.length != 8) {
           addError(error: kPhoneNumberNullError);
           return "";
         }

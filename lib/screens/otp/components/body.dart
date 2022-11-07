@@ -81,7 +81,7 @@ class _BodyState extends State<Body> {
             floatingLabelBehavior: FloatingLabelBehavior.auto,
           ),
           validator: (value) {
-            if (value!.isEmpty || value.length != 10) {
+            if (value!.isEmpty || value.length != 8) {
               return "";
             }
             return null;

@@ -383,7 +383,7 @@ class _PageBodyState extends State<PageBody> {
                                     // ),
                                     child: profileUrlKey.isEmpty
                                         ? Image.asset(
-                                            "assets/images/depositphotos_137014128-stock-illustration-user-profile-icon.jpg",
+                                            "assets/images/profileHolder.jpg",
                                             width: 95,
                                             height: 95,
                                             fit: BoxFit.cover,
