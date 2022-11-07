@@ -226,7 +226,7 @@ class ProfileFetch with ChangeNotifier {
     //     .map((key, value) => MapEntry(key.toString(), value.toString()));
     try {
       //404
-      response = await dio.patch("${globals.url}/updateUserInfo",
+      response = await dio.patch("${globals.url}/updateUserInfoApp",
           data: formData, options: Options(headers: headers));
       // ////print(response.data.toString());
       final extractedData = response.data;
