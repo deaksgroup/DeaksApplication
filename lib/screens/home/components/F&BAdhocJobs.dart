@@ -384,7 +384,7 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
                               .getProfile;
                       if (!Provider.of<Auth>(context, listen: false).isAuth) {
                         Navigator.pushNamed(context, SignInScreen.routeName);
-                      } else if (profile["accountStatus"] == "UNAUTORIZED") {
+                      } else if (profile["accountStatus"] == "UNAUTHORIZED") {
                         showAlert();
                       } else {
                         askConfirmation();

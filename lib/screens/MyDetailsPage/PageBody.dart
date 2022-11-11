@@ -452,6 +452,7 @@ class _PageBodyState extends State<PageBody> {
                       children: [
                         TextSpan(
                           text: profile["verificationStatus"] == "PENDING" ||
+                                  profile["accountStatus"] == "UNAUTHORIZED" ||
                                   profile["verificationStatus"] ==
                                       "NOTSUBMITTED"
                               ? "Account Verification Pending..."

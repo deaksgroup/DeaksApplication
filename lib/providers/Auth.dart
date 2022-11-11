@@ -411,7 +411,7 @@ class Auth with ChangeNotifier {
     _expiryDate = expiryDate;
     _email = extractedUserData['email'];
     _contactNumber = extractedUserData['contactNumber'];
-
+    print(_token);
     // log("autologing");
 
     notifyListeners();
