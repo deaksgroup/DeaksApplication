@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> {
                         builder: (ctx, authResultSnapshot) =>
                             authResultSnapshot.connectionState ==
                                     ConnectionState.waiting
-                                ? SplashScreen()
+                                ? const SplashScreen()
                                 : const PageState(),
                       ),
 

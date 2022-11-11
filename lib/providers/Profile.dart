@@ -258,30 +258,30 @@ class ProfileFetch with ChangeNotifier {
     return extractedData;
   }
 
-  Future<void> cancelSubscription(String outletId) async {
-    var dio = Dio();
-    Response response;
+  // Future<void> cancelSubscription(String outletId) async {
+  //   var dio = Dio();
+  //   Response response;
 
-    Map<String, dynamic> headers = {
-      "secret_token": token,
-    };
-    try {
-      response = await dio.patch("${globals.url}/profile",
-          options: Options(headers: headers));
-    } on DioError catch (e) {}
-  }
+  //   Map<String, dynamic> headers = {
+  //     "secret_token": token,
+  //   };
+  //   try {
+  //     response = await dio.patch("${globals.url}/profile",
+  //         options: Options(headers: headers));
+  //   } on DioError catch (e) {}
+  // }
 
-  Future<void> subscribe(String outletId) async {
-    var dio = Dio();
-    Response response;
+  // Future<void> subscribe(String outletId) async {
+  //   var dio = Dio();
+  //   Response response;
 
-    Map<String, dynamic> headers = {
-      "secret_token": token,
-    };
+  //   Map<String, dynamic> headers = {
+  //     "secret_token": token,
+  //   };
 
-    try {
-      response = await dio.patch("${globals.url}/profile",
-          options: Options(headers: headers));
-    } on DioError catch (e) {}
-  }
+  //   try {
+  //     response = await dio.patch("${globals.url}/profile",
+  //         options: Options(headers: headers));
+  //   } on DioError catch (e) {}
+  // }
 }
