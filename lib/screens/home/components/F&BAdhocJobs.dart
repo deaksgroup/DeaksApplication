@@ -35,17 +35,24 @@ class _AdHocJobsState extends State<AdHocJobs> {
                     onTap: (() {
                       Navigator.pushNamed(context, JobDetailsScreen.routeName,
                           arguments: [
-                            widget.displaySlots[index],
+                            widget.displaySlots
+                                .where((element) => element.priority == "LOW")
+                                .toList()[index],
                             widget.displaySlots,
                           ]);
                     }),
                     child: AdHocJobCard(
-                      displaySlot: widget.displaySlots[index],
+                      displaySlot: widget.displaySlots
+                          .where((element) => element.priority == "LOW")
+                          .toList()[index],
                       displaySlots: widget.displaySlots,
                     ),
                   );
                 }),
-                itemCount: widget.displaySlots.length,
+                itemCount: widget.displaySlots
+                    .where((element) => element.priority == "LOW")
+                    .toList()
+                    .length,
               )
             : const Center(
                 child: Text("Jobs not available."),
@@ -150,31 +157,20 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
 
   @override
   void didChangeDependencies() async {
-    if (int.parse(widget.displaySlot.vacancy) > 3) {
+    if (int.parse(widget.displaySlot.vacancy) > 3 &&
+        int.parse(widget.displaySlot.vacancy) -
+                widget.displaySlot.confirmedRequests.length >
+            3) {
       setState(() {
         status = "Open";
         color = Colors.green;
       });
     } else if (int.parse(widget.displaySlot.vacancy) -
-            widget.displaySlot.confirmedRequests.length >
-        3) {
-      setState(() {
-        status = "Open";
-        color = Colors.green;
-      });
-    } else if (int.parse(widget.displaySlot.vacancy) -
-            widget.displaySlot.confirmedRequests.length <=
+            widget.displaySlot.confirmedRequests.length ==
         0) {
       setState(() {
         status = "Waiting List";
         color = Colors.orange;
-      });
-    } else if (int.parse(widget.displaySlot.release) -
-            int.parse(widget.displaySlot.vacancy) ==
-        widget.displaySlot.waitingListRequests.length) {
-      setState(() {
-        status = "Closed";
-        color = Colors.blue;
       });
     } else {
       setState(() {
@@ -182,6 +178,16 @@ class _AdHocJobCardState extends State<AdHocJobCard> {
         color = Colors.red;
       });
     }
+
+    // if (int.parse(widget.displaySlot.vacancy) -
+    //         widget.displaySlot.confirmedRequests.length >
+    //     3) {
+    //   setState(() {
+    //     status = "Open";
+    //     color = Colors.green;
+    //   });
+    // }
+
     super.didChangeDependencies();
   }
 

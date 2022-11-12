@@ -26,14 +26,22 @@ class _TrendingJobsState extends State<TrendingJobs> {
                             Navigator.pushNamed(
                                 context, JobDetailsScreen.routeName,
                                 arguments: [
-                                  widget.displaySlots[index],
+                                  widget.displaySlots
+                                      .where((element) =>
+                                          element.priority == "HIGH")
+                                      .toList()[index],
                                   widget.displaySlots,
                                 ])
                           },
                       child: TrendingJobsCard(
-                          displaySlot: widget.displaySlots[index]));
+                          displaySlot: widget.displaySlots
+                              .where((element) => element.priority == "HIGH")
+                              .toList()[index]));
                 }),
-                itemCount: widget.displaySlots.length,
+                itemCount: widget.displaySlots
+                    .where((element) => element.priority == "HIGH")
+                    .toList()
+                    .length,
               )
             : const Center(
                 child: Text("Jobs not available."),
@@ -62,31 +70,20 @@ class _TrendingJobsCardState extends State<TrendingJobsCard> {
 
   @override
   void didChangeDependencies() async {
-    if (int.parse(widget.displaySlot.vacancy) > 3) {
+    if (int.parse(widget.displaySlot.vacancy) > 3 &&
+        int.parse(widget.displaySlot.vacancy) -
+                widget.displaySlot.confirmedRequests.length >
+            3) {
       setState(() {
         status = "Open";
         color = Colors.green;
       });
     } else if (int.parse(widget.displaySlot.vacancy) -
-            widget.displaySlot.confirmedRequests.length >
-        3) {
-      setState(() {
-        status = "Open";
-        color = Colors.green;
-      });
-    } else if (int.parse(widget.displaySlot.vacancy) -
-            widget.displaySlot.confirmedRequests.length <=
+            widget.displaySlot.confirmedRequests.length ==
         0) {
       setState(() {
         status = "Waiting List";
         color = Colors.orange;
-      });
-    } else if (int.parse(widget.displaySlot.release) -
-            int.parse(widget.displaySlot.vacancy) ==
-        widget.displaySlot.waitingListRequests.length) {
-      setState(() {
-        status = "Closed";
-        color = Colors.blue;
       });
     } else {
       setState(() {

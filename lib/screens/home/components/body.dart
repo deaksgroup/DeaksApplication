@@ -92,20 +92,19 @@ class _BodyState extends State<Body> {
               title: "Trending",
             ),
             const SizedBox(height: 10),
-            TrendingJobs(
-              displaySlots: widget.displaySlots
-                  .where((element) => element.priority == "HIGH")
-                  .toList(),
-            ),
+            TrendingJobs(displaySlots: widget.displaySlots
+                // .where((element) => element.priority == "HIGH")
+                // .toList(),
+                ),
             const SizedBox(height: 20),
             const SectionTitle(
               title: "F&B Ad-hoc Jobs",
             ),
             const SizedBox(height: 20),
-            AdHocJobs(
-                displaySlots: widget.displaySlots
-                    .where((element) => element.priority == "LOW")
-                    .toList()),
+            AdHocJobs(displaySlots: widget.displaySlots
+                // .where((element) => element.priority == "LOW")
+                // .toList()
+                ),
             SizedBox(height: getProportionateScreenWidth(30)),
           ],
         ),

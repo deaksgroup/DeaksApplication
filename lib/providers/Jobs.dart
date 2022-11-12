@@ -101,7 +101,7 @@ class Jobs with ChangeNotifier {
             hourlyPay: job["hourlyPay"] ?? "",
             priority: job["priority"] ?? "",
             startTime: job["startTime"] ?? "",
-            totalPayForSlot: job["totalPayForSlot"] ?? "",
+            totalPayForSlot: job["totalPay"] ?? "",
             release: job["release"].toString(),
             jobRemarks: job["jobRemarks"] ?? "",
             vacancy: job["vacancy"].toString(),
