@@ -41,7 +41,7 @@ class NotificationFetch with ChangeNotifier {
     try {
       //404
 
-      response = await dio.post("${globals.url}/notitificationResponse",
+      response = await dio.post("${globals.url}/notificationResponse",
           options: Options(headers: headers), data: responseMessage);
 
       final responseData = response.data;

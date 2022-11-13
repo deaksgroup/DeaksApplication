@@ -185,49 +185,49 @@ class _SearchFieldState extends State<SearchField> {
                       )),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-                onPressed: (() {
-                  setState(() {
-                    if (isSorting) {
-                      isSorting = false;
-                    } else {
-                      isFiltering = false;
-                      isSorting = true;
-                    }
-                  });
-                }),
-                child: Text(
-                  "Sort",
-                  style: TextStyle(
-                      color: sort == 0
-                          ? Colors.blueGrey
-                          : Colors.blue.withOpacity(1),
-                      fontSize: 12),
-                )),
-            TextButton(
-                onPressed: (() {
-                  setState(() {
-                    if (isFiltering) {
-                      isFiltering = false;
-                    } else {
-                      isSorting = false;
-                      isFiltering = true;
-                    }
-                  });
-                }),
-                child: Text("Filter By",
-                    style: TextStyle(
-                        color: isFliterByHotel ||
-                                isFliterByTags ||
-                                isFliterBySubscriptions
-                            ? Colors.blue
-                            : Colors.blueGrey,
-                        fontSize: 12)))
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.end,
+        //   children: [
+        //     TextButton(
+        //         onPressed: (() {
+        //           setState(() {
+        //             if (isSorting) {
+        //               isSorting = false;
+        //             } else {
+        //               isFiltering = false;
+        //               isSorting = true;
+        //             }
+        //           });
+        //         }),
+        //         child: Text(
+        //           "Sort",
+        //           style: TextStyle(
+        //               color: sort == 0
+        //                   ? Colors.blueGrey
+        //                   : Colors.blue.withOpacity(1),
+        //               fontSize: 12),
+        //         )),
+        //     TextButton(
+        //         onPressed: (() {
+        //           setState(() {
+        //             if (isFiltering) {
+        //               isFiltering = false;
+        //             } else {
+        //               isSorting = false;
+        //               isFiltering = true;
+        //             }
+        //           });
+        //         }),
+        //         child: Text("Filter By",
+        //             style: TextStyle(
+        //                 color: isFliterByHotel ||
+        //                         isFliterByTags ||
+        //                         isFliterBySubscriptions
+        //                     ? Colors.blue
+        //                     : Colors.blueGrey,
+        //                 fontSize: 12)))
+        //   ],
+        // ),
         if (isSorting)
           Container(
             margin: const EdgeInsets.only(bottom: 20),

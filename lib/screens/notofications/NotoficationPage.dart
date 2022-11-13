@@ -1,5 +1,5 @@
 import 'package:deaksapp/providers/Notification.dart';
-import 'package:deaksapp/screens/pagestate/pagestate.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +9,7 @@ class NotoficationPage extends StatefulWidget {
 
   final Map<dynamic, dynamic> payload;
 
-  NotoficationPage({super.key, required this.payload});
+  const NotoficationPage({super.key, required this.payload});
 
   @override
   State<NotoficationPage> createState() => _NotoficationPageState();
@@ -29,52 +29,16 @@ class _NotoficationPageState extends State<NotoficationPage> {
     super.didChangeDependencies();
   }
 
-  void askConfirmation(Map<dynamic, dynamic> notify) {
-    showPlatformDialog(
-      context: context,
-      builder: (context) => BasicDialogAlert(
-        title: Text(notify["title"]),
-        content: Text(notify["body"]),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: Text(notify["action1"]),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Map<String, String> responseData = {
-                "tokenNumber": notify["tokenNumber"],
-                "slotId": notify["slotId"],
-                "response": notify["action1"],
-              };
-              sendNotificationResponse(responseData);
-            },
-          ),
-          BasicDialogAction(
-            title: Text(notify["action2"]),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Map<String, String> responseData = {
-                "tokenNumber": notify["tokenNumber"],
-                "slotId": notify["slotId"],
-                "response": notify["action2"],
-              };
-              sendNotificationResponse(responseData);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> sendNotificationResponse(
       Map<String, String> responseData) async {
     Provider.of<NotificationFetch>(context, listen: false)
         .sendNotificationResponse(responseData)
         .then((value) => {
               // Flushbar(
-              //   margin: EdgeInsets.all(8),
+              //   margin: const EdgeInsets.all(8),
               //   borderRadius: BorderRadius.circular(5),
               //   message: value["message"],
-              //   duration: Duration(seconds: 3),
+              //   duration: const Duration(seconds: 3),
               // )..show(context),
             });
   }
@@ -99,8 +63,9 @@ class _NotoficationPageState extends State<NotoficationPage> {
                   BasicDialogAction(
                     title: Text(widget.payload["action1"]),
                     onPressed: () {
-                      Navigator.of(context)
-                          .popAndPushNamed(PageState.routeName);
+                      // Navigator.of(context)
+                      //     .popAndPushNamed(PageState.routeName);
+                      Navigator.of(context).pop();
                       Map<String, String> responseData = {
                         "tokenNumber": widget.payload["tokenNumber"],
                         "slotId": widget.payload["slotId"],
@@ -112,7 +77,7 @@ class _NotoficationPageState extends State<NotoficationPage> {
                   BasicDialogAction(
                     title: Text(widget.payload["action2"]),
                     onPressed: () {
-                      Navigator.of(context).popUntil((route) => true);
+                      Navigator.of(context).pop();
                       Map<String, String> responseData = {
                         "tokenNumber": widget.payload["tokenNumber"],
                         "slotId": widget.payload["slotId"],
