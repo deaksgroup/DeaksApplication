@@ -187,7 +187,7 @@ class JobCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5),
                                   message: value == 200
                                       ? "Job Canceled Succesfully"
-                                      : "Something went wrong! Please contact our support.",
+                                      : "Failed to cancel this job slot. Please contact our support.",
                                   duration: const Duration(seconds: 3),
                                 )..show(context),
                               });
